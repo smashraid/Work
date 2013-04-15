@@ -351,9 +351,11 @@
     <Content Include="css\ui\images\ui-icons_cd0a0a_256x240.png" />
     <Content Include="css\ui\jquery.ui.css" />
     <Content Include="default.aspx" />
+    <Content Include="dummy.txt" />
     <Content Include="Global.asax" />
     <Content Include="macroScripts\dummy.txt" />
     <Content Include="masterpages\dummy.txt" />
+    <Content Include="scripts\angular.js" />
     <Content Include="scripts\bootstrap.js" />
     <Content Include="scripts\dummy.txt" />
     <Content Include="scripts\jquery.colorbox.js" />
