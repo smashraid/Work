@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<UmbracoData>
+    <Data key="1255">Resistance</Data>
+    <Data key="1254">Type</Data>
+    <Data key="1253">Training</Data>
+    <Data key="1252">Action</Data>
+    <Data key="1233">ObjectType</Data>
+    <Data key="1232">UserType</Data>
+    <Data key="1244">Rate</Data>
+    <Data key="1059">Device</Data>
+    <Data key="1060">Exercise</Data>
+    <Data key="1062">Measurement</Data>
+    <Data key="1064">Notification</Data>
+    <Data key="1065">Platform</Data>
+    <Data key="1066">Trainer</Data>
+    <Data key="1085">Category</Data>
+    <Data key="1084">State</Data>
+    <Data key="1068">Unit</Data>
+    <Data key="1061">Gender</Data>
+    <Data key="1158">GymnastNode</Data>
+    <Data key="1149">Site</Data>
+    <Data key="C:\Users\stsuchidac\Documents\visual studio 2010\Projects\Umbraco\Web\App_Data\ResourceData.xml">ResourceData</Data>
+    <Data key="C:\Users\stsuchidac\Documents\visual studio 2010\Projects\Umbraco\Web\media\">Media</Data>
+    <Data key="C:\inetpub\wwwroot\Photo\">Photo</Data>
+</UmbracoData>

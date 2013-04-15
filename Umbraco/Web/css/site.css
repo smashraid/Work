@@ -1,0 +1,203 @@
+body
+{
+    background-color: ghostwhite;
+}
+
+#logo
+{
+    float: left;
+}
+
+#top
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 0 auto;
+    position: relative;
+    text-transform: uppercase;
+    width: 990px;
+    clear: both;
+    overflow: hidden;
+    padding: 8px;
+}
+
+#top ul
+{
+    float: right;
+    list-style: none outside none;
+}
+
+#top ul li
+{
+    float: right;
+    margin: 0 0 0 10px;
+}
+
+#top ul li
+{
+    float: right;
+}
+
+
+
+header
+{
+    margin: 0 auto;
+    padding: 15px 0;
+    position: relative;
+    z-index: 9;
+    width: 990px;
+}
+header nav
+{
+}
+header nav ul li
+{
+    display: inline-block;
+    font-size: 18px;
+    margin: 60px 8px 0 8px;
+    position: relative;
+    text-transform: uppercase;
+    border-bottom-width: 6px;
+    border-bottom-style: solid;
+}
+header nav ul li a
+{
+    display: block;
+    outline: medium none;
+    padding: 5px 20px;
+    text-decoration: none;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+header nav ul li a:hover
+{
+    text-decoration: none;
+    color: grey;
+}
+
+header nav ul li a
+{
+    text-decoration: none;
+}
+
+
+#body
+{
+    clear: both;
+    margin: 0 auto;
+    padding-bottom: 126px;
+    width: 990px;
+}
+
+#content
+{
+    clear: both;
+    margin-top: 25px;
+    overflow: hidden;
+    position: relative;
+    z-index: 999;
+}
+
+footer
+{
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 20px 0 15px;
+    position: relative;
+    text-transform: uppercase;
+    clear: both;
+    margin: 0 auto;
+    position: relative;
+    width: 990px;
+}
+
+footer div
+{
+    clear: both;
+    overflow: hidden;
+    width: 82%;
+}
+
+footer div dl
+{
+    border-right: 1px solid #CCCCC2;
+    float: left;
+    margin-right: 20px;
+    padding-right: 20px;
+}
+
+footer div dl dt a
+{
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+footer div dl dd a
+{
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+footer div dl dt a:hover
+{
+    text-decoration: none;
+    color: grey;
+}
+
+footer div dl dd a:hover
+{
+    text-decoration: none;
+    color: grey;
+}
+
+#gallery
+{
+    height: 310px;
+    width: 670px;
+    position: relative;
+    padding: 10px;
+}
+#slider
+{
+    height: 310px;
+    width: 670px;
+}
+#slider img
+{
+    height: 310px;
+    width: 670px;
+}
+#nav
+{
+    position: absolute;
+    top: 280px;
+    right: 0;
+    z-index: 9999;
+    margin: 5px 20px;
+}
+#nav ul a
+{
+    text-indent: -99999px;
+    width: 10px;
+    height: 10px;
+    background: white;
+    float: left;
+    margin-right: 10px;
+    display: block;
+}
+
+#nav div ul a.activeSlide
+{
+    background: darkorange;
+}
+
+#nav ul li
+{
+    float: left;
+    margin-right: 10px;
+}
+/* EDITOR PROPERTIES - PLEASE DON'T DELETE THIS LINE TO AVOID DUPLICATE PROPERTIES */

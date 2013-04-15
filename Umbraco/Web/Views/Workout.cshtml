@@ -1,0 +1,152 @@
+﻿@using System.Web.Optimization
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Section.cshtml";
+}
+<div class="container">
+    <div class="header">
+        <ul>
+            <li class="tabOn"><a href="#"><span>Workout Repository</span> </a></li>
+        </ul>
+        <div class="top">
+        </div>
+    </div>
+    <div class="title">
+    </div>
+    <div class="wrap">
+        <div class="content tabpagescrollinglayer" id="tabSection123">
+            @Umbraco.Field("body")
+                <div id="pnlFormWorkoutRepository">
+                <table id="grid">
+                </table>
+                <div id="pager">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="left">
+    </div>
+    <div class="right">
+    </div>
+</div>
+@section script
+{
+ @Scripts.Render("~/scripts/jquery.jqgrid")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ($('#pnlFormWorkoutRepository').length) {
+                var lastSel;
+                $('#grid').jqGrid({
+                    datatype: function () {
+                        var pageSize = $('#grid').getGridParam('rowNum');
+                        var currentPage = $('#grid').getGridParam('page');
+                        var sortColumn = $('#grid').getGridParam('sortname');
+                        var sortOrder = $('#grid').getGridParam('sortorder');
+                        var isSearch = $('#grid').getGridParam('search');
+                        var searchOptions;
+                        var searchField = '';
+                        var searchOper = '';
+                        var searchString = '';
+                        var filters = '';
+                        if (isSearch == true) { //Obtiene los parámetros de busqueda en caso de que la variable _search sea true
+                            searchOptions = $('#grid').getGridParam('postData');
+                            searchField = searchOptions.searchField;
+                            searchOper = searchOptions.searchOper;
+                            searchString = searchOptions.searchString;
+                            filters = searchOptions.filters;
+                        }
+                        var grid = {
+                            //Parametros de entrada
+                            PageSize: pageSize,
+                            CurrentPage: currentPage,
+                            SortColumn: sortColumn,
+                            SortOrder: sortOrder,
+                            IsSearch: isSearch,
+                            SearchField: searchField,
+                            SearchValue: searchString,
+                            SearchOper: searchOper,
+                            Filters: filters
+                        };
+
+                        var json = JSON.stringify(grid);
+                        $.ajax({
+                            url: '/umbraco/surface/DataTypeSurface/GetTemplate',
+                            cache: false,
+                            data: json,
+                            dataType: 'json',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (data, state) { //success: function (data, textStatus, jqXHR) {
+                                if (state == 'success') {
+                                    $('#grid')[0].addJSONData(data);
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) { //error: function (jqXHR, textStatus, errorThrown) {
+                                alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                            }
+                        });
+                    },
+                    jsonReader: {
+                        root: 'root',
+                        page: 'page',
+                        total: 'total',
+                        records: 'records',
+                        repeatitems: true,
+                        cell: 'cell',
+                        id: 'id'
+                    },
+                    colModel: [//Columns
+                        {name: 'Id', index: 'Id', width: 80, align: 'center', label: 'Id', hidden: false, sortable: true, search: true, stype: 'text', searchrules: { integer: true }, searchoptions: { sopt: ['eq', 'ne', 'lt', 'le', 'gt', 'ge'] }, edittype: 'text', formatter: 'integer', editoptions: { readonly: true, size: 10} },
+                        { name: 'TemplateName', index: 'TemplateName', width: 150, align: 'left', label: 'TemplateName', hidden: false, sortable: true, search: true, stype: 'text', searchoptions: { sopt: ['eq', 'bw', 'bn', 'ew', 'en', 'cn', 'nc'] }, editable: false },
+                        { name: 'Category', index: 'Category', width: 150, align: 'left', label: 'Category', hidden: false, sortable: true, search: true, stype: 'text', searchoptions: { sopt: ['eq', 'bw', 'bn', 'ew', 'en', 'cn', 'nc'] }, editable: false },
+                        { name: 'ExerciseName', index: 'ExerciseName', width: 200, align: 'center', label: 'Exercise', hidden: false, sortable: true, search: false, editable: false },
+                        { name: 'Type', index: 'Type', width: 100, align: 'left', label: 'Type', hidden: false, sortable: true, search: true, stype: 'text', searchoptions: { sopt: ['eq', 'bw', 'bn', 'ew', 'en', 'cn', 'nc'] }, editable: false },
+                        { name: 'Unit', index: 'Unit', width: 100, align: 'left', label: 'Unit', hidden: false, sortable: true, search: true, stype: 'text', searchoptions: { sopt: ['eq', 'bw', 'bn', 'ew', 'en', 'cn', 'nc'] }, editable: false }
+                    ],
+                    editurl: '/umbraco/surface/DataTypeSurface/GetTemplate',
+                    pager: '#pager', //Pager.
+                    loadtext: 'Loading Data...',
+                    recordtext: '{0} - {1} of {2} elements',
+                    emptyrecords: 'No results',
+                    pgtext: 'Pág: {0} de {1}', //Paging input control text format.
+                    rowNum: '10', // PageSize.
+                    rowList: [10, 20, 30, 40], //Variable PageSize DropDownList. 
+                    viewrecords: true, //Show the RecordCount in the pager.
+                    multiselect: false,
+                    sortname: 'Id', //Default SortColumn
+                    sortorder: 'asc', //Default SortOrder.
+                    width: '850',
+                    height: '400',
+                    imgpath: '/css/ui/images',
+                    caption: 'Workout',
+                    grouping:true, 
+  groupingView : { 
+     groupField : ['TemplateName'],
+     groupDataSorted : true 
+  }, 
+                }).navGrid('#pager',
+                    { edit: false, add: false, del: false, search: false, view: false },
+                    {}, //Options for the Edit Dialog
+                    {}, //Options for the Add Dialog
+                    {}, //Options for Delete
+                    {}, //Options for Search
+                    {}  //Options for View
+                ).inlineNav('#pager',
+                    {
+                        addParams: { useFormatter: false },
+                        editParams: {
+                            aftersavefunc: function (rowid, result) {
+                                $('#grid').trigger('reloadGrid');
+                            }
+                        }
+                    });
+            }
+        });
+    </script>
+}
+@section css
+{
+    @Styles.Render("~/css/jqgrid/jqgrid")
+}

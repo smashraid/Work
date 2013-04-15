@@ -1,0 +1,24 @@
+﻿@using Umbraco.Web.Models
+@using umbraco.cms.businesslogic.web
+@*@inherits Umbraco.Web.Mvc.UmbracoViewPage<DynamicPublishedContentList>*@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+<div id="gallery">
+    <div id="slider">
+        @foreach (string image in Umbraco.Field("images", recursive: true).ToString().Split(','))
+        {
+            DynamicPublishedContent data = Umbraco.Media(image);             
+                        
+            <a href="@UmbracoCustom.GetSliderUrl(data)">
+                <img src="@data.GetProperty("umbracoFile").Value" alt="@data.Name"  />
+            </a>
+                       
+        }
+    </div>
+    <div id="nav">
+        <div>
+            <ul>
+            </ul>
+        </div>
+    </div>
+</div>

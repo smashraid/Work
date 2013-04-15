@@ -1,0 +1,659 @@
+﻿<items>
+    <item id='1' sortOrder='0'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Standard/Incline/Decline/TRX Push-ups</exercise>
+    </item>
+    <item id='2' sortOrder='1'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Diamond Push-ups</exercise>
+    </item>
+    <item id='3' sortOrder='2'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bozu Ball Push-ups</exercise>
+    </item>
+    <item id='4' sortOrder='3'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Med Ball Push-ups</exercise>
+    </item>
+    <item id='5' sortOrder='4'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Flat/Incline/Decline Bench BB/DB Press</exercise>
+    </item>
+    <item id='6' sortOrder='5'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Close Grip Flat Bench BB Press</exercise>
+    </item>
+    <item id='7' sortOrder='6'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Flat/Incline/Decline Bench DB Chest Press</exercise>
+    </item>
+    <item id='8' sortOrder='7'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Flat/Incline/Decline DB/TRX Chest Fly</exercise>
+    </item>
+    <item id='9' sortOrder='8'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Standard/Incline/Decline Cable Crossover</exercise>
+    </item>
+    <item id='10' sortOrder='9'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bench Assisted Pullovers</exercise>
+    </item>
+    <item id='11' sortOrder='10'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Pullover Leg Raises</exercise>
+    </item>
+    <item id='12' sortOrder='11'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Stability Ball DB Press</exercise>
+    </item>
+    <item id='13' sortOrder='12'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Stability Ball DB Pullover</exercise>
+    </item>
+    <item id='14' sortOrder='13'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Floor Wipers</exercise>
+    </item>
+    <item id='15' sortOrder='14'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Chest Dips Muscle Ups</exercise>
+    </item>
+
+    <item id='16' sortOrder='15'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Ball Slams</exercise>
+    </item>
+    <item id='17' sortOrder='16'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Push Planks</exercise>
+    </item>
+    <item id='18' sortOrder='17'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Push Planks w/ Bozu Ball</exercise>
+    </item>
+    <item id='19' sortOrder='18'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Wide Grip Pull-ups</exercise>
+    </item>
+    <item id='20' sortOrder='19'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Close Grip Pull-ups</exercise>
+    </item>
+    <item id='21' sortOrder='20'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Chin-ups</exercise>
+    </item>
+    <item id='22' sortOrder='21'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Hammer Grip Pull-ups</exercise>
+    </item>
+    <item id='23' sortOrder='22'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Inverted Hammer Grip Pull-ups</exercise>
+    </item>
+    <item id='24' sortOrder='23'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>L-Sit Pull-Ups</exercise>
+    </item>
+    <item id='25' sortOrder='24'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Jumping Pull-ups</exercise>
+    </item>
+    <item id='26' sortOrder='25'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Australian Pull-up</exercise>
+    </item>
+    <item id='27' sortOrder='26'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>TRX Inverted Row</exercise>
+    </item>
+    <item id='28' sortOrder='27'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Straight Bar Upright Cable Row</exercise>
+    </item>
+    <item id='29' sortOrder='28'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bench Assisted DB Row</exercise>
+    </item>
+    <item id='30' sortOrder='29'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Unassisted DB Row</exercise>
+    </item>
+    <item id='31' sortOrder='30'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bent-Over BB Row</exercise>
+    </item>
+    <item id='32' sortOrder='31'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bent-Over Dual DB Row</exercise>
+    </item>
+    <item id='33' sortOrder='32'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>KB/DB Swing (One Arm/Double Arm)</exercise>
+    </item>
+    <item id='34' sortOrder='33'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Flat/Incline DB Back Fly</exercise>
+    </item>
+    <item id='35' sortOrder='34'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Cable Inverse Wood Chop</exercise>
+    </item>
+    <item id='36' sortOrder='35'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bent-Over KB/DB/TRX Reverse Fly Out</exercise>
+    </item>
+    <item id='37' sortOrder='36'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Deadlifts</exercise>
+    </item>
+    <item id='38' sortOrder='37'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Lat Pull-downs (Wide/Close/Hammer Grip)</exercise>
+    </item>
+    <item id='39' sortOrder='38'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Rope/Cable High-Low Row</exercise>
+    </item>
+    <item id='40' sortOrder='39'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Rope/Cable Low-High Row</exercise>
+    </item>
+    <item id='41' sortOrder='40'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Supermans </exercise>
+    </item>
+    <item id='42' sortOrder='41'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Back Extension</exercise>
+    </item>
+    <item id='43' sortOrder='42'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Renegade Row</exercise>
+    </item>
+    <item id='44' sortOrder='43'>
+        <category nodeName='Category' nodeType='1085'>120</category>
+        <exercise nodeName='Exercise' nodeType='-88'>T-Bar Row</exercise>
+    </item>
+    <item id='45' sortOrder='44'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Upright Row</exercise>
+    </item>
+    <item id='46' sortOrder='45'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Cable Standing Press (Alternating/Dual)</exercise>
+    </item>
+    <item id='47' sortOrder='46'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Farmers Carry</exercise>
+    </item>
+    <item id='48' sortOrder='47'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Shrugs</exercise>
+    </item>
+    <item id='49' sortOrder='48'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Lateral Raise (Alternating/Dual)</exercise>
+    </item>
+    <item id='50' sortOrder='49'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Front Raise (Alternating/Dual)</exercise>
+    </item>
+    <item id='51' sortOrder='50'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Tilted Lateral Raise </exercise>
+    </item>
+    <item id='52' sortOrder='51'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB Internal Press and Thrust</exercise>
+    </item>
+    <item id='53' sortOrder='52'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB/KB Seated/Standing Military Press</exercise>
+    </item>
+    <item id='54' sortOrder='53'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB/KB Thrusters</exercise>
+    </item>
+    <item id='55' sortOrder='54'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Push Press</exercise>
+    </item>
+    <item id='56' sortOrder='55'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Cable Raises (Alternating/Dual)</exercise>
+    </item>
+    <item id='57' sortOrder='56'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Rear Delt Press-Downs (Wide Grip/Cable)</exercise>
+    </item>
+    <item id='58' sortOrder='57'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Arnold Press</exercise>
+    </item>
+    <item id='59' sortOrder='58'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>KB/DB Swings (One Arm/Double Arm)</exercise>
+    </item>
+    <item id='60' sortOrder='59'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Overhead Push-ups</exercise>
+    </item>
+    <item id='61' sortOrder='60'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB/KB Power Snatch (One Arm/Double Arm)</exercise>
+    </item>
+    <item id='62' sortOrder='61'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB/KB Hanging Clean (One Arm/Double Arm)</exercise>
+    </item>
+    <item id='63' sortOrder='62'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB/KB Hanging Clean and Press</exercise>
+    </item>
+    <item id='64' sortOrder='63'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB/KB Power Clean and Press</exercise>
+    </item>
+    <item id='65' sortOrder='64'>
+        <category nodeName='Category' nodeType='1085'>23</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Curl and Press</exercise>
+    </item>
+    <item id='66' sortOrder='65'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Deadlifts</exercise>
+    </item>
+    <item id='67' sortOrder='66'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Straight-Leg Deadlifts</exercise>
+    </item>
+    <item id='68' sortOrder='67'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Good Mornings</exercise>
+    </item>
+    <item id='69' sortOrder='68'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Leg Press</exercise>
+    </item>
+    <item id='70' sortOrder='69'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Leg Extension</exercise>
+    </item>
+    <item id='71' sortOrder='70'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Leg Curls</exercise>
+    </item>
+    <item id='72' sortOrder='71'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Air Squats</exercise>
+    </item>
+    <item id='73' sortOrder='72'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Pop Squats</exercise>
+    </item>
+    <item id='74' sortOrder='73'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Jump Squats</exercise>
+    </item>
+    <item id='75' sortOrder='74'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB Hack Squats</exercise>
+    </item>
+    <item id='76' sortOrder='75'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB Back Squats</exercise>
+    </item>
+    <item id='77' sortOrder='76'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB Front Squats</exercise>
+    </item>
+    <item id='78' sortOrder='77'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB/KB Sumo Squats</exercise>
+    </item>
+    <item id='79' sortOrder='78'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Lunges</exercise>
+    </item>
+    <item id='80' sortOrder='79'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bulgarian Split Squats</exercise>
+    </item>
+    <item id='81' sortOrder='80'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Kick Backs</exercise>
+    </item>
+    <item id='82' sortOrder='81'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Lateral Leg Raise</exercise>
+    </item>
+    <item id='83' sortOrder='82'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Reverse Lunges</exercise>
+    </item>
+    <item id='84' sortOrder='83'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Overhead Squats</exercise>
+    </item>
+    <item id='85' sortOrder='84'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Calf Raises</exercise>
+    </item>
+    <item id='86' sortOrder='85'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Decline Calf Raise</exercise>
+    </item>
+    <item id='87' sortOrder='86'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Inverted Bozu Ball Squats</exercise>
+    </item>
+    <item id='88' sortOrder='87'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Pistol Squats</exercise>
+    </item>
+    <item id='89' sortOrder='88'>
+        <category nodeName='Category' nodeType='1085'>24</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Hyperextensions</exercise>
+    </item>
+    <item id='90' sortOrder='89'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Strict Curl</exercise>
+    </item>
+    <item id='91' sortOrder='90'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Standard/Incline Hammer Curl (Alternating/Dual)</exercise>
+    </item>
+    <item id='92' sortOrder='91'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Standing Curl w/ Rotation</exercise>
+    </item>
+    <item id='93' sortOrder='92'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB/KB Internal Curl</exercise>
+    </item>
+    <item id='94' sortOrder='93'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB/KB Concentration Curl</exercise>
+    </item>
+    <item id='95' sortOrder='94'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Straight Bar/Cable Curl</exercise>
+    </item>
+    <item id='96' sortOrder='95'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Rope/Cable Curl</exercise>
+    </item>
+    <item id='97' sortOrder='96'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Zottmon Curl (Alternating/Dual)</exercise>
+    </item>
+    <item id='98' sortOrder='97'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>One Arm Cable Curl</exercise>
+    </item>
+    <item id='99' sortOrder='98'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Inverted Bozu Ball Curl</exercise>
+    </item>
+    <item id='100' sortOrder='99'>
+        <category nodeName='Category' nodeType='1085'>25</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Reverse Curl</exercise>
+    </item>
+    <item id='101' sortOrder='100'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Tricep Dips</exercise>
+    </item>
+    <item id='102' sortOrder='101'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB/KB Overhead Extension (Single Arm/Double Arm)</exercise>
+    </item>
+    <item id='103' sortOrder='102'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB/EZ-Bar Reverse Skull Crushers</exercise>
+    </item>
+    <item id='104' sortOrder='103'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Rope/Cable Press-Downs</exercise>
+    </item>
+    <item id='105' sortOrder='104'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Straight Bar Press-Downs (Standard/Reverse)</exercise>
+    </item>
+    <item id='106' sortOrder='105'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Rope/Cable Overhead Extension</exercise>
+    </item>
+    <item id='107' sortOrder='106'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>One Arm Reverse Cable Press-Down</exercise>
+    </item>
+    <item id='108' sortOrder='107'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Diamond Push-Ups</exercise>
+    </item>
+    <item id='109' sortOrder='108'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Close-Grip Flat Bench BB Press</exercise>
+    </item>
+    <item id='110' sortOrder='109' >
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB Flat Bench Side Extension</exercise>
+    </item>
+    <item id='111' sortOrder='110'>
+        <category nodeName='Category' nodeType='1085'>71</category>
+        <exercise nodeName='Exercise' nodeType='-88'>DB/Cable Tricep Kick Backs</exercise>
+    </item>
+    <item id='112' sortOrder='111'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Run</exercise>
+    </item>
+    <item id='113' sortOrder='112'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Elliptical</exercise>
+    </item>
+    <item id='114' sortOrder='113'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Cybex Arc</exercise>
+    </item>
+    <item id='115' sortOrder='114'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Boxing</exercise>
+    </item>
+    <item id='116' sortOrder='115'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Kickboxing</exercise>
+    </item>
+    <item id='117' sortOrder='116'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Grappling</exercise>
+    </item>
+    <item id='118' sortOrder='117'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Step Mill</exercise>
+    </item>
+    <item id='119' sortOrder='118'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Spin</exercise>
+    </item>
+    <item id='120' sortOrder='119'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Treadmill</exercise>
+    </item>
+    <item id='121' sortOrder='120'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Row Machine</exercise>
+    </item>
+    <item id='122' sortOrder='121'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Zumba</exercise>
+    </item>
+    <item id='123' sortOrder='122'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Barre</exercise>
+    </item>
+    <item id='124' sortOrder='123'>
+        <category nodeName='Category' nodeType='1085'>72</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Yoga</exercise>
+    </item>
+    <item id='125' sortOrder='124'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Standard/Decline Crunches</exercise>
+    </item>
+    <item id='126' sortOrder='125'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Standard/Decline Sit-ups</exercise>
+    </item>
+    <item id='127' sortOrder='126'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Leg Raises</exercise>
+    </item>
+    <item id='128' sortOrder='127'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Hanging Leg Raises (Standard/Rotation)</exercise>
+    </item>
+    <item id='129' sortOrder='128'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>L-Sit Pull-ups</exercise>
+    </item>
+    <item id='130' sortOrder='129'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Pullover Leg Raises</exercise>
+    </item>
+    <item id='131' sortOrder='130'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>V-Ups</exercise>
+    </item>
+    <item id='132' sortOrder='131'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Push Planks (Fixed/Non-Fixed Position)</exercise>
+    </item>
+    <item id='133' sortOrder='132'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Push Planks w/ Inverted Bozu Ball (Fixed/Non-Fixed)</exercise>
+    </item>
+    <item id='134' sortOrder='133'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Side Planks (Fixed/Non-Fixed Position)</exercise>
+    </item>
+    <item id='135' sortOrder='134'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Side Crunches</exercise>
+    </item>
+    <item id='136' sortOrder='135'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Standing Oblique Crunches</exercise>
+    </item>
+    <item id='137' sortOrder='136'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Tilted Oblique Crunches</exercise>
+    </item>
+    <item id='138' sortOrder='137'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Rope/Cable Crunches</exercise>
+    </item>
+    <item id='139' sortOrder='138'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Stability Ball Crunches</exercise>
+    </item>
+    <item id='140' sortOrder='139'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Stability Ball Sit-ups</exercise>
+    </item>
+    <item id='141' sortOrder='140'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Toes to Bar Raises</exercise>
+    </item>
+    <item id='142' sortOrder='141'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>GHD Sit-ups</exercise>
+    </item>
+    <item id='143' sortOrder='142'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>BB/DB Floor Wipers</exercise>
+    </item>
+    <item id='144' sortOrder='143'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bicycle Kicks</exercise>
+    </item>
+    <item id='145' sortOrder='144'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Supermans</exercise>
+    </item>
+    <item id='146' sortOrder='145'>
+        <category nodeName='Category' nodeType='1085'>73</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Back Extension</exercise>
+    </item>
+    <item id='147' sortOrder='146'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Burpees</exercise>
+    </item>
+    <item id='148' sortOrder='147'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Burpee Broad Jumps</exercise>
+    </item>
+    <item id='149' sortOrder='148'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Jumping Pull-ups</exercise>
+    </item>
+    <item id='150' sortOrder='149'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Box Jumps</exercise>
+    </item>
+    <item id='151' sortOrder='150'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Step-ups</exercise>
+    </item>
+    <item id='152' sortOrder='151'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Switchback Lunges</exercise>
+    </item>
+    <item id='153' sortOrder='152'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Jumping Jacks</exercise>
+    </item>
+    <item id='154' sortOrder='153'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Split Jacks</exercise>
+    </item>
+    <item id='155' sortOrder='154'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Jump Rope (Standard/Double Unders)</exercise>
+    </item>
+    <item id='156' sortOrder='155'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Mountain Climbers</exercise>
+    </item>
+    <item id='157' sortOrder='156'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>In and Outs</exercise>
+    </item>
+    <item id='158' sortOrder='157'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Lateral In and Outs</exercise>
+    </item>
+    <item id='159' sortOrder='158'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Standing Bicycle Kicks</exercise>
+    </item>
+    <item id='160' sortOrder='159'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Duck Walk</exercise>
+    </item>
+    <item id='161' sortOrder='160'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>KB Figure 8's</exercise>
+    </item>
+    <item id='162' sortOrder='161'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Crab Walk</exercise>
+    </item>
+    <item id='163' sortOrder='162'>
+        <category nodeName='Category' nodeType='1085'>74</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Bear Crawl</exercise>
+    </item>
+    <item id='164' sortOrder='163'>
+        <category nodeName='Category' nodeType='1085'>119</category>
+        <exercise nodeName='Exercise' nodeType='-88'>Wall Ball</exercise>
+    </item>
+</items>

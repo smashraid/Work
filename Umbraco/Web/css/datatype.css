@@ -1,0 +1,55 @@
+﻿body
+{
+}
+
+#wrap_carousel
+{
+}
+#carousel
+{
+    height: 410px;
+    width: 410px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+#carousel img
+{
+    height: 370px;
+    width: 370px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    top: 0;
+    left: 0;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
+}
+#prev, #next
+{
+    position: absolute;
+    top: 185px;
+    cursor: pointer;
+}
+#prev
+{
+    left: 210px;
+}
+#next
+{
+    right: 265px;
+}
+
+#dataInfo
+{
+    float: right;
+    height: 310px;
+    width: 200px;
+    border: 1px solid #ccc;
+    padding: 10px 25px;
+    margin: 15px;
+}
+#dataInfo span {
+    float: right;
+    margin: 0 50px 20px;
+}

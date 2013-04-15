@@ -1,0 +1,37 @@
+﻿@model Account
+@using (Html.BeginUmbracoForm("Login", "AccountSurface"))
+{
+    <div class=".form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="LoginName">
+                User</label>
+            <div class="controls">
+                <div class="input-prepend">
+                    <input id="LoginName" type="text" name="LoginName" placeholder="User" value="" >
+                </div>
+            </div>
+
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Password">
+                Password</label>
+            <div class="controls">
+                <input id="Password" type="password" name="Password" placeholder="Password" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox">
+                    <input id="RememberMe" name="RememberMe" value="true" type="checkbox">
+                    <input name="RememberMe" value="false" type="hidden">
+                    Remember me
+                </label>
+                <button type="submit" class="btn">
+                    Sign in
+                </button>
+                <a href="/register" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+        
+    </div>
+}

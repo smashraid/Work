@@ -1,0 +1,201 @@
+﻿@using System.Web.Optimization
+@using umbraco.cms.businesslogic.datatype
+@{
+    IEnumerable<PreValue> categories = UmbracoCustom.DataTypeValue(UmbracoType.Category);
+    List<SelectListItem> categoryList = new List<SelectListItem>(categories.Select(x => new SelectListItem { Text = x.Value, Value = x.Id.ToString() }));
+
+    IEnumerable<PreValue> types = UmbracoCustom.DataTypeValue(UmbracoType.Type);
+    List<SelectListItem> typeList = new List<SelectListItem>(types.Select(x => new SelectListItem { Text = x.Value, Value = x.Id.ToString() }));
+
+    IEnumerable<PreValue> units = UmbracoCustom.DataTypeValue(UmbracoType.Unit);
+    List<SelectListItem> unitList = new List<SelectListItem>(units.Select(x => new SelectListItem { Text = x.Value, Value = x.Id.ToString() }));
+}
+<button data-bind="click: add, clickBubble: false" class="btn btn-primary" id="add">
+    <i class="ui-icon ui-icon-plus"></i>
+</button>
+<div class="form-horizontal" id="dialog">
+    <div class="control-group">
+        <label class="control-label" for="category">
+            Category
+        </label>
+        <div class="controls">
+            @Html.DropDownList("category", new SelectList(categoryList, "Value", "Text"))
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="exercise">
+            Exercise
+        </label>
+        <div class="controls" id="exercise">
+            <select name="exercise" id="exercise" ></select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="sets">
+            Sets
+        </label>
+        <div class="controls">
+            <input type="text" name="sets" value=" " id="sets" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="reps">
+            Reps
+        </label>
+        <div class="controls">
+            <input type="text" name="reps" value=" " id="reps" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="resistence">
+            Resistence
+        </label>
+        <div class="controls">
+            <input type="text" name="resistence" value=" " id="resistence" />
+            @Html.DropDownList("repsunit", new SelectList(unitList, "Value", "Text"), "")
+        </div>
+    </div>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Exercise
+            </th>
+            <th>
+                Sets
+            </th>
+            <th>
+                Reps
+            </th>
+            <th>
+                Resistance
+            </th>
+            <th>
+                Unit
+            </th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: routines">
+        <tr>
+            <td data-bind="text: Id">
+            </td>
+            <td data-bind="text: Exercise.ExerciseName">
+            </td>
+            <td data-bind="text: Sets">
+            </td>
+            <td data-bind="text: Reps">
+            </td>
+            <td data-bind="text: Resistance">
+            </td>
+            <td data-bind="text: Unit">
+            </td>
+            <td>
+                <button class="btn btn-primary" data-bind="click: $root.delete">
+                    <i class="ui-icon ui-icon-trash"></i>
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-primary" data-bind="click: $root.update">
+                    <i class="ui-icon ui-icon-pencil"></i>
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-primary" data-bind="click: $root.historical">
+                    <i class="ui-icon ui-icon-clipboard"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<link href="../../css/ui/jquery.ui.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select[name="category"]').change(function() {
+            var option = $(this).val();
+            if (option != "") {
+                var url = '/api/member/GetExerciseByCategory';
+                $.get(url, { categoryid: option, trainerid: 0 }, function(data) {
+                    $('select[name="exercise"]').empty();
+                    $.each(data, function(index, element) {
+                        $('select[name="exercise"]').append(new Option(element.ExerciseName, element.Id, false, false));
+                    });
+                });
+            }
+        });
+
+        $("#dialog").dialog({
+            autoOpen: false,
+            resizable: false,
+            height: 440,
+            width: 400,
+            title: 'Add Topic',
+            modal: true,
+            buttons: {
+                "Save": function() {
+                },
+                Cancel: function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        $('.ui-dialog-buttonset').find('span').each(function(index, element) {
+            if (element.innerHTML == "Save") {
+                $(element).parent().attr('data-bind', 'click: save');
+            }
+        });
+
+        function RoutinesViewModel(routines) {
+            var self = this;
+            self.routines = ko.observableArray(ko.utils.arrayMap(routines, function(routine) {
+                return { Id: routine.Id, Exercise: routine.Exercise, Sets: routine.Sets, Reps: routine.Reps, Resistance: routine.Resistance, Unit: routine.Unit, Note: routine.Note  };
+            }));
+            self.add = function() {
+                $("#dialog").dialog("open");
+            };
+            self.save = function() {
+                //$.post('/umbraco/surface/HelperSurface/SetTopic', { name: $('#name').val(), description: $('#description').val() }, function (data) {
+                //self.topics.unshift({ Id: data.Id, Name: data.Name, Description: data.Description, User: data.User, CreatedDate: data.CreatedDate });
+                alert('created');
+                $("#dialog").dialog("close");
+                //});
+            };
+            self.delete = function(routine) {
+                alert(routine.Exercise + " deleted");
+            };
+            self.update = function(routine) {
+                alert(routine.Exercise + " updated");
+            };
+            self.historical = function(routine) {
+                alert("showing historical");
+            };
+        }
+
+        function GetRoutines() {
+            $.get('/api/member/GetRoutineByWorkout?id=1223', function(data) {
+                ko.applyBindings(new RoutinesViewModel(data));
+            });
+        }
+
+        GetRoutines();
+
+//        ko.applyBindings(new RoutinesViewModel([{
+//            Id: 1,
+//            ExerciseId: 10,
+//            Exercise: "Test 1",
+//            Sets: 5,
+//            Reps: 8
+//        }]));
+
+//                $('#add').click(function (e) {
+//                    e.preventDefault();
+//                    $("#dialog").dialog("open");
+//                });
+    });
+    
+
+</script>

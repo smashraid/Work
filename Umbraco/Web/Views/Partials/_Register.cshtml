@@ -1,0 +1,90 @@
+﻿@model Account
+@using (Html.BeginUmbracoForm("Register", "AccountSurface"))
+{
+    <div class=".form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="Name">
+                Name</label>
+            <div class="controls">
+                <input id="Name" type="text" name="Name" placeholder="Name" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="LoginName">
+                User</label>
+            <div class="controls">
+                <input id="LoginName" type="text" name="LoginName" placeholder="User" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Password">
+                Password</label>
+            <div class="controls">
+                <input id="Password" type="password" name="Password" placeholder="Password" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Email">
+                Email</label>
+            <div class="controls">
+                <input id="Email" type="text" name="Email" placeholder="Email" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="City">
+                City</label>
+            <div class="controls">
+                <input id="City" type="text" name="City" placeholder="City" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="State">
+                State</label>
+            <div class="controls">
+                <input id="State" type="text" name="State" placeholder="State" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Country">
+                Country</label>
+            <div class="controls">
+                <input id="Country" type="text" name="Country" placeholder="Country" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ZipCode">
+                Zip Code</label>
+            <div class="controls">
+                <input id="ZipCode" type="text" name="ZipCode" placeholder="ZipCode" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Address">
+                Address</label>
+            <div class="controls">
+                <textarea id="Address" name="Address" placeholder="Address" rows="8" cols="25" ></textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Phone">
+                Phone</label>
+            <div class="controls">
+                <input id="Phone" type="text" name="Phone" placeholder="Phone" value="" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="Photo">
+                Photo</label>
+            <div class="controls">
+                <input type="file" name="Photo"  />
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn">
+                    Sign in
+                </button>
+            </div>
+        </div>
+    </div>
+}

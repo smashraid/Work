@@ -1,0 +1,34 @@
+﻿@using Umbraco.Web.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Layout.cshtml";
+    ViewBag.Title = Model.Content.GetProperty("title").Value.ToString();
+}
+<div class="panel">
+    <div class="boxhead">
+        <h2>Home</h2>
+    </div>
+    @{
+        Html.RenderPartial("_Slider");
+    }
+    <div id="content">
+        @Umbraco.Field("body")
+    </div>
+</div>
+@section script
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#slider').cycle({
+                fx: 'scrollHorz',
+                delay: -1000,
+                timeout: 5000,
+                speed: 1000,
+                pager: '#nav ul',
+                next: '#next',
+                prev: '#prev'
+            });
+        });
+    </script>
+}

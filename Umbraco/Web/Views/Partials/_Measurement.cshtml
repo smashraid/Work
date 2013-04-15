@@ -1,0 +1,58 @@
+﻿@using Umbraco.Web.Models
+@using umbraco.cms.businesslogic.web
+@inherits Umbraco.Web.Mvc.UmbracoViewPage<MeasurementViewModel>
+
+<div id="demos">
+    <ul id="nav" >
+        @foreach (string thumb in Model.Images)
+        {
+            <li><a href="#"><img src="@thumb" width="50" height="50" alt="" data-title="Title 1" data-description="Image 1" /></a></li>
+        }
+    </ul>
+    <div id="slideshow" class="pics" >
+        @foreach (string image in Model.Images)
+        {
+            <img src="@image" width="200" height="200" alt="" />
+        }
+       
+    </div>
+    <div id="dataInfo">
+        <div>
+            <h2>Gymnast Progress</h2>
+            <span>@Model.Measurement.CreatedDate.ToShortDateString()</span>
+        </div>
+        <div>Weight: @Model.Measurement.Weight</div>
+        <div>Neck: @Model.Measurement.Neck</div>
+        <div>Shoulders: @Model.Measurement.Shoulders</div>
+        <div>Right Arm: @Model.Measurement.RightArm</div>
+        <div>Left Arm: @Model.Measurement.LeftArm</div>
+        <div>Chest: @Model.Measurement.Chest</div>
+        <div>Belly Button: @Model.Measurement.BellyButton</div>
+        <div>Hips: @Model.Measurement.Hips</div>
+        <div>Right Thigh: @Model.Measurement.RightThigh</div>
+        <div>Left Thigh: @Model.Measurement.LeftThigh</div>
+        <div>Right Calf: @Model.Measurement.RightCalf</div>
+        <div>Left Calf: @Model.Measurement.LeftCalf</div>
+        <div>Arm: @Model.Measurement.Arm</div>
+        <div>Waist: @Model.Measurement.Waist</div>    
+        <div>Thigh: @Model.Measurement.Thigh</div>
+        <div>Back: @Model.Measurement.Back</div>
+    </div>
+</div>
+
+
+<style type="text/css">
+    .pics { height: 332px; width: 332px; padding:0; margin:0; overflow: hidden }
+    .pics img { height: 300px; width: 300px; padding: 15px; border: 1px solid #ccc; background-color: #eee; top:0; left:0 }
+    .pics img {
+        -moz-border-radius: 10px; -webkit-border-radius: 10px;
+    }
+    #slideshow { left: 20px; float: left; margin: 20px }
+    #nav { width: 470px; margin: 15px; float: left }
+    #nav li { width: 50px; float: left; margin: 8px; list-style: none }
+    #nav a { width: 50px; padding: 3px; display: block; border: 1px solid #ccc; }
+    #nav li.activeLI  a { background: #ff8  }
+    #nav a:focus { outline: none; }
+    #nav img { border: none; display: block }
+    pre { clear: left }
+</style>

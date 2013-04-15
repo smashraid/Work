@@ -1,0 +1,137 @@
+﻿@using System.Web.Optimization
+@using umbraco.cms.businesslogic.member
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = null;
+    var site = Model.Content.AncestorOrSelf(1);
+}
+<!DOCTYPE html>
+<html>
+    <head>
+       @RenderSection("head", required: false)
+        <title>@ViewBag.Title</title>
+        <link href="@site.GetProperty("favicon").Value" rel="icon" type="image/x-icon" />
+        @Styles.Render("~/css/all")
+        @RenderSection("css", required: false)
+        @Scripts.Render("~/scripts/modernizr")
+    </head>
+    <body>
+        <header>
+            <div id="top">
+                <ul>
+                    <li>
+                        <a target="_blank" href="@site.GetProperty("facebook").Value">
+                            F
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="@site.GetProperty("twitter").Value">
+                            T
+                        </a>
+                    </li>
+                    <li><a target="_blank" href="@site.GetProperty("google").Value">
+                            G
+                        </a>
+                    </li>
+                    @if (!Umbraco.MemberIsLoggedOn())
+                    {
+                        <li><a href="/login">Login</a></li>
+                    }
+                    else
+                    {
+                        Member member = Member.GetCurrentMember();
+                        <li>
+                            <img src="/Umbraco/images/umbraco/glyphicons_003_user.png" alt="@member.LoginName" />
+                            <a href="/information"> @member.Text</a>
+                            @Html.ActionLink("LogOff", "LogOff", "AccountSurface")
+                        </li>
+                   
+                    }
+                </ul>
+                <p>
+                    @site.GetProperty("address").Value - @site.GetProperty("city").Value, @site.GetProperty("state").Value
+                    @site.GetProperty("zipCode").Value
+                    <span>
+                        @site.GetProperty("phone").Value
+                    </span>
+                </p>
+            </div>
+            <h1 id="logo">
+                <a href="/home">
+                    <img src="@site.GetProperty("logo").Value" alt="logo" width="128" height="128" />
+                </a>
+            </h1>
+            <nav>
+                @{
+                    IEnumerable<IPublishedContent> headerNavigation = site.Children.Where(p => p.GetProperty("isHeaderNavigation").Value.ToString() == "1");
+                    <ul>
+                        @foreach (var link in headerNavigation)
+                        {
+                            <li style="border-bottom-color: #@link.GetProperty("linkColor").Value;">
+                                <a href="@link.UrlName">
+                                    @(link.GetProperty("linkName").Value.ToString() != string.Empty ? link.GetProperty("linkName").Value : link.Name)
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </nav>
+        </header>
+        <div id="body">
+            @RenderBody()
+        </div>
+        <footer>
+            <div>
+                <dl>
+                    <dt><a href="#">footer links 1</a> </dt>
+                    <dd>
+                        <a href="#">sublink 1.1</a>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><a href="#">footer links 2</a> </dt>
+                    <dd>
+                        <a href="#">sublink 2.1</a>
+                    </dd>
+                    <dd>
+                        <a href="#">sublink 2.2</a>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><a href="#">footer links 3</a> </dt>
+                    <dd>
+                        <a href="#">sublink 3.1</a>
+                    </dd>
+                    <dd>
+                        <a href="#">sublink 3.2</a>
+                    </dd>
+                    <dd>
+                        <a href="#">sublink 3.3</a>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><a href="#">footer links 4</a> </dt>
+                    <dd>
+                        <a href="#">sublink 4.1</a>
+                    </dd>
+                    <dd>
+                        <a href="#">sublink 4.2</a>
+                    </dd>
+                    <dd>
+                        <a href="#">sublink 4.3</a>
+                    </dd>
+                    <dd>
+                        <a href="#">sublink 4.4</a>
+                    </dd>
+                </dl>
+            </div>
+        </footer>
+        @Scripts.Render("~/scripts/jquery", "~/scripts/jqueryui", "~/scripts/all")
+        @RenderSection("script", required: false)
+    </body>
+</html>
+
+
+
+
+
