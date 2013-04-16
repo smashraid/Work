@@ -1855,7 +1855,7 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Topic> SelectTopic(Paging paging)
+    public List<Topic> SelectTopic([FromUri]Paging paging)
     {
         List<Topic> topics = new List<Topic>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
@@ -1901,7 +1901,7 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Post> SelectPost(Paging paging)
+    public List<Post> SelectPost([FromUri]Paging paging)
     {
         List<Post> posts = new List<Post>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
@@ -2134,7 +2134,7 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Chat> SelectChat(Paging paging)
+    public List<Chat> SelectChat([FromUri]Paging paging)
     {
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectChat",
@@ -2181,7 +2181,7 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Talk> SelectTalk(Paging paging)
+    public List<Talk> SelectTalk([FromUri]Paging paging)
     {
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTalk",
