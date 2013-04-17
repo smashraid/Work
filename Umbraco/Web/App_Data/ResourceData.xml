@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <UmbracoData>
+    <Data key="1256">WorkoutState</Data>
     <Data key="1255">Resistance</Data>
     <Data key="1254">Type</Data>
     <Data key="1253">Training</Data>

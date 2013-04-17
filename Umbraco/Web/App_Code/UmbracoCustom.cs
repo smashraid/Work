@@ -353,5 +353,6 @@ public enum UmbracoType
     ObjectType,
     Action,
     Training,
-    Resistance
+    Resistance,
+    WorkoutState
 }

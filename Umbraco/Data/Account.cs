@@ -65,7 +65,6 @@ public class Account
     public decimal? Height { get; set; }
     public decimal? StartWeight { get; set; }
     public decimal? GoalWeight { get; set; }
-    public DateTime? DOB { get; set; }
     public bool UseMetric { get; set; }
     public int TrainerId { get; set; }
     

@@ -156,7 +156,7 @@ public class MemberController : ApiController
             Height = member.getProperty("height").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("height").Value) : (decimal?)null,
             StartWeight = member.getProperty("startWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("startWeight").Value) : (decimal?)null,
             GoalWeight = member.getProperty("goalWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("goalWeight").Value) : (decimal?)null,
-            DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
+            //DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
             UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
             TrainerId = document.getProperty("trainer").Value.ToString() != string.Empty ? Convert.ToInt32(document.getProperty("trainer").Value) : 0,
             EmailAlert = member.getProperty("emailAlert").Value.ToString() == "1",
@@ -256,7 +256,7 @@ public class MemberController : ApiController
             Height = member.getProperty("height").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("height").Value) : (decimal?)null,
             StartWeight = member.getProperty("startWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("startWeight").Value) : (decimal?)null,
             GoalWeight = member.getProperty("goalWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("goalWeight").Value) : (decimal?)null,
-            DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
+            //DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
             UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
             TrainerId = document.getProperty("trainer").Value.ToString() != string.Empty ? Convert.ToInt32(document.getProperty("trainer").Value) : 0,
             EmailAlert = member.getProperty("emailAlert").Value.ToString() == "1",
@@ -293,7 +293,7 @@ public class MemberController : ApiController
             member.getProperty("height").Value = account.Height.HasValue ? account.Height.ToString() : string.Empty;
             member.getProperty("startWeight").Value = account.StartWeight.HasValue ? account.Height.ToString() : string.Empty;
             member.getProperty("goalWeight").Value = account.GoalWeight.HasValue ? account.Height.ToString() : string.Empty;
-            member.getProperty("dob").Value = account.Birthday.HasValue ? account.Birthday.Value.ToShortDateString() : string.Empty;
+            //member.getProperty("dob").Value = account.Birthday.HasValue ? account.Birthday.Value.ToShortDateString() : string.Empty;
             member.getProperty("useMetric").Value = account.UseMetric ? "1" : "0";
             member.getProperty("emailAlert").Value = account.EmailAlert ? "1" : "0";
             member.Save();
@@ -385,6 +385,7 @@ public class MemberController : ApiController
             document.getProperty("dateScheduled").Value = workout.DateScheduled;
             document.getProperty("dateCompleted").Value = workout.DateCompleted;
             document.getProperty("description").Value = workout.Description;
+            document.getProperty("state").Value = workout.State;
             document.Save();
             workout.Id = document.Id;
 
@@ -432,6 +433,7 @@ public class MemberController : ApiController
             document.getProperty("dateScheduled").Value = workout.DateScheduled;
             document.getProperty("dateCompleted").Value = workout.DateCompleted;
             document.getProperty("description").Value = workout.Description;
+            document.getProperty("state").Value = workout.State;
             //document.getProperty("rate").Value = workout.RateId;
             document.getProperty("note").Value = workout.Note;
             document.Save();
@@ -880,7 +882,7 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
-    public HttpResponseMessage InsertRoutines(List<RoutineViewModel> routineViewModels)
+    public HttpResponseMessage InsertRoutines(IEnumerable<RoutineViewModel> routineViewModels)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
@@ -1052,7 +1054,7 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
-    public HttpResponseMessage InsertRoutinesSuperSet(List<RoutineViewModel> routineViewModels)
+    public HttpResponseMessage InsertRoutinesSuperSet(IEnumerable<RoutineViewModel> routineViewModels)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
@@ -1855,7 +1857,7 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Topic> SelectTopic([FromUri]Paging paging)
+    public TopicViewModel SelectTopic([FromUri]Paging paging)
     {
         List<Topic> topics = new List<Topic>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
@@ -1878,7 +1880,11 @@ public class MemberController : ApiController
         }
         paging.Records = topics.Count();
         paging.TotalPages = (int)Math.Ceiling((float)topics.Count() / paging.Pagesize);
-        return topics.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
+        return new TopicViewModel
+            {
+                Topics = topics.Skip((paging.CurrentPage - 1)*paging.Pagesize).Take(paging.Pagesize).ToList(),
+                Paging = paging
+            };
     }
 
     private void GetTopicUser(Topic topic)
@@ -1901,11 +1907,11 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Post> SelectPost([FromUri]Paging paging)
+    public List<Post> SelectPost(int id)
     {
         List<Post> posts = new List<Post>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectPost", new SqlParameter { ParameterName = "@TopicId", Value = paging.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
+        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectPost", new SqlParameter { ParameterName = "@TopicId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
         while (reader.Read())
         {
             Post post = new Post
@@ -1922,9 +1928,10 @@ public class MemberController : ApiController
             GetPostUser(post);
             posts.Add(post);
         }
-        paging.Records = posts.Count();
-        paging.TotalPages = (int)Math.Ceiling((float)posts.Count() / paging.Pagesize);
-        return posts.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
+        //paging.Records = posts.Count();
+        //paging.TotalPages = (int)Math.Ceiling((float)posts.Count() / paging.Pagesize);
+        //return posts.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
+        return posts;
     }
 
     private void GetPostUser(Post post)
@@ -2134,7 +2141,7 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Chat> SelectChat([FromUri]Paging paging)
+    public ChatViewModel SelectChat([FromUri]Paging paging)
     {
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectChat",
@@ -2157,7 +2164,11 @@ public class MemberController : ApiController
         }
         paging.Records = chats.Count();
         paging.TotalPages = (int)Math.Ceiling((float)chats.Count() / paging.Pagesize);
-        return chats.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
+        return new ChatViewModel
+            {
+                Chats = chats.Skip((paging.CurrentPage - 1)*paging.Pagesize).Take(paging.Pagesize).ToList(),
+                Paging = paging
+            };
     }
 
     private void GetChatUser(Chat chat)
@@ -2181,11 +2192,11 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public List<Talk> SelectTalk([FromUri]Paging paging)
+    public List<Talk> SelectTalk(int id)
     {
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTalk",
-          new SqlParameter { ParameterName = "@ChatId", Value = paging.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
+          new SqlParameter { ParameterName = "@ChatId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
         );
         List<Talk> talks = new List<Talk>();
         while (reader.Read())
@@ -2203,9 +2214,10 @@ public class MemberController : ApiController
             GetTalkUser(talk);
             talks.Add(talk);
         }
-        paging.Records = talks.Count();
-        paging.TotalPages = (int)Math.Ceiling((float)talks.Count() / paging.Pagesize);
-        return talks.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
+        //paging.Records = talks.Count();
+        //paging.TotalPages = (int)Math.Ceiling((float)talks.Count() / paging.Pagesize);
+        //return talks.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
+        return talks;
     }
 
     private void GetTalkUser(Talk talk)

@@ -24,4 +24,5 @@ public class Workout
     public int? RateId { get; set; }
     public string Rate { get; set; }
     public string Note { get; set; }
+    public int? State { get; set; }
 }
