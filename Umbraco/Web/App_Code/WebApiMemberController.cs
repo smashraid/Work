@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -175,10 +177,18 @@ public class MemberController : ApiController
         HttpResponseMessage response = new HttpResponseMessage();
         try
         {
-            MembershipUser user = Membership.GetUser(changePassword.LoginName);
-            user.ChangePassword(changePassword.Password, changePassword.NewPassword);
-            response.StatusCode = HttpStatusCode.OK;
-            response.Content = new StringContent("Password changed successfully");
+            if (Membership.ValidateUser(changePassword.LoginName, changePassword.Password))
+            {
+                MembershipUser user = Membership.GetUser(changePassword.LoginName);
+                user.ChangePassword(changePassword.Password, changePassword.NewPassword);
+                response.StatusCode = HttpStatusCode.OK;
+                response.Content = new StringContent("Password changed successfully");
+            }
+            else
+            {
+                response.StatusCode = HttpStatusCode.NotFound;
+                response.Content = new StringContent("LoginName or Password invalid");
+            }
         }
         catch (Exception ex)
         {
@@ -291,8 +301,8 @@ public class MemberController : ApiController
             member.getProperty("address").Value = account.Address ?? string.Empty;
             member.getProperty("phone").Value = account.Phone ?? string.Empty;
             member.getProperty("height").Value = account.Height.HasValue ? account.Height.ToString() : string.Empty;
-            member.getProperty("startWeight").Value = account.StartWeight.HasValue ? account.Height.ToString() : string.Empty;
-            member.getProperty("goalWeight").Value = account.GoalWeight.HasValue ? account.Height.ToString() : string.Empty;
+            member.getProperty("startWeight").Value = account.StartWeight.HasValue ? account.StartWeight.ToString() : string.Empty;
+            member.getProperty("goalWeight").Value = account.GoalWeight.HasValue ? account.GoalWeight.ToString() : string.Empty;
             //member.getProperty("dob").Value = account.Birthday.HasValue ? account.Birthday.Value.ToShortDateString() : string.Empty;
             member.getProperty("useMetric").Value = account.UseMetric ? "1" : "0";
             member.getProperty("emailAlert").Value = account.EmailAlert ? "1" : "0";
@@ -314,6 +324,60 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
+    public HttpResponseMessage UpdateMember(Account account)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            Member member = Member.GetCurrentMember();
+            member.Email = account.Email;
+            member.getProperty("gender").Value = !string.IsNullOrEmpty(account.Gender) ? UmbracoCustom.PropertyId(UmbracoType.Gender, account.Gender) : member.getProperty("gender").Value;
+            member.getProperty("firstName").Value = !string.IsNullOrEmpty(account.FirstName) ? account.FirstName : member.getProperty("firstName").Value;
+            member.getProperty("lastName").Value = !string.IsNullOrEmpty(account.LastName) ? account.LastName : member.getProperty("lastName").Value;
+            member.getProperty("birthday").Value = account.Birthday.HasValue ? account.Birthday.Value : member.getProperty("birthday").Value;
+            member.getProperty("phone").Value = !string.IsNullOrEmpty(account.Phone) ? account.Phone : member.getProperty("phone").Value;
+            member.getProperty("height").Value = account.Height.HasValue ? account.Height.Value : member.getProperty("height").Value;
+            member.getProperty("startWeight").Value = account.StartWeight.HasValue ? account.StartWeight.Value : member.getProperty("startWeight").Value;
+            member.getProperty("goalWeight").Value = account.GoalWeight.HasValue ? account.GoalWeight.Value : member.getProperty("goalWeight").Value;
+            member.Save();
+
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Member was updated successfully");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+
+        return response;
+    }
+
+    [HttpPost]
+    public HttpResponseMessage UpdateEmailAlert(bool emailAlert)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            Member member = Member.GetCurrentMember();
+            member.getProperty("emailAlert").Value = emailAlert ? "1" : "0";
+            member.Save();
+
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Email Alert was updated successfully");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+
+        return response;
+    }
+
+    [HttpPost]
     public Task<HttpResponseMessage> InsertAvatar()
     {
         Member member = Member.GetCurrentMember();
@@ -322,7 +386,8 @@ public class MemberController : ApiController
             throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
         }
 
-        string root = HttpContext.Current.Server.MapPath("~/App_Data");
+        //string root = HttpContext.Current.Server.MapPath("~/App_Data");
+        string root = UmbracoCustom.GetParameterValue(UmbracoType.Temp);
         CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(root);
 
         var task = Request.Content.ReadAsMultipartAsync(provider).
@@ -352,15 +417,34 @@ public class MemberController : ApiController
                     catch (Exception ex)
                     {
                         Log.Add(LogTypes.New, -1, ex.Message);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                     }
 
 
                 }
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, "Image was updated successfully");
             });
 
         return task;
 
+    }
+
+    public HttpResponseMessage GetAvatar()
+    {
+        //Image image = Image.FromFile(@"D:\Photo\1193\04252013\0001.jpg");
+        //MemoryStream memoryStream = new MemoryStream();
+        //image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+        byte[] image = File.ReadAllBytes(@"D:\Photo\1193\04252013\000.jpg");
+        byte[] image2 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0002.jpg");
+        byte[] image3 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0003.jpg");
+
+        List<byte[]> images = new List<byte[]> { image, image2, image3 };
+
+        HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+        //result.Content = new ByteArrayContent(memoryStream.ToArray());
+        result.Content = new ByteArrayContent(image);
+        result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        return result;
     }
 
     #endregion
@@ -827,7 +911,7 @@ public class MemberController : ApiController
 
             //Document WorkoutId = new Document(routine.ObjectId);
             //Document GymnastId = new Document(WorkoutId.ParentId);
-            
+
 
 
             SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = routineViewModel.Routine.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
@@ -899,7 +983,7 @@ public class MemberController : ApiController
 
                 //Document WorkoutId = new Document(routine.ObjectId);
                 //Document GymnastId = new Document(WorkoutId.ParentId);
-                
+
                 SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = routineViewModel.Routine.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
                 SqlHelper.ExecuteNonQuery(transaction, CommandType.StoredProcedure, "InsertRoutine",
                         parameter,
@@ -1385,7 +1469,8 @@ public class MemberController : ApiController
                     Note = reader.GetValue(10).ToString(),
                     StateId = reader.IsDBNull(11) ? (int?)null : Convert.ToInt32(reader.GetValue(11)),
                     State = UmbracoCustom.PropertyValue(UmbracoType.State, reader.GetValue(11)),
-                    SortOrder = Convert.ToInt32(reader.GetValue(12))
+                    SortOrder = Convert.ToInt32(reader.GetValue(12)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(13))
                 },
                 Stories = GetStory(Convert.ToInt32(reader.GetValue(5)))
             });
@@ -1415,7 +1500,8 @@ public class MemberController : ApiController
                 Value = Convert.ToDecimal(reader.GetValue(4)),
                 TypeId = Convert.ToInt32(reader.GetValue(5)),
                 Type = UmbracoCustom.PropertyValue(UmbracoType.Type, reader.GetValue(5)),
-                Note = reader.GetValue(6).ToString()
+                Note = reader.GetValue(6).ToString(),
+                CreatedDate = Convert.ToDateTime(reader.GetValue(7))
             });
         }
         return exerciseStories;
@@ -1577,12 +1663,12 @@ public class MemberController : ApiController
 
     public SuperSet GetSuperSetById(int id)
     {
-        SuperSet superSet= new SuperSet();
+        SuperSet superSet = new SuperSet();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectSuperSetById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
         while (reader.Read())
         {
-            superSet= new SuperSet
+            superSet = new SuperSet
             {
                 Id = Convert.ToInt32(reader.GetValue(0).ToString()),
                 Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
@@ -1595,15 +1681,6 @@ public class MemberController : ApiController
             };
         }
         return superSet;
-    }
-
-    [HttpPost]
-    public HttpResponseMessage TestInsert(RoutineViewModel routineViewModel)
-    {
-        HttpResponseMessage response = new HttpResponseMessage();
-        response.StatusCode = HttpStatusCode.OK;
-        response.Content = new StringContent("It Works");
-        return response;
     }
 
     #endregion
@@ -1760,7 +1837,7 @@ public class MemberController : ApiController
     #region MessageBoard
 
     [HttpPost]
-    public int InsertTopic(Topic topic)
+    public Topic InsertTopic(Topic topic)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         int id = 0;
@@ -1771,12 +1848,12 @@ public class MemberController : ApiController
             SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = topic.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertTopic",
             parameter,
-            new SqlParameter { ParameterName = "@Name", Value = topic.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 50 },
-            new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 500 },
+            new SqlParameter { ParameterName = "@Name", Value = topic.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 50 },
+            new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
             new SqlParameter { ParameterName = "@UserId", Value = topic.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@UserType", Value = topic.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
             );
-            id = Convert.ToInt32(parameter.Value);
+            topic.Id = Convert.ToInt32(parameter.Value);
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Topic successfully created");
         }
@@ -1786,7 +1863,7 @@ public class MemberController : ApiController
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
-        return id;
+        return topic;
     }
 
     private void SetTopicUser(Topic topic)
@@ -1882,7 +1959,7 @@ public class MemberController : ApiController
         paging.TotalPages = (int)Math.Ceiling((float)topics.Count() / paging.Pagesize);
         return new TopicViewModel
             {
-                Topics = topics.Skip((paging.CurrentPage - 1)*paging.Pagesize).Take(paging.Pagesize).ToList(),
+                Topics = topics.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList(),
                 Paging = paging
             };
     }
@@ -1934,6 +2011,30 @@ public class MemberController : ApiController
         return posts;
     }
 
+    [HttpGet]
+    public Post SelectLastPost()
+    {
+        Post post = new Post();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectLastPost");
+        while (reader.Read())
+        {
+            post = new Post
+            {
+                Id = Convert.ToInt32(reader.GetValue(0)),
+                Message = reader.GetValue(1).ToString(),
+                TopicId = Convert.ToInt32(reader.GetValue(2)),
+                UserId = Convert.ToInt32(reader.GetValue(3)),
+                UserType = Convert.ToInt32(reader.GetValue(4)),
+                CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6)),
+                ReportAbuse = Convert.ToBoolean(reader.GetValue(7))
+            };
+            GetPostUser(post);
+        }
+        return post;
+    }
+
     private void GetPostUser(Post post)
     {
         User user = umbraco.BusinessLogic.User.GetCurrent();
@@ -1946,11 +2047,15 @@ public class MemberController : ApiController
         {
             post.User = new User(post.UserId).Name;
             post.IsOwner = currentUser == post.UserId;
+
         }
         else
         {
-            post.User = new Member(post.UserId).Text;
+            Member m = new Member(post.UserId);
+            post.User = m.Text;
             post.IsOwner = currentUser == post.UserId;
+            post.FirstName = m.getProperty("firstName").Value.ToString();
+            post.LastName = m.getProperty("lastName").Value.ToString();
         }
     }
 
@@ -2003,8 +2108,8 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateTopic",
             new SqlParameter { ParameterName = "@Id", Value = topic.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-            new SqlParameter { ParameterName = "@Name", Value = topic.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 50 },
-            new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 500 }
+            new SqlParameter { ParameterName = "@Name", Value = topic.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 500 }
             );
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Topic successfully updated");
@@ -2043,7 +2148,7 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
-    public int InsertChat(Chat chat)
+    public Chat InsertChat(Chat chat)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         int id = 0;
@@ -2055,11 +2160,11 @@ public class MemberController : ApiController
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertChat",
                parameter,
                new SqlParameter { ParameterName = "@GymnastId", Value = chat.GymnastId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@Subject", Value = chat.Subject, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 50 },
+               new SqlParameter { ParameterName = "@Subject", Value = chat.Subject, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
                new SqlParameter { ParameterName = "@UserId", Value = chat.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@UserType", Value = chat.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
                );
-            id = Convert.ToInt32(parameter.Value);
+            chat.Id = Convert.ToInt32(parameter.Value);
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Chat successfully created");
         }
@@ -2069,7 +2174,7 @@ public class MemberController : ApiController
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
-        return id;
+        return chat;
     }
 
     private void SetChatUser(Chat chat)
@@ -2157,7 +2262,8 @@ public class MemberController : ApiController
                     Subject = reader.GetValue(2).ToString(),
                     UserId = Convert.ToInt32(reader.GetValue(3)),
                     UserType = Convert.ToInt32(reader.GetValue(4)),
-                    CreatedDate = Convert.ToDateTime(reader.GetValue(5))
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    IsRead = Convert.ToBoolean(reader.GetValue(6))
                 };
             GetChatUser(chat);
             chats.Add(chat);
@@ -2166,7 +2272,7 @@ public class MemberController : ApiController
         paging.TotalPages = (int)Math.Ceiling((float)chats.Count() / paging.Pagesize);
         return new ChatViewModel
             {
-                Chats = chats.Skip((paging.CurrentPage - 1)*paging.Pagesize).Take(paging.Pagesize).ToList(),
+                Chats = chats.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList(),
                 Paging = paging
             };
     }
@@ -2249,7 +2355,8 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateChat",
             new SqlParameter { ParameterName = "@Id", Value = chat.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-            new SqlParameter { ParameterName = "@Subject", Value = chat.Subject, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 50 }
+            new SqlParameter { ParameterName = "@Subject", Value = chat.Subject, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@IsRead", Value = chat.IsRead, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Bit }
             );
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Chat successfully updated");
@@ -2339,8 +2446,9 @@ public class MemberController : ApiController
             throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
         }
 
-        string root = HttpContext.Current.Server.MapPath("~/App_Data");
+        //string root = HttpContext.Current.Server.MapPath(UmbracoCustom.GetParameterValue(UmbracoType.Temp));
         //MultipartFormDataStreamProvider provider = new MultipartFormDataStreamProvider(root);
+        string root = UmbracoCustom.GetParameterValue(UmbracoType.Temp);
         CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(root);
 
         Request.Content.LoadIntoBufferAsync().Wait();
@@ -2508,4 +2616,40 @@ public class MemberController : ApiController
     }
 
     #endregion
+
+
+    [HttpPost]
+    public HttpResponseMessage TestInsert(RoutineViewModel routineViewModel)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        response.StatusCode = HttpStatusCode.OK;
+        response.Content = new StringContent("It Works");
+        return response;
+    }
+
+    [HttpPost]
+    public HttpResponseMessage TestInsert2(RoutineViewModel routineViewModel)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        response.StatusCode = HttpStatusCode.OK;
+        response.Content = new StringContent("It Works");
+        return response;
+    }
+
+
+
+    [HttpGet]
+    public List<byte[]> GetImages()
+    {
+        //Image image = Image.FromFile(@"D:\Photo\1193\04252013\0001.jpg");
+        //MemoryStream memoryStream = new MemoryStream();
+        //image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+        byte[] image = File.ReadAllBytes(@"D:\Photo\1193\04252013\0001.jpg");
+        byte[] image2 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0002.jpg");
+        byte[] image3 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0003.jpg");
+
+        List<byte[]> images = new List<byte[]> { image, image2, image3 };
+        return images;
+    }
+
 }

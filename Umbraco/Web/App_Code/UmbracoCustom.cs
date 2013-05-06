@@ -192,7 +192,8 @@ public class UmbracoCustom : System.Web.UI.Page
                 result = ConfigurationManager.AppSettings["umbracoTimeOutInMinutes"];
                 break;
             default:
-                string path = HttpContext.Current != null ? HttpContext.Current.Server.MapPath("~/App_Data") + @"\ResourceData.xml" : GetParameterValue(UmbracoType.ResourceData);
+                //string path = HttpContext.Current != null ? HttpContext.Current.Server.MapPath("~/App_Data") + @"\ResourceData.xml" : ConfigurationManager.AppSettings["ResourceData"];
+                string path = ConfigurationManager.AppSettings["ResourceData"];
                 XDocument umbracoData = XDocument.Load(path);
                 result = (from c in umbracoData.Descendants("Data")
                           where c.Value.Equals(parameter.ToString())
@@ -348,11 +349,11 @@ public enum UmbracoType
     Media,
     Photo,
     Site,
-    ResourceData,
     UserType,
     ObjectType,
     Action,
     Training,
     Resistance,
-    WorkoutState
+    WorkoutState,
+	Temp
 }

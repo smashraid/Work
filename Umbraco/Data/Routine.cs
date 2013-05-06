@@ -25,6 +25,7 @@ public class Routine
     public int? StateId { get; set; }
     public string State { get; set; }
     public Exercise Exercise { get; set; }
+    public DateTime CreatedDate { get; set; }
     public DateTime? StartedDate { get; set; }
     public DateTime? CompletedDate { get; set; }
     public DateTime? CanceledDate { get; set; }

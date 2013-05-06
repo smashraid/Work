@@ -20,7 +20,7 @@
     <Data key="1061">Gender</Data>
     <Data key="1158">GymnastNode</Data>
     <Data key="1149">Site</Data>
-    <Data key="C:\Users\stsuchidac\Documents\visual studio 2010\Projects\Umbraco\Web\App_Data\ResourceData.xml">ResourceData</Data>
-    <Data key="C:\Users\stsuchidac\Documents\visual studio 2010\Projects\Umbraco\Web\media\">Media</Data>
-    <Data key="C:\inetpub\wwwroot\Photo\">Photo</Data>
+    <Data key="C:\Users\stsuchidac\Documents\GitHub\Work\Umbraco\Web\media\">Media</Data>
+    <Data key="D:\Photo\">Photo</Data>
+    <Data key="D:\Photo\Temp\">Temp</Data>
 </UmbracoData>

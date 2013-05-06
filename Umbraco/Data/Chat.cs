@@ -15,5 +15,6 @@ public class Chat
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
     public bool IsOwner { get; set; }
+    public bool IsRead { get; set; }
 }
 
