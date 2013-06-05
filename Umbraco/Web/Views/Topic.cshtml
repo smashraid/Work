@@ -1,0 +1,159 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Section.cshtml";
+}
+<div class="container">
+    <div class="header">
+        <ul>
+            <li class="tabOn"><a href="#"><span>Topic </span></a></li>
+        </ul>
+        <div class="top">
+        </div>
+    </div>
+    <div class="title">
+        <button data-bind="click: addTopic" class="btn" id="addtopic">
+            <i class="icon-plus"></i>
+        </button>
+        <button class="btn" id="refreshtopic">
+            <i class="icon-refresh"></i>
+        </button>
+    </div>
+    <div class="row-fluid" style="overflow-y: auto; overflow-x: hidden; padding: 0 0 0 10px">
+        <div class="content tabpagescrollinglayer row-fluid" id="tabSection">
+            @Umbraco.Field("body")
+            <div id="topics" class="row-fluid">
+                <ul class="thumbnails" data-bind="foreach: topics">
+                    <li class="span4">
+                        <div class="thumbnail">
+                            <div class="caption">
+                                <h3 onclick="GetPost(this);" data-bind="attr: { id: Id }, text: Name" class="">
+                                </h3>
+                                <p>
+                                    <small data-bind="text: CreatedDate" class=""></small><small data-bind="text: User"
+                                        class=""></small>
+                                </p>
+                                <p data-bind="text: Description">
+                                </p>
+                                <p>
+                                    <button data-bind="click: $root.openPost" class="btn btn-primary">Post</button> <a href="#" class="btn">Delete</a></p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="dialog" style="display: none;">
+                <div class="control-group">
+                    <label class="control-label" for="name">
+                        Name</label>
+                    <div class="controls">
+                        <input type="text" name="name" placeholder="Name" value="" data-bind="value: name" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="description">
+                        Description</label>
+                    <div class="controls">
+                        <textarea name="description" placeholder="Description" rows="8" cols="35" data-bind="value: description"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="left">
+    </div>
+    <div class="right">
+    </div>
+</div>
+@section script
+{
+    <link href="../css/ui/jquery.ui.css" rel="stylesheet" type="text/css" />
+    <script src="../scripts/modernizr.js" type="text/javascript"></script>
+    <script src="../scripts/jquery.js" type="text/javascript"></script>
+    <script src="../scripts/jquery.ui.js" type="text/javascript"></script>
+    <script src="../scripts/knockout.js" type="text/javascript"></script>
+    <script src="../scripts/knockout.mapping.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#dialog").dialog({
+                autoOpen: false,
+                resizable: false,
+                height: 440,
+                width: 260,
+                title: 'Add Topic',
+                modal: true,
+                buttons: {
+                    "Save": function () {
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+            $('.ui-dialog-buttonset').find('span').each(function (index, element) {
+                if (element.innerHTML == "Save") {
+                    $(element).parent().attr('data-bind', 'click: saveTopic');
+                }
+            });
+
+            function Paging() {
+                var self = this;
+                self.Id = ko.observable();
+                self.CurrentPage = ko.observable(1);
+                self.Pagesize = ko.observable(10);
+                self.Records = ko.observable();
+                self.TotalPages = ko.observable();
+            }
+
+            function TopicViewModel() {
+                var self = this;
+                self.topics = ko.observableArray(ko.utils.arrayMap(topics, function (topic) {
+                    return { Id: topic.Id, Name: topic.Name, Description: topic.Description, User: topic.User, CreatedDate: topic.CreatedDate };
+                }));
+                self.paging = new Paging();
+                self.name = ko.observable();
+                self.description = ko.observable();
+                self.addTopic = function () {
+                    $("#dialog").dialog("open");
+                };
+                self.saveTopic = function () {
+                    alert(self.name() + '\n' + self.description());
+                    $.post('/api/member/InsertTopic', { name: self.name(), description: self.description() }, function (data) {
+                        //self.topics.unshift({ Id: data.Id, Name: data.Name, Description: data.Description, User: data.User, CreatedDate: data.CreatedDate });
+                        self.topics.unshift(data);
+                        $("#dialog").dialog("close");
+                    });
+                };
+                self.getTopic = function () {
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        //cache: false,
+                        url: '/api/member/SelectTopic',
+                        data: { paging: self.paging },
+                        //dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            self.topics(data.Topics);
+                            self.paging(data.Paging);
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                        }
+                    });
+                };
+                self.openPost = function (topic) {
+                    alert(ko.toJSON(topic));
+                    parent.right.document.location.href = '/post.aspx?id=' + topic.Id;
+                };
+            }
+            
+            var model = new TopicViewModel();
+            ko.applyBindings(model);
+            model.getTopic();
+        });
+    </script>
+}
