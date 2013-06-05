@@ -25,8 +25,9 @@ public class BundleConfig
                 "~/scripts/bootstrap.js",
                 "~/scripts/jquery.cycle.js",
                 "~/scripts/knockout.js",
-                "~/scripts/knockout.mapping.js"
-                //"~/scripts/site.js"
+                "~/scripts/knockout.mapping.js",
+                "~/scripts/site.js",
+                "~/scripts/section"
                 ));
 
         //bundles.Add(
@@ -47,7 +48,7 @@ public class BundleConfig
                 "~/scripts/jquery.jqgrid.locale-es.js"
                 ));
 
-        bundles.Add(new ScriptBundle("~/scripts/section").Include("~/scripts/section.js"));
+        //bundles.Add(new ScriptBundle("~/scripts/section").Include("~/scripts/section.js"));
 
         //Styles 
         
@@ -55,12 +56,13 @@ public class BundleConfig
             "~/css/ui/jquery.ui.css",
             "~/css/bootstrap/bootstrap.css",
             "~/css/bootstrap/bootstrap-responsive.css",
-            "~/css/site.css"
+            "~/css/site/site.css",
+            "~/css/site/section.css"
             ));
 
         bundles.Add(new StyleBundle("~/css/jqgrid/jqgrid").Include("~/css/jqgrid/jqgrid.css"));
 
-        bundles.Add(new StyleBundle("~/css/section").Include("~/css/section.css"));
+        //bundles.Add(new StyleBundle("~/css/section").Include("~/css/section.css"));
 
         ////Less
         //bundles.Add(

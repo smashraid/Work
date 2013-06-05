@@ -42,10 +42,10 @@ public class HelperSurfaceController : Umbraco.Web.Mvc.SurfaceController
         string certName = "metafitness.p12";
         byte[] cert = System.IO.File.ReadAllBytes(Path.Combine(root, certName));
 
-        pushService = new PushBroker();
+        //pushService = new PushBroker();
 
-        ApplePushChannelSettings settings = new ApplePushChannelSettings(false, cert, "ilovebbq");
-        pushService.RegisterAppleService(settings);
+        //ApplePushChannelSettings settings = new ApplePushChannelSettings(false, cert, "ilovebbq");
+        //pushService.RegisterAppleService(settings);
     }
 
     [HttpGet]

@@ -15,15 +15,16 @@ using umbraco.cms.businesslogic.member;
 using umbraco.cms.businesslogic.property;
 using umbraco.cms.businesslogic.web;
 
-namespace Custom{
-
-    public class UmbracoRepository : BaseTree
+namespace Custom
+{
+    public class ChatSection : BaseTree
     {
-        public UmbracoRepository(string application)
+        public ChatSection(string application)
             : base(application)
         {
             this.ShowContextMenu = false;
         }
+
 
         protected override void CreateRootNode(ref XmlTreeNode rootNode)
         {
@@ -42,20 +43,13 @@ namespace Custom{
             Tree.treeCollection.Clear();
 
             var nodeWorkout = XmlTreeNode.Create(this);
-            nodeWorkout.NodeID = "Workout" + Guid.NewGuid();
-            nodeWorkout.Text = "Workout";
+            nodeWorkout.NodeID = "Chat" + Guid.NewGuid();
+            nodeWorkout.Text = "Chat";
             nodeWorkout.Icon = "b_user.png";
-            nodeWorkout.Action = string.Format("javascript:openWorkoutRepository({0});", 1355);
+            nodeWorkout.Action = string.Format("javascript:openChat({0});", 1355);
             Tree.Add(nodeWorkout);
-
-            var nodeExercise = XmlTreeNode.Create(this);
-            nodeExercise.NodeID = "Exercise" + Guid.NewGuid();
-            nodeExercise.Text = "Exercise";
-            nodeExercise.Icon = "b_user.png";
-            nodeExercise.Action = string.Format("javascript:openExerciseRepository({0});", 1355);
-            Tree.Add(nodeExercise);
         }
-        
+
         public override void Render(ref System.Xml.XmlDocument Tree)
         {
             base.Render(ref Tree);
@@ -64,14 +58,14 @@ namespace Custom{
         public override void RenderJS(ref StringBuilder Javascript)
         {
             Javascript.Append(@"
-                function openWorkoutRepository(id) {                   
-                    parent.right.document.location.href = '/workout.aspx?id=' + id;
+                function openChat(id) {                   
+                    parent.right.document.location.href = '/chat.aspx?id=' + id;
                 }
 			");
 
             Javascript.Append(@"
-                function openExerciseRepository(id) {
-                    parent.right.document.location.href = '/exercise.aspx?id=' + id;                    
+                function openChat2(id) {
+                    parent.right.document.location.href = '/chat.aspx?id=' + id;                    
                 }
 			");
         }

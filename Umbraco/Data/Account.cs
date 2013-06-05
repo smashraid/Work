@@ -8,14 +8,14 @@ using System.Web;
 /// </summary>
 public class Account
 {
-	public Account()
-	{
-		//
-		// TODO: Add constructor logic here
-		//
-	}
+    public Account()
+    {
+        //
+        // TODO: Add constructor logic here
+        //
+    }
 
-    public int Id { get; set; } 
+    public int Id { get; set; }
     //[Required]
     public string Name { get; set; }
 
@@ -31,7 +31,7 @@ public class Account
     public string Password { get; set; }
 
     #region UserInformation
-    
+
     public string Gender { get; set; }
     public DateTime? Birthday { get; set; }
     public string City { get; set; }
@@ -67,7 +67,7 @@ public class Account
     public decimal? GoalWeight { get; set; }
     public bool UseMetric { get; set; }
     public int TrainerId { get; set; }
-    
+
     #endregion
 
     #region Notification

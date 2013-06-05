@@ -12,8 +12,10 @@ public class Talk
     public int UserId { get; set; }
     public int UserType { get; set; }
     public string User { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public DateTime CreatedDate { get; set; }
-    public DateTime UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
     public bool IsOwner { get; set; }
     public bool ReportAbuse { get; set; }
 }

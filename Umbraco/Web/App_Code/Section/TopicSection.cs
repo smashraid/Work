@@ -17,9 +17,9 @@ using umbraco.cms.businesslogic.web;
 
 namespace Custom
 {
-    public class UmbracoMessageBoard : BaseTree
+    public class TopicSection : BaseTree
     {
-        public UmbracoMessageBoard(string application)
+        public TopicSection(string application)
             : base(application)
         {
             string functionToCall = this.FunctionToCall;
@@ -47,7 +47,7 @@ namespace Custom
             node.NodeID = "Topic" + Guid.NewGuid();
             node.Text = "Topic";
             node.Icon = "b_user.png";
-            node.Action = string.Format("javascript:openMessageBoard({0});", 1355);
+            node.Action = string.Format("javascript:openTopic({0});", 1355);
             var data = GetTreeServiceUrl(node.NodeID);
             Tree.Add(node);
         }
@@ -62,8 +62,8 @@ namespace Custom
         public override void RenderJS(ref StringBuilder Javascript)
         {
             Javascript.Append(@"
-                function openMessageBoard(id) {                   
-                    parent.right.document.location.href = '/messageboard.aspx?id=' + id;
+                function openTopic(id) {                   
+                    parent.right.document.location.href = '/topic.aspx?id=' + id;
                 }
 			");
 

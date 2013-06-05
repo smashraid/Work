@@ -48,15 +48,15 @@ public class MemberController : ApiController
         string certName = "metafitness.p12";
         byte[] cert = File.ReadAllBytes(Path.Combine(root, certName));
 
-        pushService = new PushBroker();
+        //pushService = new PushBroker();
         //pushService.Events.OnDeviceSubscriptionExpired += new ChannelEvents.DeviceSubscriptionExpired(Events_OnDeviceSubscriptionExpired);
         //pushService.Events.OnDeviceSubscriptionIdChanged += new ChannelEvents.DeviceSubscriptionIdChanged(Events_OnDeviceSubscriptionIdChanged);
         //pushService.Events.OnChannelException += new ChannelEvents.ChannelExceptionDelegate(Events_OnChannelException);
         //pushService.Events.OnNotificationSendFailure += new ChannelEvents.NotificationSendFailureDelegate(Events_OnNotificationSendFailure);
         //pushService.Events.OnNotificationSent += new ChannelEvents.NotificationSentDelegate(Events_OnNotificationSent);
 
-        ApplePushChannelSettings settings = new ApplePushChannelSettings(false, cert, "ilovebbq");
-        pushService.RegisterAppleService(settings);
+        //ApplePushChannelSettings settings = new ApplePushChannelSettings(false, cert, "ilovebbq");
+        //pushService.RegisterAppleService(settings);
     }
 
     #region Account
@@ -90,7 +90,6 @@ public class MemberController : ApiController
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
-
         return response;
     }
 
@@ -419,32 +418,36 @@ public class MemberController : ApiController
                         Log.Add(LogTypes.New, -1, ex.Message);
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                     }
-
-
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, "Image was updated successfully");
             });
 
         return task;
-
     }
 
     public HttpResponseMessage GetAvatar()
     {
-        //Image image = Image.FromFile(@"D:\Photo\1193\04252013\0001.jpg");
-        //MemoryStream memoryStream = new MemoryStream();
-        //image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-        byte[] image = File.ReadAllBytes(@"D:\Photo\1193\04252013\000.jpg");
-        byte[] image2 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0002.jpg");
-        byte[] image3 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0003.jpg");
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            Member member = Member.GetCurrentMember();
+            string umbracoPath = member.getProperty("photo").Value.ToString();
+            string mediaPath = UmbracoCustom.GetParameterValue(UmbracoType.Media);
+            Image image = Image.FromFile(mediaPath.Replace(@"media\", umbracoPath));
+            MemoryStream memoryStream = new MemoryStream();
+            image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new ByteArrayContent(memoryStream.ToArray());
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
 
-        List<byte[]> images = new List<byte[]> { image, image2, image3 };
-
-        HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
-        //result.Content = new ByteArrayContent(memoryStream.ToArray());
-        result.Content = new ByteArrayContent(image);
-        result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-        return result;
+        return response;
     }
 
     #endregion
@@ -469,7 +472,7 @@ public class MemberController : ApiController
             document.getProperty("dateScheduled").Value = workout.DateScheduled;
             document.getProperty("dateCompleted").Value = workout.DateCompleted;
             document.getProperty("description").Value = workout.Description;
-            document.getProperty("state").Value = workout.State;
+            document.getProperty("state").Value = workout.StateId;
             document.Save();
             workout.Id = document.Id;
 
@@ -499,6 +502,8 @@ public class MemberController : ApiController
             DateScheduled = (child.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateScheduled").Value) : (DateTime?)null),
             DateCompleted = (child.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateCompleted").Value) : (DateTime?)null),
             Description = child.getProperty("description").Value.ToString(),
+            StateId = (!string.IsNullOrEmpty(child.getProperty("state").Value.ToString()) ? Convert.ToInt32(child.getProperty("state").Value) : (int?)null),
+            State = (!string.IsNullOrEmpty(child.getProperty("state").Value.ToString()) ? UmbracoCustom.PropertyValue(UmbracoType.WorkoutState, Convert.ToInt32(child.getProperty("state").Value)) : string.Empty),
             //RateId = (child.getProperty("rate").Value.ToString() != "" ? Convert.ToInt32(child.getProperty("rate").Value) : (int?)null),
             //Rate = UmbracoCustom.PropertyValue(UmbracoType.Rate, child.getProperty("rate")),
             Note = child.getProperty("note").Value.ToString()
@@ -555,6 +560,26 @@ public class MemberController : ApiController
             throw new HttpResponseException(response);
         }
         return response;
+    }
+
+    [HttpGet]
+    public WorkoutViewModel GetWorkoutDetails(int workoutid)
+    {
+        WorkoutViewModel workoutViewModel = new WorkoutViewModel
+        {
+            SuperSets = new List<SuperSetViewModel>(),
+            Routines = new List<RoutineViewModel>()
+        };
+        foreach (SuperSet superSet in GetSuperSet(workoutid))
+        {
+            workoutViewModel.SuperSets.Add(new SuperSetViewModel
+            {
+                SuperSet = superSet,
+                Routines = GetRoutineStories(superSet.Id)
+            });
+        }
+        workoutViewModel.Routines.AddRange(GetRoutineStories(workoutid));
+        return workoutViewModel;
     }
 
     #endregion
@@ -799,21 +824,23 @@ public class MemberController : ApiController
     {
         List<Exercise> exercises = new List<Exercise>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectExerciseByCategory",
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectExerciseByCategory",
             new SqlParameter { ParameterName = "@CategoryId", Value = categoryid, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@TrainerId", Value = trainerid, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
-            );
-        while (reader.Read())
+            ))
         {
-            exercises.Add(new Exercise
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                ExerciseName = reader.GetValue(1).ToString(),
-                TrainerId = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(3)),
-                CategoryId = Convert.ToInt32(reader.GetValue(3)),
-                Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(3)),
-                IsActive = Convert.ToBoolean(reader.GetValue(4))
-            });
+                exercises.Add(new Exercise
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    ExerciseName = reader.GetValue(1).ToString(),
+                    TrainerId = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(3)),
+                    CategoryId = Convert.ToInt32(reader.GetValue(3)),
+                    Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(3)),
+                    IsActive = Convert.ToBoolean(reader.GetValue(4))
+                });
+            }
         }
         return exercises;
     }
@@ -1408,48 +1435,11 @@ public class MemberController : ApiController
 
         List<Routine> routines = new List<Routine>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectRoutineByWorkout", new SqlParameter { ParameterName = "@ObjectId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectRoutineByWorkout", new SqlParameter { ParameterName = "@ObjectId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            routines.Add(new Routine
+            while (reader.Read())
             {
-                Exercise = new Exercise
-                {
-                    Id = Convert.ToInt32(reader.GetValue(0)),
-                    ExerciseName = reader.GetValue(1).ToString(),
-                    TrainerId = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
-                    CategoryId = Convert.ToInt32(reader.GetValue(3).ToString()),
-                    Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(3)),
-                    IsActive = Convert.ToBoolean(reader.GetValue(4))
-                },
-                Id = Convert.ToInt32(reader.GetValue(5).ToString()),
-                Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(6)),
-                Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(7)),
-                Resistance = reader.IsDBNull(8) ? (decimal?)null : Convert.ToDecimal(reader.GetValue(8)),
-                UnitId = reader.IsDBNull(9) ? (int?)null : Convert.ToInt32(reader.GetValue(9)),
-                Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(9)),
-                Note = reader.GetValue(10).ToString(),
-                StateId = reader.IsDBNull(11) ? (int?)null : Convert.ToInt32(reader.GetValue(11)),
-                State = UmbracoCustom.PropertyValue(UmbracoType.State, reader.GetValue(11)),
-                SortOrder = Convert.ToInt32(reader.GetValue(12))
-            });
-        }
-        return routines;
-    }
-
-    [HttpGet]
-    public IEnumerable<RoutineViewModel> GetRoutineStories(int id)
-    {
-        Member member = Member.GetCurrentMember();
-
-        List<RoutineViewModel> routineViewModels = new List<RoutineViewModel>();
-        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectRoutineByWorkout", new SqlParameter { ParameterName = "@ObjectId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
-        {
-            routineViewModels.Add(new RoutineViewModel
-            {
-                Routine = new Routine
+                routines.Add(new Routine
                 {
                     Exercise = new Exercise
                     {
@@ -1460,7 +1450,7 @@ public class MemberController : ApiController
                         Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(3)),
                         IsActive = Convert.ToBoolean(reader.GetValue(4))
                     },
-                    Id = Convert.ToInt32(reader.GetValue(5)),
+                    Id = Convert.ToInt32(reader.GetValue(5).ToString()),
                     Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(6)),
                     Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(7)),
                     Resistance = reader.IsDBNull(8) ? (decimal?)null : Convert.ToDecimal(reader.GetValue(8)),
@@ -1469,11 +1459,51 @@ public class MemberController : ApiController
                     Note = reader.GetValue(10).ToString(),
                     StateId = reader.IsDBNull(11) ? (int?)null : Convert.ToInt32(reader.GetValue(11)),
                     State = UmbracoCustom.PropertyValue(UmbracoType.State, reader.GetValue(11)),
-                    SortOrder = Convert.ToInt32(reader.GetValue(12)),
-                    CreatedDate = Convert.ToDateTime(reader.GetValue(13))
-                },
-                Stories = GetStory(Convert.ToInt32(reader.GetValue(5)))
-            });
+                    SortOrder = Convert.ToInt32(reader.GetValue(12))
+                });
+            }
+        }
+        return routines;
+    }
+
+    [HttpGet]
+    public IEnumerable<RoutineViewModel> GetRoutineStories(int id)
+    {
+        Member member = Member.GetCurrentMember();
+        List<RoutineViewModel> routineViewModels = new List<RoutineViewModel>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectRoutineByWorkout", new SqlParameter { ParameterName = "@ObjectId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                routineViewModels.Add(new RoutineViewModel
+                {
+                    Routine = new Routine
+                    {
+                        Exercise = new Exercise
+                        {
+                            Id = Convert.ToInt32(reader.GetValue(0)),
+                            ExerciseName = reader.GetValue(1).ToString(),
+                            TrainerId = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
+                            CategoryId = Convert.ToInt32(reader.GetValue(3).ToString()),
+                            Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(3)),
+                            IsActive = Convert.ToBoolean(reader.GetValue(4))
+                        },
+                        Id = Convert.ToInt32(reader.GetValue(5)),
+                        Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(6)),
+                        Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(7)),
+                        Resistance = reader.IsDBNull(8) ? (decimal?)null : Convert.ToDecimal(reader.GetValue(8)),
+                        UnitId = reader.IsDBNull(9) ? (int?)null : Convert.ToInt32(reader.GetValue(9)),
+                        Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(9)),
+                        Note = reader.GetValue(10).ToString(),
+                        StateId = reader.IsDBNull(11) ? (int?)null : Convert.ToInt32(reader.GetValue(11)),
+                        State = UmbracoCustom.PropertyValue(UmbracoType.State, reader.GetValue(11)),
+                        SortOrder = Convert.ToInt32(reader.GetValue(12)),
+                        CreatedDate = Convert.ToDateTime(reader.GetValue(13))
+                    },
+                    Stories = GetStory(Convert.ToInt32(reader.GetValue(5)))
+                });
+            }
         }
         return routineViewModels;
     }
@@ -1482,27 +1512,28 @@ public class MemberController : ApiController
     public IEnumerable<Story> GetStory(int id)
     {
         Member member = Member.GetCurrentMember();
-
         List<Story> exerciseStories = new List<Story>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectStory", new SqlParameter { ParameterName = "@ObjectId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectStory", new SqlParameter { ParameterName = "@ObjectId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            exerciseStories.Add(new Story
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                ActionId = Convert.ToInt32(reader.GetValue(1)),
-                Action = UmbracoCustom.PropertyValue(UmbracoType.Action, reader.GetValue(1)),
-                TrainingId = Convert.ToInt32(reader.GetValue(2)),
-                Training = UmbracoCustom.PropertyValue(UmbracoType.Training, reader.GetValue(2)),
-                UnitId = reader.IsDBNull(3) ? (int?)null : Convert.ToInt32(reader.GetValue(3)),
-                Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(3)),
-                Value = Convert.ToDecimal(reader.GetValue(4)),
-                TypeId = Convert.ToInt32(reader.GetValue(5)),
-                Type = UmbracoCustom.PropertyValue(UmbracoType.Type, reader.GetValue(5)),
-                Note = reader.GetValue(6).ToString(),
-                CreatedDate = Convert.ToDateTime(reader.GetValue(7))
-            });
+                exerciseStories.Add(new Story
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    ActionId = Convert.ToInt32(reader.GetValue(1)),
+                    Action = UmbracoCustom.PropertyValue(UmbracoType.Action, reader.GetValue(1)),
+                    TrainingId = Convert.ToInt32(reader.GetValue(2)),
+                    Training = UmbracoCustom.PropertyValue(UmbracoType.Training, reader.GetValue(2)),
+                    UnitId = reader.IsDBNull(3) ? (int?)null : Convert.ToInt32(reader.GetValue(3)),
+                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(3)),
+                    Value = Convert.ToDecimal(reader.GetValue(4)),
+                    TypeId = Convert.ToInt32(reader.GetValue(5)),
+                    Type = UmbracoCustom.PropertyValue(UmbracoType.Type, reader.GetValue(5)),
+                    Note = reader.GetValue(6).ToString(),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(7))
+                });
+            }
         }
         return exerciseStories;
     }
@@ -1640,45 +1671,50 @@ public class MemberController : ApiController
     public IEnumerable<SuperSet> GetSuperSet(int id)
     {
         Member member = Member.GetCurrentMember();
-
         List<SuperSet> superSets = new List<SuperSet>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectSuperSet", new SqlParameter { ParameterName = "@WorkoutId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectSuperSet", new SqlParameter { ParameterName = "@WorkoutId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            superSets.Add(new SuperSet
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0).ToString()),
-                Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
-                Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
-                ResistanceId = Convert.ToInt32(reader.GetValue(3)),
-                Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
-                UnitId = reader.IsDBNull(9) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
-                Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
-                Note = reader.GetValue(10).ToString()
-            });
+                superSets.Add(new SuperSet
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0).ToString()),
+                    Reps = reader.IsDBNull(1) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
+                    Sets = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
+                    ResistanceId = Convert.ToInt32(reader.GetValue(3)),
+                    Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
+                    UnitId = reader.IsDBNull(4) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
+                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
+                    Note = reader.GetValue(5).ToString(),
+                    WorkoutId = Convert.ToInt32(reader.GetValue(6).ToString())
+                });
+            }
         }
         return superSets;
     }
 
+    [HttpGet]
     public SuperSet GetSuperSetById(int id)
     {
         SuperSet superSet = new SuperSet();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectSuperSetById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectSuperSetById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            superSet = new SuperSet
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0).ToString()),
-                Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
-                Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
-                ResistanceId = Convert.ToInt32(reader.GetValue(3)),
-                Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
-                UnitId = reader.IsDBNull(9) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
-                Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
-                Note = reader.GetValue(10).ToString()
-            };
+                superSet = new SuperSet
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0).ToString()),
+                    Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
+                    Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
+                    ResistanceId = Convert.ToInt32(reader.GetValue(3)),
+                    Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
+                    UnitId = reader.IsDBNull(9) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
+                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
+                    Note = reader.GetValue(10).ToString()
+                };
+            }
         }
         return superSet;
     }
@@ -1699,20 +1735,19 @@ public class MemberController : ApiController
     {
         List<Device> devices = new List<Device>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectDeviceByPlatform",
-            new SqlParameter { ParameterName = "@PlatformId", Value = platformid, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
-
-            );
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectDeviceByPlatform", new SqlParameter { ParameterName = "@PlatformId", Value = platformid, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            devices.Add(new Device
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                PlatformId = Convert.ToInt32(reader.GetValue(1)),
-                Platform = UmbracoCustom.PropertyValue(UmbracoType.Platform, reader.GetValue(1)),
-                DeviceName = reader.GetValue(2).ToString(),
-                IsActive = Convert.ToBoolean(reader.GetValue(3))
-            });
+                devices.Add(new Device
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    PlatformId = Convert.ToInt32(reader.GetValue(1)),
+                    Platform = UmbracoCustom.PropertyValue(UmbracoType.Platform, reader.GetValue(1)),
+                    DeviceName = reader.GetValue(2).ToString(),
+                    IsActive = Convert.ToBoolean(reader.GetValue(3))
+                });
+            }
         }
         return devices;
     }
@@ -1723,20 +1758,22 @@ public class MemberController : ApiController
         Member member = Member.GetCurrentMember();
         List<PushNotification> notifications = new List<PushNotification>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectNotificationByMember", new SqlParameter { ParameterName = "@MemberId", Value = member.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectNotificationByMember", new SqlParameter { ParameterName = "@MemberId", Value = member.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            notifications.Add(new PushNotification
+            while (reader.Read())
             {
-                Id = int.Parse(reader.GetValue(0).ToString()),
-                MemberId = int.Parse(reader.GetValue(1).ToString()),
-                Token = reader.GetValue(2).ToString(),
-                DeviceId = int.Parse(reader.GetValue(3).ToString()),
-                IsActive = bool.Parse(reader.GetValue(4).ToString()),
-                Device = reader.GetValue(5).ToString(),
-                PlatformId = int.Parse(reader.GetValue(6).ToString()),
-                Platform = UmbracoCustom.PropertyValue(UmbracoType.Platform, reader.GetValue(6))
-            });
+                notifications.Add(new PushNotification
+                {
+                    Id = int.Parse(reader.GetValue(0).ToString()),
+                    MemberId = int.Parse(reader.GetValue(1).ToString()),
+                    Token = reader.GetValue(2).ToString(),
+                    DeviceId = int.Parse(reader.GetValue(3).ToString()),
+                    IsActive = bool.Parse(reader.GetValue(4).ToString()),
+                    Device = reader.GetValue(5).ToString(),
+                    PlatformId = int.Parse(reader.GetValue(6).ToString()),
+                    Platform = UmbracoCustom.PropertyValue(UmbracoType.Platform, reader.GetValue(6))
+                });
+            }
         }
         return notifications.SingleOrDefault(n => n.Token == token);
     }
@@ -1840,7 +1877,6 @@ public class MemberController : ApiController
     public Topic InsertTopic(Topic topic)
     {
         HttpResponseMessage response = new HttpResponseMessage();
-        int id = 0;
         try
         {
             SetTopicUser(topic);
@@ -1853,7 +1889,8 @@ public class MemberController : ApiController
             new SqlParameter { ParameterName = "@UserId", Value = topic.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@UserType", Value = topic.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
             );
-            topic.Id = Convert.ToInt32(parameter.Value);
+            //topic.Id = Convert.ToInt32(parameter.Value);
+            topic = SelectTopicById(Convert.ToInt32(parameter.Value));
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Topic successfully created");
         }
@@ -1887,20 +1924,22 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
-    public HttpResponseMessage InsertPost(Post post)
+    public Post InsertPost(Post post)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         try
         {
             SetPostUser(post);
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = post.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertPost",
-                new SqlParameter { ParameterName = "@Id", Value = post.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
+                parameter,
                 new SqlParameter { ParameterName = "@Message", Value = post.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 500 },
                 new SqlParameter { ParameterName = "@TopicId", Value = post.TopicId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                 new SqlParameter { ParameterName = "@UserId", Value = post.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                 new SqlParameter { ParameterName = "@UserType", Value = post.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
             );
+            post = SelectPostById(Convert.ToInt32(parameter.Value));
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Post successfully created");
         }
@@ -1910,7 +1949,7 @@ public class MemberController : ApiController
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
-        return response;
+        return post;
     }
 
     private void SetPostUser(Post post)
@@ -1938,25 +1977,28 @@ public class MemberController : ApiController
     {
         List<Topic> topics = new List<Topic>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTopic");
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTopic"))
         {
-            Topic topic = new Topic
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                Name = reader.GetValue(1).ToString(),
-                Description = reader.GetValue(2).ToString(),
-                UserId = Convert.ToInt32(reader.GetValue(3)),
-                UserType = Convert.ToInt32(reader.GetValue(4)),
-                CreatedDate = Convert.ToDateTime(reader.GetValue(5).ToString()),
-                UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6).ToString())
-
-            };
-            GetTopicUser(topic);
-            topics.Add(topic);
+                Topic topic = new Topic
+                    {
+                        Id = Convert.ToInt32(reader.GetValue(0)),
+                        Name = reader.GetValue(1).ToString(),
+                        Description = reader.GetValue(2).ToString(),
+                        UserId = Convert.ToInt32(reader.GetValue(3)),
+                        UserType = Convert.ToInt32(reader.GetValue(4)),
+                        CreatedDate = Convert.ToDateTime(reader.GetValue(5).ToString()),
+                        UpdatedDate =
+                            reader.IsDBNull(6) ? (DateTime?) null : Convert.ToDateTime(reader.GetValue(6).ToString()),
+                        LastPost = SelectLastPost(Convert.ToInt32(reader.GetValue(0)))
+                    };
+                GetTopicUser(topic);
+                topics.Add(topic);
+            }
+            paging.Records = topics.Count();
+            paging.TotalPages = (int) Math.Ceiling((float) topics.Count()/paging.Pagesize);
         }
-        paging.Records = topics.Count();
-        paging.TotalPages = (int)Math.Ceiling((float)topics.Count() / paging.Pagesize);
         return new TopicViewModel
             {
                 Topics = topics.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList(),
@@ -1973,13 +2015,20 @@ public class MemberController : ApiController
         string type = UmbracoCustom.PropertyValue(UmbracoType.UserType, topic.UserType).ToLower();
         if (type == "trainer")
         {
-            topic.User = new User(topic.UserId).Name;
+            User u = new User(topic.UserId);
+            topic.User =u.Name;
             topic.IsOwner = currentUser == topic.UserId;
+            string[] username = u.Name.Split(' ');
+            topic.FirstName = username[0];
+            topic.LastName = string.Join(" ", username.Skip(1));
         }
         else
         {
-            topic.User = new Member(topic.UserId).Text;
+            Member m = new Member(topic.UserId);
+            topic.User = m.Text;
             topic.IsOwner = currentUser == topic.UserId;
+            topic.FirstName = m.getProperty("firstName").Value.ToString();
+            topic.LastName = m.getProperty("lastName").Value.ToString();
         }
     }
 
@@ -1988,49 +2037,53 @@ public class MemberController : ApiController
     {
         List<Post> posts = new List<Post>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectPost", new SqlParameter { ParameterName = "@TopicId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectPost", new SqlParameter { ParameterName = "@TopicId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            Post post = new Post
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                Message = reader.GetValue(1).ToString(),
-                TopicId = Convert.ToInt32(reader.GetValue(2)),
-                UserId = Convert.ToInt32(reader.GetValue(3)),
-                UserType = Convert.ToInt32(reader.GetValue(4)),
-                CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
-                UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6)),
-                ReportAbuse = Convert.ToBoolean(reader.GetValue(7))
-            };
-            GetPostUser(post);
-            posts.Add(post);
+                Post post = new Post
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    Message = reader.GetValue(1).ToString(),
+                    TopicId = Convert.ToInt32(reader.GetValue(2)),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6)),
+                    ReportAbuse = Convert.ToBoolean(reader.GetValue(7))
+                };
+                GetPostUser(post);
+                posts.Add(post);
+            }
+            //paging.Records = posts.Count();
+            //paging.TotalPages = (int)Math.Ceiling((float)posts.Count() / paging.Pagesize);
+            //return posts.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
         }
-        //paging.Records = posts.Count();
-        //paging.TotalPages = (int)Math.Ceiling((float)posts.Count() / paging.Pagesize);
-        //return posts.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
         return posts;
     }
 
     [HttpGet]
-    public Post SelectLastPost()
+    public Post SelectLastPost(int topicId)
     {
         Post post = new Post();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectLastPost");
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectLastPost", new SqlParameter { ParameterName = "@TopicId", Value = topicId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            post = new Post
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                Message = reader.GetValue(1).ToString(),
-                TopicId = Convert.ToInt32(reader.GetValue(2)),
-                UserId = Convert.ToInt32(reader.GetValue(3)),
-                UserType = Convert.ToInt32(reader.GetValue(4)),
-                CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
-                UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6)),
-                ReportAbuse = Convert.ToBoolean(reader.GetValue(7))
-            };
-            GetPostUser(post);
+                post = new Post
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    Message = reader.GetValue(1).ToString(),
+                    TopicId = Convert.ToInt32(reader.GetValue(2)),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6)),
+                    ReportAbuse = Convert.ToBoolean(reader.GetValue(7))
+                };
+                GetPostUser(post);
+            }
         }
         return post;
     }
@@ -2045,9 +2098,12 @@ public class MemberController : ApiController
 
         if (type == "trainer")
         {
-            post.User = new User(post.UserId).Name;
+            User u = new User(post.UserId);
+            post.User = u.Name;
             post.IsOwner = currentUser == post.UserId;
-
+            string[] username = u.Name.Split(' ');
+            post.FirstName = username[0];
+            post.LastName = username[1];
         }
         else
         {
@@ -2151,7 +2207,6 @@ public class MemberController : ApiController
     public Chat InsertChat(Chat chat)
     {
         HttpResponseMessage response = new HttpResponseMessage();
-        int id = 0;
         try
         {
             SetChatUser(chat);
@@ -2164,7 +2219,8 @@ public class MemberController : ApiController
                new SqlParameter { ParameterName = "@UserId", Value = chat.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@UserType", Value = chat.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
                );
-            chat.Id = Convert.ToInt32(parameter.Value);
+            //chat.Id = Convert.ToInt32(parameter.Value);
+            chat = SelectChatById(Convert.ToInt32(parameter.Value));
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Chat successfully created");
         }
@@ -2198,21 +2254,22 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
-    public int InsertTalk(Talk talk)
+    public Talk InsertTalk(Talk talk)
     {
         HttpResponseMessage response = new HttpResponseMessage();
-        int id = 0;
         try
         {
             SetTalkUser(talk);
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = talk.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertTalk",
-               new SqlParameter { ParameterName = "@Id", Value = talk.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
+               parameter,
                new SqlParameter { ParameterName = "@ChatId", Value = talk.ChatId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@Message", Value = talk.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 500 },
                new SqlParameter { ParameterName = "@UserId", Value = talk.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@UserType", Value = talk.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
                );
+            talk = SelectTalkById(Convert.ToInt32(parameter.Value));
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Talk successfully created");
         }
@@ -2222,7 +2279,7 @@ public class MemberController : ApiController
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
-        return id;
+        return talk;
     }
 
     private void SetTalkUser(Talk talk)
@@ -2248,28 +2305,28 @@ public class MemberController : ApiController
     [HttpGet]
     public ChatViewModel SelectChat([FromUri]Paging paging)
     {
-        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectChat",
-          new SqlParameter { ParameterName = "@GymnastId", Value = paging.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
-        );
         List<Chat> chats = new List<Chat>();
-        while (reader.Read())
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectChat", new SqlParameter { ParameterName = "@GymnastId", Value = paging.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            Chat chat = new Chat
-                {
-                    Id = Convert.ToInt32(reader.GetValue(0)),
-                    GymnastId = Convert.ToInt32(reader.GetValue(1)),
-                    Subject = reader.GetValue(2).ToString(),
-                    UserId = Convert.ToInt32(reader.GetValue(3)),
-                    UserType = Convert.ToInt32(reader.GetValue(4)),
-                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
-                    IsRead = Convert.ToBoolean(reader.GetValue(6))
-                };
-            GetChatUser(chat);
-            chats.Add(chat);
+            while (reader.Read())
+            {
+                Chat chat = new Chat
+                    {
+                        Id = Convert.ToInt32(reader.GetValue(0)),
+                        GymnastId = Convert.ToInt32(reader.GetValue(1)),
+                        Subject = reader.GetValue(2).ToString(),
+                        UserId = Convert.ToInt32(reader.GetValue(3)),
+                        UserType = Convert.ToInt32(reader.GetValue(4)),
+                        CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                        IsRead = Convert.ToBoolean(reader.GetValue(6))
+                    };
+                GetChatUser(chat);
+                chats.Add(chat);
+            }
+            paging.Records = chats.Count();
+            paging.TotalPages = (int)Math.Ceiling((float)chats.Count() / paging.Pagesize);
         }
-        paging.Records = chats.Count();
-        paging.TotalPages = (int)Math.Ceiling((float)chats.Count() / paging.Pagesize);
         return new ChatViewModel
             {
                 Chats = chats.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList(),
@@ -2287,42 +2344,49 @@ public class MemberController : ApiController
 
         if (type == "trainer")
         {
-            chat.User = new User(chat.UserId).Name;
+            User u = new User(chat.UserId);
+            chat.User = u.Name;
             chat.IsOwner = currentUser == chat.UserId;
+            string[] username = u.Name.Split(' ');
+            chat.FirstName = username[0];
+            chat.LastName = username[1];
         }
         else
         {
-            chat.User = new Member(chat.UserId).Text;
+            Member m = new Member(chat.UserId);
+            chat.User = m.Text;
             chat.IsOwner = currentUser == chat.UserId;
+            chat.FirstName = m.getProperty("firstName").Value.ToString();
+            chat.LastName = m.getProperty("lastName").Value.ToString();
         }
     }
 
     [HttpGet]
     public List<Talk> SelectTalk(int id)
     {
-        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTalk",
-          new SqlParameter { ParameterName = "@ChatId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
-        );
         List<Talk> talks = new List<Talk>();
-        while (reader.Read())
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTalk", new SqlParameter { ParameterName = "@ChatId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            Talk talk = new Talk
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                ChatId = Convert.ToInt32(reader.GetValue(1)),
-                Message = reader.GetValue(2).ToString(),
-                UserId = Convert.ToInt32(reader.GetValue(3)),
-                UserType = Convert.ToInt32(reader.GetValue(4)),
-                CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
-                ReportAbuse = Convert.ToBoolean(reader.GetValue(6))
-            };
-            GetTalkUser(talk);
-            talks.Add(talk);
+                Talk talk = new Talk
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    ChatId = Convert.ToInt32(reader.GetValue(1)),
+                    Message = reader.GetValue(2).ToString(),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    ReportAbuse = Convert.ToBoolean(reader.GetValue(6))
+                };
+                GetTalkUser(talk);
+                talks.Add(talk);
+            }
+            //paging.Records = talks.Count();
+            //paging.TotalPages = (int)Math.Ceiling((float)talks.Count() / paging.Pagesize);
+            //return talks.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
         }
-        //paging.Records = talks.Count();
-        //paging.TotalPages = (int)Math.Ceiling((float)talks.Count() / paging.Pagesize);
-        //return talks.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
         return talks;
     }
 
@@ -2336,13 +2400,20 @@ public class MemberController : ApiController
 
         if (type == "trainer")
         {
-            talk.User = new User(talk.UserId).Name;
+            User u = new User(talk.UserId);
+            talk.User = u.Name;
             talk.IsOwner = currentUser == talk.UserId;
+            string[] username = u.Name.Split(' ');
+            talk.FirstName = username[0];
+            talk.LastName = username[1];
         }
         else
         {
-            talk.User = new Member(talk.UserId).Text;
+            Member m = new Member(talk.UserId);
+            talk.User = m.Text;
             talk.IsOwner = currentUser == talk.UserId;
+            talk.FirstName = m.getProperty("firstName").Value.ToString();
+            talk.LastName = m.getProperty("lastName").Value.ToString();
         }
     }
 
@@ -2434,6 +2505,109 @@ public class MemberController : ApiController
         return response;
     }
 
+    [HttpGet]
+    public Talk SelectTalkById(int id)
+    {
+        Talk talk = new Talk();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTalkById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                talk = new Talk
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    ChatId = Convert.ToInt32(reader.GetValue(1)),
+                    Message = reader.GetValue(2).ToString(),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6).ToString()),
+                    ReportAbuse = Convert.ToBoolean(reader.GetValue(7))
+                };
+                GetTalkUser(talk);
+            }
+        }
+        return talk;
+    }
+
+    [HttpGet]
+    public Chat SelectChatById(int id)
+    {
+        Chat chat = new Chat();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectChatById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                chat = new Chat
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    GymnastId = Convert.ToInt32(reader.GetValue(1)),
+                    Subject = reader.GetValue(2).ToString(),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6).ToString()),
+                    IsRead = Convert.ToBoolean(reader.GetValue(7))
+                };
+                GetChatUser(chat);
+            }
+        }
+        return chat;
+    }
+
+    [HttpGet]
+    public Post SelectPostById(int id)
+    {
+        Post post = new Post();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectPostById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                post = new Post
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    Message = reader.GetValue(1).ToString(),
+                    TopicId = Convert.ToInt32(reader.GetValue(2)),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6).ToString()),
+                    ReportAbuse = Convert.ToBoolean(reader.GetValue(7))
+                };
+                GetPostUser(post);
+            }
+        }
+        return post;
+    }
+
+    [HttpGet]
+    public Topic SelectTopicById(int id)
+    {
+        Topic topic = new Topic();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectTopicById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                topic = new Topic
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    Name = reader.GetValue(1).ToString(),
+                    Description = reader.GetValue(2).ToString(),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    UpdatedDate = reader.IsDBNull(6) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(6).ToString())
+                };
+                GetTopicUser(topic);
+            }
+        }
+        return topic;
+    }
+
     #endregion
 
     #region Measurement
@@ -2446,6 +2620,7 @@ public class MemberController : ApiController
             throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
         }
 
+        //string root = HttpContext.Current.Server.MapPath("~/App_Data");
         //string root = HttpContext.Current.Server.MapPath(UmbracoCustom.GetParameterValue(UmbracoType.Temp));
         //MultipartFormDataStreamProvider provider = new MultipartFormDataStreamProvider(root);
         string root = UmbracoCustom.GetParameterValue(UmbracoType.Temp);
@@ -2460,101 +2635,278 @@ public class MemberController : ApiController
                     Request.CreateErrorResponse(HttpStatusCode.InternalServerError, t.Exception);
                 }
 
-                string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-                SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertMeasurement",
-                  new SqlParameter { ParameterName = "@Id", Value = new int(), Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
-                  new SqlParameter { ParameterName = "@GymnastId", Value = Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                  new SqlParameter { ParameterName = "@Weight", Value = Convert.ToDecimal(provider.FormData.GetValues("Weight")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Neck", Value = Convert.ToDecimal(provider.FormData.GetValues("Neck")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Shoulders", Value = Convert.ToDecimal(provider.FormData.GetValues("Shoulders")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@RightArm", Value = Convert.ToDecimal(provider.FormData.GetValues("RightArm")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@LeftArm", Value = Convert.ToDecimal(provider.FormData.GetValues("LeftArm")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Chest", Value = Convert.ToDecimal(provider.FormData.GetValues("Chest")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@BellyButton", Value = Convert.ToDecimal(provider.FormData.GetValues("BellyButton")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Hips", Value = Convert.ToDecimal(provider.FormData.GetValues("Hips")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@RightThigh", Value = Convert.ToDecimal(provider.FormData.GetValues("RightThigh")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@LeftThigh", Value = Convert.ToDecimal(provider.FormData.GetValues("LeftThigh")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@RightCalf", Value = Convert.ToDecimal(provider.FormData.GetValues("RightCalf")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@LeftCalf", Value = Convert.ToDecimal(provider.FormData.GetValues("LeftCalf")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Arm", Value = Convert.ToDecimal(provider.FormData.GetValues("Arm")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Waist", Value = Convert.ToDecimal(provider.FormData.GetValues("Waist")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Thigh", Value = Convert.ToDecimal(provider.FormData.GetValues("Thigh")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
-                  new SqlParameter { ParameterName = "@Back", Value = Convert.ToDecimal(provider.FormData.GetValues("Back")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal }
-                  );
-
-                // Show all the key-value pairs.
-                //Measurement measurement = new Measurement
-                //    {
-                //        GymnastId = Convert.ToInt32(provider.FormData.GetValues(0)[0]),
-                //        Weight = Convert.ToDecimal(provider.FormData.GetValues(1)[0]),
-                //        Neck = Convert.ToDecimal(provider.FormData.GetValues(2)[0]),
-                //        Shoulders = Convert.ToDecimal(provider.FormData.GetValues(3)[0]),
-                //        RightArm = Convert.ToDecimal(provider.FormData.GetValues(4)[0]),
-                //        LeftArm = Convert.ToDecimal(provider.FormData.GetValues(5)[0]),
-                //        Chest = Convert.ToDecimal(provider.FormData.GetValues(6)[0]),
-                //        BellyButton = Convert.ToDecimal(provider.FormData.GetValues(7)[0]),
-                //        Hips = Convert.ToDecimal(provider.FormData.GetValues(8)[0]),
-                //        RightThigh = Convert.ToDecimal(provider.FormData.GetValues(9)[0]),
-                //        LeftThigh = Convert.ToDecimal(provider.FormData.GetValues(10)[0]),
-                //        RightCalf = Convert.ToDecimal(provider.FormData.GetValues(11)[0]),
-                //        LeftCalf = Convert.ToDecimal(provider.FormData.GetValues(12)[0]),
-                //        Arm = Convert.ToDecimal(provider.FormData.GetValues(13)[0]),
-                //        Waist = Convert.ToDecimal(provider.FormData.GetValues(14)[0]),
-                //        Thigh = Convert.ToDecimal(provider.FormData.GetValues(15)[0]),
-                //        Back = Convert.ToDecimal(provider.FormData.GetValues(16)[0])
-                //    };
-
-                string imagePath = UmbracoCustom.GetParameterValue(UmbracoType.Photo) + provider.FormData.GetValues("GymnastId")[0];
-                string datePath = Path.Combine(imagePath, DateTime.Now.ToString("MMddyyyy"));
-                DirectoryInfo directoryInfo = !Directory.Exists(imagePath) ? Directory.CreateDirectory(imagePath) : new DirectoryInfo(imagePath);
-                DirectoryInfo directoryDate = !Directory.Exists(datePath) ? Directory.CreateDirectory(datePath) : new DirectoryInfo(datePath);
-
-                // This illustrates how to get the file names.
-                foreach (MultipartFileData file in provider.FileData)
+                try
                 {
-                    FileInfo info = new FileInfo(file.LocalFileName);
-                    Stream stream = new FileStream(file.LocalFileName, FileMode.Open);
-                    stream.Position = 0;
-                    UmbracoFile imageUpload = UmbracoFile.Save(stream, string.Format(@"{0}\{1}", directoryDate.FullName, info.Name));
-                    imageUpload.Resize(100, "thumb");
-                }
+                    // Show all the key-value pairs.
+                    //Measurement measurement = new Measurement
+                    //    {
+                    //        GymnastId = Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]),
+                    //        Weight = Convert.ToDecimal(provider.FormData.GetValues("Weight")[0]),
+                    //        Neck = Convert.ToDecimal(provider.FormData.GetValues("Neck")[0]),
+                    //        Shoulders = Convert.ToDecimal(provider.FormData.GetValues("Shoulders")[0]),
+                    //        RightArm = Convert.ToDecimal(provider.FormData.GetValues("RightArm")[0]),
+                    //        LeftArm = Convert.ToDecimal(provider.FormData.GetValues("LeftArm")[0]),
+                    //        Chest = Convert.ToDecimal(provider.FormData.GetValues("Chest")[0]),
+                    //        BellyButton = Convert.ToDecimal(provider.FormData.GetValues("BellyButton")[0]),
+                    //        Hips = Convert.ToDecimal(provider.FormData.GetValues("Hips")[0]),
+                    //        RightThigh = Convert.ToDecimal(provider.FormData.GetValues("RightThigh")[0]),
+                    //        LeftThigh = Convert.ToDecimal(provider.FormData.GetValues("LeftThigh")[0]),
+                    //        RightCalf = Convert.ToDecimal(provider.FormData.GetValues("RightCalf")[0]),
+                    //        LeftCalf = Convert.ToDecimal(provider.FormData.GetValues("LeftCalf")[0]),
+                    //        Arm = Convert.ToDecimal(provider.FormData.GetValues("Arm")[0]),
+                    //        Waist = Convert.ToDecimal(provider.FormData.GetValues("Waist")[0]),
+                    //        Thigh = Convert.ToDecimal(provider.FormData.GetValues("Thigh")[0]),
+                    //        Back = Convert.ToDecimal(provider.FormData.GetValues("Back")[0])
+                    //    };
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                    string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+                    SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = new int(), Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertMeasurement",
+                      parameter,
+                      new SqlParameter { ParameterName = "@GymnastId", Value = Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                      new SqlParameter { ParameterName = "@Weight", Value = Convert.ToDecimal(provider.FormData.GetValues("Weight")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3},
+                      new SqlParameter { ParameterName = "@Neck", Value = Convert.ToDecimal(provider.FormData.GetValues("Neck")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@Shoulders", Value = Convert.ToDecimal(provider.FormData.GetValues("Shoulders")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@RightArm", Value = Convert.ToDecimal(provider.FormData.GetValues("RightArm")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@LeftArm", Value = Convert.ToDecimal(provider.FormData.GetValues("LeftArm")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@Chest", Value = Convert.ToDecimal(provider.FormData.GetValues("Chest")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@BellyButton", Value = Convert.ToDecimal(provider.FormData.GetValues("BellyButton")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@Hips", Value = Convert.ToDecimal(provider.FormData.GetValues("Hips")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@RightThigh", Value = Convert.ToDecimal(provider.FormData.GetValues("RightThigh")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@LeftThigh", Value = Convert.ToDecimal(provider.FormData.GetValues("LeftThigh")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@RightCalf", Value = Convert.ToDecimal(provider.FormData.GetValues("RightCalf")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@LeftCalf", Value = Convert.ToDecimal(provider.FormData.GetValues("LeftCalf")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@Arm", Value = Convert.ToDecimal(provider.FormData.GetValues("Arm")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@Waist", Value = Convert.ToDecimal(provider.FormData.GetValues("Waist")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@Thigh", Value = Convert.ToDecimal(provider.FormData.GetValues("Thigh")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
+                      new SqlParameter { ParameterName = "@Back", Value = Convert.ToDecimal(provider.FormData.GetValues("Back")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 }
+                      );
+                    Log.Add(LogTypes.New, Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), Convert.ToInt32(parameter.Value).ToString());
+                    string imagePath = UmbracoCustom.GetParameterValue(UmbracoType.Photo) + provider.FormData.GetValues("GymnastId")[0];
+                    Log.Add(LogTypes.New, Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), imagePath);
+                    //string datePath = Path.Combine(imagePath, DateTime.Now.ToString("MMddyyyy"));
+                    string datePath = Path.Combine(imagePath, Convert.ToInt32(parameter.Value).ToString());
+                    Log.Add(LogTypes.New, Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), datePath);
+                    DirectoryInfo directoryInfo = !Directory.Exists(imagePath) ? Directory.CreateDirectory(imagePath) : new DirectoryInfo(imagePath);
+                    Log.Add(LogTypes.New, Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), directoryInfo.FullName);
+                    DirectoryInfo directoryDate = !Directory.Exists(datePath) ? Directory.CreateDirectory(datePath) : new DirectoryInfo(datePath);
+                    Log.Add(LogTypes.New, Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), directoryDate.FullName);
+
+                    // This illustrates how to get the file names.
+                    foreach (MultipartFileData file in provider.FileData)
+                    {
+                        FileInfo info = new FileInfo(file.LocalFileName);
+                        Stream stream = new FileStream(file.LocalFileName, FileMode.Open);
+                        stream.Position = 0;
+                        UmbracoFile imageUpload = UmbracoFile.Save(stream, string.Format(@"{0}\{1}", directoryDate.FullName, info.Name));
+                        imageUpload.Resize(100, "thumb");
+                        Log.Add(LogTypes.New, Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), file.LocalFileName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, "Measurement succesfully created");
             });
 
         return task;
     }
 
+    [HttpPost]
+    public HttpResponseMessage UpdateMeasurement(Measurement measurement)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            Member member = Member.GetCurrentMember();
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateMeasurement",
+              new SqlParameter { ParameterName = "@Id", Value = measurement.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+              new SqlParameter { ParameterName = "@Weight", Value = measurement.Weight, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Neck", Value = measurement.Neck, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Shoulders", Value = measurement.Shoulders, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@RightArm", Value = measurement.RightArm, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@LeftArm", Value = measurement.LeftArm, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Chest", Value = measurement.Chest, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@BellyButton", Value = measurement.BellyButton, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Hips", Value = measurement.Hips, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@RightThigh", Value = measurement.RightThigh, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@LeftThigh", Value = measurement.LeftThigh, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@RightCalf", Value = measurement.RightCalf, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@LeftCalf", Value = measurement.LeftCalf, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Arm", Value = measurement.Arm, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Waist", Value = measurement.Waist, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Thigh", Value = measurement.Thigh, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
+              new SqlParameter { ParameterName = "@Back", Value = measurement.Back, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal }
+              );
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Measurement was updated successfully");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
     [HttpGet]
-    public Measurement SelectMeasurementByGymnast(int gymnastId)
+    public IEnumerable<byte[]> GetMeasurementPhoto(int id)
+    {
+        List<byte[]> images = new List<byte[]>();
+        Measurement measurement = SelectMeasurementById(id);
+        IEnumerable<string> files = Directory.GetFiles(Path.Combine(new[] { UmbracoCustom.GetParameterValue(UmbracoType.Photo), measurement.GymnastId.ToString(), measurement.Id.ToString() })).Where(f => !f.Contains("_thumb"));
+        foreach (string file in files)
+        {
+            Image image = Image.FromFile(file);
+            MemoryStream memoryStream = new MemoryStream();
+            image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            images.Add(memoryStream.ToArray());
+        }
+        return images;
+    }
+
+    [HttpGet]
+    public IEnumerable<PhotoViewModel> GetAllMeasurementPhoto(int gymnastId)
+    {
+        List<PhotoViewModel> photoViewModels = new List<PhotoViewModel>();
+        List<Measurement> measurements = SelectMeasurementByGymnastId(gymnastId);
+
+        foreach (Measurement measurement in measurements)
+        {
+            List<byte[]> photos = new List<byte[]>();
+            IEnumerable<string> files =
+                Directory.GetFiles(
+                    Path.Combine(new[]
+                        {
+                            UmbracoCustom.GetParameterValue(UmbracoType.Photo), 
+                            measurement.GymnastId.ToString(),
+                            measurement.Id.ToString()
+                        })).Where(f => !f.Contains("_thumb"));
+
+            foreach (string file in files)
+            {
+                Image image = Image.FromFile(file);
+                MemoryStream memoryStream = new MemoryStream();
+                image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                photos.Add(memoryStream.ToArray());
+            }
+
+            photoViewModels.Add(new PhotoViewModel
+                {
+                    Id = measurement.Id,
+                    Photos = photos
+                });
+        }
+        return photoViewModels;
+    }
+
+    [HttpGet]
+    public Measurement SelectMeasurementById(int id)
     {
         Measurement measurement = new Measurement();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectMeasurementByGymnastId", new SqlParameter { ParameterName = "@GymnastId", Value = gymnastId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int });
-        while (reader.Read())
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectMeasurementById", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
         {
-            measurement = new Measurement
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                GymnastId = Convert.ToInt32(reader.GetValue(1)),
-                Weight = Convert.ToDecimal(reader.GetValue(2)),
-                Neck = Convert.ToDecimal(reader.GetValue(3)),
-                Shoulders = Convert.ToDecimal(reader.GetValue(4)),
-                RightArm = Convert.ToDecimal(reader.GetValue(5)),
-                LeftArm = Convert.ToDecimal(reader.GetValue(6)),
-                Chest = Convert.ToDecimal(reader.GetValue(7)),
-                BellyButton = Convert.ToDecimal(reader.GetValue(8)),
-                Hips = Convert.ToDecimal(reader.GetValue(9)),
-                RightThigh = Convert.ToDecimal(reader.GetValue(10)),
-                LeftThigh = Convert.ToDecimal(reader.GetValue(11)),
-                RightCalf = Convert.ToDecimal(reader.GetValue(12)),
-                LeftCalf = Convert.ToDecimal(reader.GetValue(13)),
-                Arm = Convert.ToDecimal(reader.GetValue(14)),
-                Waist = Convert.ToDecimal(reader.GetValue(15)),
-                Thigh = Convert.ToDecimal(reader.GetValue(16)),
-                Back = Convert.ToDecimal(reader.GetValue(17)),
-                CreatedDate = Convert.ToDateTime(reader.GetValue(18).ToString())
-            };
+                measurement = new Measurement
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    GymnastId = Convert.ToInt32(reader.GetValue(1)),
+                    Weight = Convert.ToDecimal(reader.GetValue(2)),
+                    Neck = Convert.ToDecimal(reader.GetValue(3)),
+                    Shoulders = Convert.ToDecimal(reader.GetValue(4)),
+                    RightArm = Convert.ToDecimal(reader.GetValue(5)),
+                    LeftArm = Convert.ToDecimal(reader.GetValue(6)),
+                    Chest = Convert.ToDecimal(reader.GetValue(7)),
+                    BellyButton = Convert.ToDecimal(reader.GetValue(8)),
+                    Hips = Convert.ToDecimal(reader.GetValue(9)),
+                    RightThigh = Convert.ToDecimal(reader.GetValue(10)),
+                    LeftThigh = Convert.ToDecimal(reader.GetValue(11)),
+                    RightCalf = Convert.ToDecimal(reader.GetValue(12)),
+                    LeftCalf = Convert.ToDecimal(reader.GetValue(13)),
+                    Arm = Convert.ToDecimal(reader.GetValue(14)),
+                    Waist = Convert.ToDecimal(reader.GetValue(15)),
+                    Thigh = Convert.ToDecimal(reader.GetValue(16)),
+                    Back = Convert.ToDecimal(reader.GetValue(17)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(18).ToString())
+                };
+            }
+        }
+        return measurement;
+    }
+
+    [HttpGet]
+    public List<Measurement> SelectMeasurementByGymnastId(int gymnastId)
+    {
+        List<Measurement> measurements = new List<Measurement>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectMeasurementByGymnastId", new SqlParameter { ParameterName = "@GymnastId", Value = gymnastId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                measurements.Add(new Measurement
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    GymnastId = Convert.ToInt32(reader.GetValue(1)),
+                    Weight = Convert.ToDecimal(reader.GetValue(2)),
+                    Neck = Convert.ToDecimal(reader.GetValue(3)),
+                    Shoulders = Convert.ToDecimal(reader.GetValue(4)),
+                    RightArm = Convert.ToDecimal(reader.GetValue(5)),
+                    LeftArm = Convert.ToDecimal(reader.GetValue(6)),
+                    Chest = Convert.ToDecimal(reader.GetValue(7)),
+                    BellyButton = Convert.ToDecimal(reader.GetValue(8)),
+                    Hips = Convert.ToDecimal(reader.GetValue(9)),
+                    RightThigh = Convert.ToDecimal(reader.GetValue(10)),
+                    LeftThigh = Convert.ToDecimal(reader.GetValue(11)),
+                    RightCalf = Convert.ToDecimal(reader.GetValue(12)),
+                    LeftCalf = Convert.ToDecimal(reader.GetValue(13)),
+                    Arm = Convert.ToDecimal(reader.GetValue(14)),
+                    Waist = Convert.ToDecimal(reader.GetValue(15)),
+                    Thigh = Convert.ToDecimal(reader.GetValue(16)),
+                    Back = Convert.ToDecimal(reader.GetValue(17)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(18).ToString())
+                });
+            }
+        }
+        return measurements;
+    }
+
+    [HttpGet]
+    public Measurement SelectLastMeasurement(int gymnastId)
+    {
+        Measurement measurement = new Measurement();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectLastMeasurement", new SqlParameter { ParameterName = "@GymnastId", Value = gymnastId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                measurement = new Measurement
+                    {
+                        Id = Convert.ToInt32(reader.GetValue(0)),
+                        GymnastId = Convert.ToInt32(reader.GetValue(1)),
+                        Weight = Convert.ToDecimal(reader.GetValue(2)),
+                        Neck = Convert.ToDecimal(reader.GetValue(3)),
+                        Shoulders = Convert.ToDecimal(reader.GetValue(4)),
+                        RightArm = Convert.ToDecimal(reader.GetValue(5)),
+                        LeftArm = Convert.ToDecimal(reader.GetValue(6)),
+                        Chest = Convert.ToDecimal(reader.GetValue(7)),
+                        BellyButton = Convert.ToDecimal(reader.GetValue(8)),
+                        Hips = Convert.ToDecimal(reader.GetValue(9)),
+                        RightThigh = Convert.ToDecimal(reader.GetValue(10)),
+                        LeftThigh = Convert.ToDecimal(reader.GetValue(11)),
+                        RightCalf = Convert.ToDecimal(reader.GetValue(12)),
+                        LeftCalf = Convert.ToDecimal(reader.GetValue(13)),
+                        Arm = Convert.ToDecimal(reader.GetValue(14)),
+                        Waist = Convert.ToDecimal(reader.GetValue(15)),
+                        Thigh = Convert.ToDecimal(reader.GetValue(16)),
+                        Back = Convert.ToDecimal(reader.GetValue(17)),
+                        CreatedDate = Convert.ToDateTime(reader.GetValue(18).ToString())
+                    };
+            }
         }
         return measurement;
     }
@@ -2564,35 +2916,37 @@ public class MemberController : ApiController
     {
         List<Measurement> measurements = new List<Measurement>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-        SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectMeasurementByGymnastIdByDate",
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectMeasurementByGymnastIdByDate",
             new SqlParameter { ParameterName = "@GymnastId", Value = gymnastId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@FromDate", Value = fromDate, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.DateTime },
             new SqlParameter { ParameterName = "@ToDate", Value = toDate, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.DateTime }
-            );
-        while (reader.Read())
+            ))
         {
-            measurements.Add(new Measurement
+            while (reader.Read())
             {
-                Id = Convert.ToInt32(reader.GetValue(0)),
-                GymnastId = Convert.ToInt32(reader.GetValue(1)),
-                Weight = Convert.ToDecimal(reader.GetValue(2)),
-                Neck = Convert.ToDecimal(reader.GetValue(3)),
-                Shoulders = Convert.ToDecimal(reader.GetValue(4)),
-                RightArm = Convert.ToDecimal(reader.GetValue(5)),
-                LeftArm = Convert.ToDecimal(reader.GetValue(6)),
-                Chest = Convert.ToDecimal(reader.GetValue(7)),
-                BellyButton = Convert.ToDecimal(reader.GetValue(8)),
-                Hips = Convert.ToDecimal(reader.GetValue(9)),
-                RightThigh = Convert.ToDecimal(reader.GetValue(10)),
-                LeftThigh = Convert.ToDecimal(reader.GetValue(11)),
-                RightCalf = Convert.ToDecimal(reader.GetValue(12)),
-                LeftCalf = Convert.ToDecimal(reader.GetValue(13)),
-                Arm = Convert.ToDecimal(reader.GetValue(14)),
-                Waist = Convert.ToDecimal(reader.GetValue(15)),
-                Thigh = Convert.ToDecimal(reader.GetValue(16)),
-                Back = Convert.ToDecimal(reader.GetValue(17)),
-                CreatedDate = Convert.ToDateTime(reader.GetValue(18).ToString())
-            });
+                measurements.Add(new Measurement
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    GymnastId = Convert.ToInt32(reader.GetValue(1)),
+                    Weight = Convert.ToDecimal(reader.GetValue(2)),
+                    Neck = Convert.ToDecimal(reader.GetValue(3)),
+                    Shoulders = Convert.ToDecimal(reader.GetValue(4)),
+                    RightArm = Convert.ToDecimal(reader.GetValue(5)),
+                    LeftArm = Convert.ToDecimal(reader.GetValue(6)),
+                    Chest = Convert.ToDecimal(reader.GetValue(7)),
+                    BellyButton = Convert.ToDecimal(reader.GetValue(8)),
+                    Hips = Convert.ToDecimal(reader.GetValue(9)),
+                    RightThigh = Convert.ToDecimal(reader.GetValue(10)),
+                    LeftThigh = Convert.ToDecimal(reader.GetValue(11)),
+                    RightCalf = Convert.ToDecimal(reader.GetValue(12)),
+                    LeftCalf = Convert.ToDecimal(reader.GetValue(13)),
+                    Arm = Convert.ToDecimal(reader.GetValue(14)),
+                    Waist = Convert.ToDecimal(reader.GetValue(15)),
+                    Thigh = Convert.ToDecimal(reader.GetValue(16)),
+                    Back = Convert.ToDecimal(reader.GetValue(17)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(18).ToString())
+                });
+            }
         }
         return measurements;
     }
@@ -2617,6 +2971,7 @@ public class MemberController : ApiController
 
     #endregion
 
+    #region Test
 
     [HttpPost]
     public HttpResponseMessage TestInsert(RoutineViewModel routineViewModel)
@@ -2636,20 +2991,13 @@ public class MemberController : ApiController
         return response;
     }
 
-
-
     [HttpGet]
-    public List<byte[]> GetImages()
+    public DateTime GetDateTime(string datetime)
     {
-        //Image image = Image.FromFile(@"D:\Photo\1193\04252013\0001.jpg");
-        //MemoryStream memoryStream = new MemoryStream();
-        //image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-        byte[] image = File.ReadAllBytes(@"D:\Photo\1193\04252013\0001.jpg");
-        byte[] image2 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0002.jpg");
-        byte[] image3 = File.ReadAllBytes(@"D:\Photo\1193\04252013\0003.jpg");
-
-        List<byte[]> images = new List<byte[]> { image, image2, image3 };
-        return images;
+        DateTime result;
+        bool parse = DateTime.TryParse(datetime, out result);
+        return result;
     }
 
+    #endregion
 }

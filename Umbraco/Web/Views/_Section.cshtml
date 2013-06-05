@@ -5,26 +5,18 @@
 @{
     Layout = null;
 }
-
-
 <!DOCTYPE html>
 <html>
-    <head>
-        @RenderSection("head", required: false)
-        <title>@ViewBag.Title</title>
-        @Styles.Render("~/css/all", "~/css/section")
-        @RenderSection("css", required: false)
-        @Scripts.Render("~/scripts/modernizr")
-    </head>
-    <body>
-        <header>
-        </header>
-        <div id="body">
-            @RenderBody()
-        </div>
-        <footer>
-        </footer>
-        @Scripts.Render("~/scripts/jquery", "~/scripts/jqueryui", "~/scripts/all", "~/scripts/section")
-        @RenderSection("script", required: false)
-    </body>
+<head>
+    @RenderSection("head", required: false)
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/css/all")
+    @RenderSection("css", required: false)
+    @Scripts.Render("~/scripts/modernizr")
+</head>
+<body>
+    @RenderBody()
+    @Scripts.Render("~/scripts/jquery", "~/scripts/jqueryui", "~/scripts/all")
+    @RenderSection("script", required: false)
+</body>
 </html>

@@ -45,7 +45,6 @@
                     Html.Action("GetPrevalue", "DataTypeSurface", new { id = 1220 });
                     IEnumerable<PreValue> types = (IEnumerable<PreValue>)TempData["resource"];
                     List<SelectListItem> typeList = new List<SelectListItem>(types.Select(x => new SelectListItem { Text = x.Value, Value = x.Id.ToString() }));
-
                 }
                 @Html.DropDownListFor(x => x.TypeId, new SelectList(typeList, "Value", "Text"), "Choise...")
                 @*            <select name="ctl00$body$ddlType" id="body_ddlType">
@@ -64,7 +63,6 @@
                     Html.Action("GetPrevalue", "DataTypeSurface", new { id = 1219 });
                     IEnumerable<PreValue> units = (IEnumerable<PreValue>)TempData["resource"];
                     List<SelectListItem> unitList = new List<SelectListItem>(units.Select(x => new SelectListItem { Text = x.Value, Value = x.Id.ToString() }));
-
                 }
                 @Html.DropDownListFor(x => x.UnitId, new SelectList(unitList, "Value", "Text"), "Choise...")
                 

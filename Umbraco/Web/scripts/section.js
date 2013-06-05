@@ -8,8 +8,8 @@
         tvWidth = tvWidth - 20;
     }
     var tabviewHeight = tvHeight - 12;
-    $('#tabSection123').height((tabviewHeight - 67));
-    $('#tabSection123').width((tvWidth - 2));
+    $('#tabSection').height((tabviewHeight - 67));
+    $('#tabSection').width((tvWidth - 2));
 }
 
 $(document).ready(function () {

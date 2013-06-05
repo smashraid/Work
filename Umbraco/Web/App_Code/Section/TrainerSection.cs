@@ -18,9 +18,9 @@ using umbraco.cms.businesslogic.web;
 
 namespace Custom
 {
-    public class UmbracoClient : BaseTree
+    public class TrainerSection : BaseTree
     {
-        public UmbracoClient(string application)
+        public TrainerSection(string application)
             : base(application)
         {
             this.ShowContextMenu = false;
@@ -52,7 +52,7 @@ namespace Custom
                 node.NodeID = gymnast.Id.ToString();
                 node.Text = member.Text;
                 node.Icon = "b_user.png";
-                node.Action = string.Format("javascript:openSendNewsletter({0});", gymnast.Id);
+                node.Action = string.Format("javascript:openTrainer({0});", gymnast.Id);
                 node.Source = gymnast.HasChildren ? this.GetTreeServiceUrl(gymnast.Id).Replace("trainer", "content") : "";
                 Tree.Add(node);
             }
@@ -84,7 +84,7 @@ namespace Custom
         public override void RenderJS(ref StringBuilder Javascript)
         {
             Javascript.Append(@"
-                function openSendNewsletter(id) {                   
+                function openTrainer(id) {                   
                     parent.right.document.location.href = '/umbraco/editContent.aspx?id=' + id;
                 }
 			");

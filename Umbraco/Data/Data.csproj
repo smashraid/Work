@@ -64,8 +64,11 @@
     <Compile Include="UmbracoPreValue.cs" />
     <Compile Include="UmbracoUser.cs" />
     <Compile Include="ViewModel\ChatViewModel.cs" />
+    <Compile Include="ViewModel\PhotoViewModel.cs" />
     <Compile Include="ViewModel\RoutineViewModel.cs" />
+    <Compile Include="ViewModel\SuperSetViewModel.cs" />
     <Compile Include="ViewModel\TopicViewModel.cs" />
+    <Compile Include="ViewModel\WorkoutViewModel.cs" />
     <Compile Include="Workout.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
