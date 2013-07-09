@@ -1,0 +1,139 @@
+@model Dictionary<string, string>
+@{
+    Dictionary<string, string> x = (Dictionary<string, string>)Model;
+    string gymnastId = Model["gymnastid"];
+    string memberId = Model["memberid"];
+}
+<div class="row-fluid" >
+    <div id="content-topic" class="span10">
+        <fieldset>
+            <legend>Topic</legend>
+            <div class="form-horizontal" data-bind="with: topic">
+                @*<div style="margin-bottom: 0.5em;">
+                    <input type="text" name="name" placeholder="Name" data-bind="value: Name" class="input-large" />
+                </div>*@
+                <div style="margin-bottom: 0.5em;">
+                    @*<textarea name="description" placeholder="Description" data-bind="value: Description" cols="10" rows="3" class="input-xxlarge" ></textarea>    *@
+                    <textarea name="name" placeholder="Name" data-bind="value: Name" cols="10" rows="3" class="input-xxlarge" ></textarea>    
+                </div>
+                <button class="btn" data-bind="click: $root.saveTopic, visible: !$root.IsEdit(), enable: Name() != '', valueUpdate:'afterkeydown'" ><i class="icon-plus"></i></button>
+                <button class="btn" data-bind="click: $root.getTopic, visible: !$root.IsEdit()"><i class="icon-refresh"></i></button>
+                <input type="hidden" name="Id" value=" " data-bind="text: Id" />
+                <button class="btn" data-bind="click: $root.updateTopic, visible: $root.IsEdit" ><i class="icon-ok"></i></button>
+                <button class="btn" data-bind="click: $root.cancelTopic, visible: $root.IsEdit"><i class="icon-remove"></i></button>
+            </div>
+            <br/>
+        </fieldset>
+            <ul class="media-list" data-bind="foreach: topics">
+                <li class="media">
+                    <a class="pull-left" href="#">
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading" data-bind="text: Name"></h4>
+                            <small data-bind="text: CreatedDate"></small>
+                            <p>
+                                <button class="btn" data-bind="click: $root.openPost"><i class="icon-ok-sign"></i></button>
+                                <button class="btn" data-bind="click: $root.editTopic, visible: IsOwner"><i class="icon-pencil"></i></button>
+                                <button class="btn" data-bind="click: $root.deleteTopic, visible: IsOwner"><i class="icon-trash"></i></button>
+                            </p>
+                    </div>
+                </li>
+            </ul>
+       
+    </div>
+</div>
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/knockout.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function Paging2() {
+        var self = this;
+        self.Id = ko.observable();
+        self.CurrentPage = ko.observable(1);
+        self.Pagesize = ko.observable(10);
+        self.Records = ko.observable();
+        self.TotalPages = ko.observable();
+    }
+
+    function TopicViewModel() {
+        var self = this;
+        self.Id = ko.observable(0);
+        self.Name = ko.observable("");
+        //self.Description = ko.observable("");
+        self.UserId = ko.observable();
+        self.UserType = ko.observable();
+        self.User = ko.observable();
+        self.FirstName = ko.observable();
+        self.LastName = ko.observable();
+        self.CreatedDate = ko.observable();
+        self.UpdatedDate = ko.observable();
+        self.IsOwner = ko.observable();
+        //self.LastPost = ko.observable();
+    }
+
+    function TopicsViewModel() {
+        var self = this;
+        self.topics = ko.observableArray();
+        self.paging = new Paging2();
+        self.topic = new TopicViewModel();
+        self.IsEdit = ko.observable(false);
+        self.saveTopic = function () {
+            $.post('/api/member/InsertTopic', { Name: self.topic.Name() }, function (data) {
+                self.topics.unshift(data);
+                //self.topic.Description("");
+            });
+        };
+        self.editTopic = function (topic) {
+            self.topic.Name(topic.Name);
+            //self.topic.Description(topic.Description);
+            self.topic.Id(topic.Id);
+            self.IsEdit(true);
+        };
+        self.cancelTopic = function () {
+            self.topic.Name("");
+            //self.topic.Description("");
+            self.topic.Id(0);
+            self.IsEdit(false);
+        };
+        self.updateTopic = function () {
+            $.post('/api/member/UpdateTopic', { Id: self.topic.Id(), Name: self.topic.Name() }, function (data) {
+                self.getTopic();
+                self.cancelTopic();
+            });
+        };
+        self.deleteTopic = function (topic) {
+            $.post('/api/member/DeleteTopic', { id: topic.Id }, function (data) {
+                self.topics.remove(topic);
+            });
+        };
+        self.getTopic = function () {
+             $('#content-topic').ajaxLoading();
+            $.ajax({
+                type: "GET",
+                async: false,
+                //cache: false,
+                url: '/api/member/SelectTopic',
+                data: { paging: self.paging },
+                //dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    self.topics(data.Topics);
+                    //self.paging(data.Paging);
+                     $('#content-topic').closeLoading();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+        self.openPost = function (topic) {
+            parent.right.document.location.href = '/template.aspx?view=post&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&topicid=' + topic.Id + '&topictitle=' + topic.Name;
+        };
+    }
+
+    $(document).ready(function () {
+        var model = new TopicsViewModel();
+        ko.applyBindings(model, $('#content-topic')[0]);
+        model.getTopic();
+    });
+</script>

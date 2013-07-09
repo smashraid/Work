@@ -25,5 +25,6 @@ using System.Text;
       public decimal Thigh { get; set; }
       public decimal Back { get; set; }
       public DateTime CreatedDate { get; set; }
+      public bool HasPhotos { get; set; }
     }
 

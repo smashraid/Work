@@ -27,7 +27,8 @@ public class BundleConfig
                 "~/scripts/knockout.js",
                 "~/scripts/knockout.mapping.js",
                 "~/scripts/site.js",
-                "~/scripts/section"
+                "~/scripts/section.js",
+                "~/scripts/helper.js"
                 ));
 
         //bundles.Add(

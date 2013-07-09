@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <UmbracoData>
+    <Data key="1110">Purchase</Data>
     <Data key="1077">WorkoutState</Data>
     <Data key="1071">Resistance</Data>
     <Data key="1074">Type</Data>
@@ -26,4 +27,5 @@
     <Data key="C:\Users\stsuchidac\Documents\GitHub\Work\Umbraco\Web\media\">Media</Data>
     <Data key="D:\Photo\">Photo</Data>
     <Data key="D:\Photo\Temp\">Temp</Data>
+    <!--<add key="ResourceData" value="C:\Photo\ResourceData.xml" />-->
 </UmbracoData>

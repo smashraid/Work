@@ -46,6 +46,7 @@
     <Compile Include="Device.cs" />
     <Compile Include="EmailMessage.cs" />
     <Compile Include="Exercise.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Paging.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="Gymnast.cs" />
@@ -64,6 +65,10 @@
     <Compile Include="UmbracoPreValue.cs" />
     <Compile Include="UmbracoUser.cs" />
     <Compile Include="ViewModel\ChatViewModel.cs" />
+    <Compile Include="ViewModel\DashboardViewModel.cs" />
+    <Compile Include="ViewModel\GymnastViewModel.cs" />
+    <Compile Include="ViewModel\InfomationViewModel.cs" />
+    <Compile Include="ViewModel\MeasurementViewModel.cs" />
     <Compile Include="ViewModel\PhotoViewModel.cs" />
     <Compile Include="ViewModel\RoutineViewModel.cs" />
     <Compile Include="ViewModel\SuperSetViewModel.cs" />

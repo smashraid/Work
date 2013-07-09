@@ -1,5 +1,5 @@
-﻿@model Account
-@using (Html.BeginUmbracoForm("Login", "AccountSurface"))
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Account>
+@using (Html.BeginUmbracoForm("Login", "AccountSurface", new { id = "loginform" }))
 {
     <div class=".form-horizontal">
         <div class="control-group">
@@ -7,16 +7,15 @@
                 User</label>
             <div class="controls">
                 <div class="input-prepend">
-                    <input id="LoginName" type="text" name="LoginName" placeholder="User" value="" >
+                    <input id="LoginName" type="text" name="LoginName" placeholder="User" value="">
                 </div>
             </div>
-
         </div>
         <div class="control-group">
             <label class="control-label" for="Password">
                 Password</label>
             <div class="controls">
-                <input id="Password" type="password" name="Password" placeholder="Password" value="" >
+                <input id="Password" type="password" name="Password" placeholder="Password" value="">
             </div>
         </div>
         <div class="control-group">
@@ -32,6 +31,14 @@
                 <a href="/register" class="btn btn-primary">Register</a>
             </div>
         </div>
-        
     </div>
 }
+<script type="text/javascript">
+    $(document).ready(function () {
+        alert('Hello World');
+
+        $('div.header').children('li').each(function (index, element) {
+            alert($(element).attr('class'));
+        });
+    });
+</script>

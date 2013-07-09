@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
@@ -99,10 +100,10 @@ public class UmbracoCustom : System.Web.UI.Page
     public static string PropertyValue(UmbracoType parameter, string value)
     {
         int id = Convert.ToInt32(GetParameterValue(parameter));
-            IEnumerable<PreValue> data = DataTypeValue(id);
-            PreValue preValue = data.SingleOrDefault(dt => dt.Value.ToLower() == value.ToLower());
-            string result = (preValue != null) ? preValue.Value : string.Empty;
-        
+        IEnumerable<PreValue> data = DataTypeValue(id);
+        PreValue preValue = data.SingleOrDefault(dt => dt.Value.ToLower() == value.ToLower());
+        string result = (preValue != null) ? preValue.Value : string.Empty;
+
         return result;
     }
 
@@ -328,6 +329,33 @@ public class UmbracoCustom : System.Web.UI.Page
                   );
         return guid;
     }
+
+    public static string ImageToBase64(Image image, System.Drawing.Imaging.ImageFormat format)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            // Convert Image to byte[]
+            image.Save(ms, format);
+            byte[] imageBytes = ms.ToArray();
+
+            // Convert byte[] to Base64 String
+            string base64String = Convert.ToBase64String(imageBytes);
+            //return string.Format("data:image/jpeg;base64,{0}", base64String);
+            return base64String;
+        }
+    }
+
+    public static Image Base64ToImage(string base64String)
+    {
+        // Convert Base64 String to byte[]
+        byte[] imageBytes = Convert.FromBase64String(base64String);
+        MemoryStream ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
+
+        // Convert byte[] to Image
+        ms.Write(imageBytes, 0, imageBytes.Length);
+        Image image = Image.FromStream(ms, true);
+        return image;
+    }
 }
 
 public enum UmbracoType
@@ -355,5 +383,6 @@ public enum UmbracoType
     Training,
     Resistance,
     WorkoutState,
-	Temp
+    Temp,
+    Purchase
 }

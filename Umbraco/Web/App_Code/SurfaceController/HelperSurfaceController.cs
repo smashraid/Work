@@ -28,6 +28,7 @@ using umbraco.cms.businesslogic.datatype;
 using umbraco.cms.businesslogic.media;
 using umbraco.cms.businesslogic.member;
 using umbraco.cms.businesslogic.web;
+using umbraco.cms.presentation.Trees;
 using umbraco.presentation.nodeFactory;
 using Property = umbraco.cms.businesslogic.property.Property;
 
@@ -46,6 +47,19 @@ public class HelperSurfaceController : Umbraco.Web.Mvc.SurfaceController
 
         //ApplePushChannelSettings settings = new ApplePushChannelSettings(false, cert, "ilovebbq");
         //pushService.RegisterAppleService(settings);
+    }
+
+    [HttpGet]
+    public void GetNodes()
+    {
+        XmlTree xTree = new XmlTree();
+        ITreeService treeParams = new TreeService(1099, "content", false, false, TreeDialogModes.none, null);
+        TreeDefinition tree = TreeDefinitionCollection.Instance.FindTree("content");
+        BaseTree instance = tree.CreateInstance();
+        instance.SetTreeParameters((ITreeService)treeParams);
+        instance.Render(ref xTree);
+        Response.ContentType = "application/json";
+        Response.Write(((object)xTree).ToString());
     }
 
     [HttpGet]
@@ -259,7 +273,7 @@ public class HelperSurfaceController : Umbraco.Web.Mvc.SurfaceController
         Id.Direction = ParameterDirection.Output;
         SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertTopic", Id,
             new SqlParameter { ParameterName = "@Name", Value = topic.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 50 },
-                   new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 500 },
+                   //new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 500 },
                    new SqlParameter { ParameterName = "@UserId", Value = topic.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                    new SqlParameter { ParameterName = "@UserType", Value = topic.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
                    );
@@ -427,7 +441,7 @@ public class HelperSurfaceController : Umbraco.Web.Mvc.SurfaceController
             {
                 Id = Convert.ToInt32(reader.GetValue(0)),
                 Name = reader.GetValue(1).ToString(),
-                Description = reader.GetValue(2).ToString(),
+                //Description = reader.GetValue(2).ToString(),
                 UserId = Convert.ToInt32(reader.GetValue(3)),
                 UserType = Convert.ToInt32(reader.GetValue(4)),
                 CreatedDate = Convert.ToDateTime(reader.GetValue(5).ToString()),
@@ -529,7 +543,7 @@ public class HelperSurfaceController : Umbraco.Web.Mvc.SurfaceController
             {
                 Id = Convert.ToInt32(reader.GetValue(0)),
                 Name = reader.GetValue(1).ToString(),
-                Description = reader.GetValue(2).ToString(),
+                //Description = reader.GetValue(2).ToString(),
                 UserId = Convert.ToInt32(reader.GetValue(3)),
                 UserType = Convert.ToInt32(reader.GetValue(4)),
                 CreatedDate = Convert.ToDateTime(reader.GetValue(5).ToString()),

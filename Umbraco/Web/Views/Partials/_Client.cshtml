@@ -1,0 +1,155 @@
+@model Dictionary<string, string>
+@{
+    Dictionary<string, string> x = (Dictionary<string, string>)Model;
+    string gymnastId = Model["gymnastid"];
+    string memberId = Model["memberid"];
+}
+<div id="content-client" class="form-horizontal" style="font-size: 11px;">
+    <div class="row-fluid">
+        <fieldset class="span5">
+            <legend>Client Information</legend>
+            <div class="control-group">
+                <label class="control-label" >
+                    FirstName</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: FirstName"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    FirstName</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: LastName"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    Email</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: Email"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    Gender</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: Gender"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    City</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: City"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    State</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: State"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    Country</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: Country"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    Zip Code</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: ZipCode"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    Address</label>
+                <div class="controls">
+                    <textarea id="address" data-bind="text: Address" placeholder="Address" rows="8" cols="40" class="uneditable-textarea"></textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    Phone</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: Phone"></span>
+                </div>
+            </div>
+        </fieldset>
+        <div class="row-fluid">
+          <fieldset class="span5">
+            <legend>Gymnast Information</legend>
+            <div class="control-group">
+                <label class="control-label" >
+                    Height</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: Height"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    StartWeight</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: StartWeight"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" >
+                    GoalWeight</label>
+                <div class="controls">
+                    <span class="input-large uneditable-input" data-bind="text: GoalWeight"></span>
+                </div>
+            </div>
+        </fieldset>
+         <fieldset class="span5">
+            <legend>Avatar</legend>
+            <div data-bind="with: Avatar" class="thumbnail">
+                <img data-bind="attr: { src: photo }" alt="No Photo" />
+            </div>
+        </fieldset>
+    </div>
+    </div>
+    
+</div>
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/knockout.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function GymnastViewModel(gymnast, avatar) {
+        var self = this;
+        self.Id = ko.observable(gymnast.Id);
+        self.Name = ko.observable(gymnast.Name);
+        self.FirstName = ko.observable(gymnast.FirstName);
+        self.LastName = ko.observable(gymnast.LastName);
+        self.Email = ko.observable(gymnast.Email);
+        self.Gender = ko.observable(gymnast.Gender);
+        self.Birthday = ko.observable(gymnast.Birthday);
+        self.City = ko.observable(gymnast.City);
+        self.State = ko.observable(gymnast.State);
+        self.Country = ko.observable(gymnast.Country);
+        self.ZipCode = ko.observable(gymnast.ZipCode);
+        self.Address = ko.observable(gymnast.Address);
+        self.Phone = ko.observable(gymnast.Phone);
+        self.Height = ko.observable(gymnast.Height);
+        self.StartWeight = ko.observable(gymnast.StartWeight);
+        self.GoalWeight = ko.observable(gymnast.GoalWeight);
+        self.Avatar = new AvatarViewModel(avatar);
+    }
+
+    function AvatarViewModel(avatar) {
+        var self = this;
+        self.photo = ko.observable(avatar);
+    }
+
+    $(document).ready(function () {
+        $('#content-client').ajaxLoading();
+        $.get('/api/member/SelectMemberById', { id: @memberId }, function (data) {
+            $.get('/api/member/GetMemberAvatar', { id: @memberId }, function (data1) {
+                ko.applyBindings(new GymnastViewModel(data, data1));
+                $('#content-client').closeLoading();
+            });
+        });
+    });
+</script>

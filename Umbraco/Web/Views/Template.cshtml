@@ -1,75 +1,51 @@
-﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
-@{
+﻿@{
     Layout = "_Section.cshtml";
+    string view = Request.QueryString["view"];
+    string gymnastId = Request.QueryString["gymnastid"];
+    string memberId = Request.QueryString["memberid"];
+    string chatId = Request.QueryString["chatid"];
+    string chatTitle = Request.QueryString["chattitle"];
+    string topicId = Request.QueryString["topicid"];
+    string topicTitle = Request.QueryString["topictitle"];
+    string workoutId = Request.QueryString["workoutid"];
+    Dictionary<string, string> model = new Dictionary<string, string>
+        {
+            {"gymnastid", gymnastId},
+            {"memberid", memberId},
+            {"chatid", chatId},
+            {"chattitle", chatTitle},
+            {"workoutid", workoutId},
+            {"topicid", topicId},
+            {"topictitle", topicTitle}
+        };
 }
-<table cellspacing="0" cellpadding="0" style="height: auto; width: 100%; border: none 0px; ">
-    <tbody>
-        <tr valign="top">
-            <td height="20">
-            </td>
-            <td>
-                <div style="height: auto; width: 100%;">
-                    <div class="header">
-                        <ul>
-                            <li class="tabOn">
-                                <a>
-                                    <span>
-                                        Measurements
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="tabOff">
-                                <a>
-                                    <span>
-                                        Messages
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="tabOff">
-                                <a>
-                                    <span>
-                                        Properties
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="tabpagecontainer" >
-                        <div class="tabpage" style="display: block;">
-                            <div class="menubar">
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td>                                                        
-                                                </td>
-                                                <td>
-                                                    <div style="height: 26px; width: auto;" class="slh">
-                                                        <div class="sl" style="top: 0px; left: 0px; height: 26px; width: auto;" >                                                                
-                                                            <!-- Aca colocar botones -->
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                        
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                            </div>
-                            <div style="height: auto; width: auto;"  class="tabpagescrollinglayer">
-                                <div style="text-align: center;" class="tabpageContent">
-                                </div>
-                            </div>
-                        </div>                          
-                    </div>
-                    <div class="footer">
-                        <div class="status">
-                            <h2>
-                            </h2>
-                        </div>
-                    </div>
-                </div>                    
-            </td>
-        </tr>
-    </tbody>
-</table>
+@switch (view)
+{
+    case "gymnast":
+        @Html.Partial("_Client", model)
+        break;
+    case "measurement":
+        @Html.Partial("_Measurement", model)
+        break;
+    case "workout":
+        @Html.Partial("_Workout", model)
+        break;
+    case "chat":
+        @Html.Partial("_Chat", model)
+        break;
+    case "talk":
+        @Html.Partial("_Talk", model)
+        break;
+    case "topic":
+        @Html.Partial("_Topic", model)
+        break;
+    case "post":
+        @Html.Partial("_Post", model)
+        break;
+    case "routine":
+        @Html.Partial("_Routine", model)
+        break;
+    case "superset":
+        @Html.Partial("_Topic")
+        break;
+}

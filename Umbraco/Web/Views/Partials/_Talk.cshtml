@@ -1,0 +1,117 @@
+@model Dictionary<string, string>
+@{
+    Dictionary<string, string> x = (Dictionary<string, string>)Model;
+    string gymnastId = Model["gymnastid"];
+    string memberId = Model["memberid"];
+    string chatTitle = Model["chattitle"];
+    string chatId = Model["chatid"];
+} 
+<div id="content-talk" >
+    <fieldset>
+        <legend>Talk</legend>
+        <div class="form-inline" data-bind="with: talk">
+            <input type="text" name="Message" placeholder="Message" value="" data-bind="value: Message" />
+            <button class="btn" data-bind="click: $root.saveTalk, visible: !$root.IsEdit(), enable: Message() != '', valueUpdate:'afterkeydown'" ><i class="icon-plus"></i></button>
+            <button class="btn" data-bind="click: $root.getTalk, visible: !$root.IsEdit()"><i class="icon-refresh"></i></button>
+            <input type="hidden" name="Id" value=" " data-bind="text: Id" />
+            <button class="btn" data-bind="click: $root.updateTalk, visible: $root.IsEdit" ><i class="icon-ok"></i></button>
+            <button class="btn" data-bind="click: $root.cancelTalk, visible: $root.IsEdit"><i class="icon-remove"></i></button>
+        </div><br/>
+    </fieldset>
+    <div>
+    <h3>@chatTitle</h3>
+        <div data-bind="foreach: talks" class="span10">
+            <div class="media">
+                <a class="pull-left" href="#">
+                </a>
+                <div class="media-body">
+                    <h4  class="media-heading"><span data-bind="text: FirstName"></span> <span data-bind="text: LastName"></span></h4>
+                    <small data-bind="text: CreatedDate"></small>
+                    <p data-bind="text: Message"></p>
+                    <button class="btn" data-bind="click: $root.editTalk, visible: IsOwner"><i class="icon-pencil"></i></button>
+                    <button class="btn" data-bind="click: $root.deleteTalk, visible: IsOwner"><i class="icon-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/knockout.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function TalkViewModel() {
+        var self = this;
+        self.Id = ko.observable(0);
+        self.ChatId = ko.observable(@chatId);
+        self.Message = ko.observable("");
+        self.UserId = ko.observable();
+        self.UserType = ko.observable();
+        self.User = ko.observable();
+        self.FirstName = ko.observable();
+        self.LastName = ko.observable();
+        self.CreatedDate = ko.observable();
+        self.UpdatedDate = ko.observable();
+        self.IsOwner = ko.observable();
+        self.ReportAbuse = ko.observable();
+        self.FullName = ko.computed(function () {
+            return self.FirstName() + ' ' + self.LastName();
+        });
+    }
+
+    function TalksViewModel() {
+        var self = this;
+        self.talks = ko.observableArray();
+        self.talk = new TalkViewModel();
+        self.IsEdit = ko.observable(false);
+        self.saveTalk = function () {
+            $.post('/api/member/InsertTalk',  ko.toJS(self.talk) , function (data) {
+                self.talks.unshift(data);
+                self.talk.Message("");
+            });
+        };
+         self.editTalk = function (talk) {
+            self.talk.Message(talk.Message);
+            self.talk.Id(talk.Id);
+            self.IsEdit(true);
+        };
+        self.cancelTalk = function () {
+            self.talk.Message("");
+            self.talk.Id(0);
+            self.IsEdit(false);
+        };
+        self.updateTalk = function () {
+            $.post('/api/member/UpdateTalk', { Id: self.talk.Id(), Message: self.talk.Message() }, function (data) {
+                self.getTalk();
+                self.cancelTalk();
+            });
+        };
+        self.deleteTalk = function (talk) {
+            $.post('/api/member/DeleteTalk', { id: talk.Id }, function (data) {
+                self.talks.remove(talk);
+            });
+        };
+        self.getTalk = function () {
+            $.ajax({
+                type: "GET",
+                async: false,
+                //cache: false,
+                url: '/api/member/SelectTalk',
+                data: { id: @chatId },
+                //dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    self.talks(data);
+                    console.log(data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+    }
+
+    $(document).ready(function() {
+        var model = new TalksViewModel();
+        ko.applyBindings(model, $('#content-talk')[0]);
+        model.getTalk();
+    });
+</script>

@@ -1,9 +1,11 @@
 ﻿@using System.Web.Optimization
+@using umbraco.BusinessLogic
 @using umbraco.cms.businesslogic.member
 @using umbraco.cms.businesslogic.web
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = null;
+    User user = umbraco.BusinessLogic.User.GetCurrent();
 }
 <!DOCTYPE html>
 <html>
@@ -14,9 +16,57 @@
     @RenderSection("css", required: false)
     @Scripts.Render("~/scripts/modernizr")
 </head>
-<body>
-    @RenderBody()
-    @Scripts.Render("~/scripts/jquery", "~/scripts/jqueryui", "~/scripts/all")
-    @RenderSection("script", required: false)
-</body>
+    <body>
+        <div class="container">
+            <div class="navbar navbar navbar-fixed-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <button data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar collapsed" type="button">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a href="#" class="brand">Metafitness</a>
+                        <div class="nav-collapse collapse" style="height: 0px;">
+                            <p class="navbar-text pull-right">
+                                Logged in as @user.Name
+                            </p>
+                            <ul class="nav">
+                                <li class="active"><a href="#">Dashboard</a></li>
+                                <li><a href="#contact">Gymnast</a></li>
+                                <li><a href="#contact">Measurement</a></li>
+                                <li><a href="#contact">Workout</a></li>
+                                <li><a href="#contact">Chat</a></li>
+                                <li><a href="#contact">Topic</a></li>
+                            </ul>
+                        </div><!--/.nav-collapse -->
+                    </div>
+                </div>
+            </div>
+            <div class="header">
+                <ul>
+                    <li class="tabOn"><a href="#"><span>@ViewBag.Title</span></a></li>
+                </ul>
+                <div class="top">
+                </div>
+            </div>
+            <div class="title">          
+            </div>
+            <div>
+                <div class="container-fluid" style="overflow-y: scroll; overflow-x: hidden; padding: 0 0 0 10px; height: 900px; width: auto;">
+                    <div class="content tabpagescrollinglayer row-fluid" id="tabSection">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="left">
+            </div>
+            <div class="right">
+            </div>
+        </div>
+        @Scripts.Render("~/scripts/jquery", "~/scripts/jqueryui", "~/scripts/all")
+        @RenderSection("script", required: false)
+    </body>
 </html>

@@ -1,0 +1,329 @@
+@model Dictionary<string, string>
+@{
+    Dictionary<string, string> x = (Dictionary<string, string>)Model;
+    string gymnastId = Model["gymnastid"];
+    string memberId = Model["memberid"];
+}
+<div id="content-workout">
+    <div>
+        <fieldset>
+            <legend>Workout</legend>
+            <div class="row-fluid">
+                <table class="table table-striped table-hover table-condensed">
+                    <caption>
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                State
+                            </th>
+                            <th>
+                                CreatedDate
+                            </th>
+                            <th>
+                                SortOrder
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: workouts">
+                        <tr>
+                            <td data-bind="text: Name">
+                            </td>
+                            <td data-bind="text: Description">
+                            </td>
+                            <td data-bind="text: State">
+                            </td>
+                            <td data-bind="text: CreatedDate">
+                            </td>
+                            <td data-bind="text: SortOrder">
+                            </td>
+                            <td>
+                                <button class="btn" data-bind="click: $root.deleteWorkout">
+                                    <i class="icon-remove"></i>
+                                </button>
+                                <button class="btn" data-bind="click: $root.openRoutine">
+                                    <i class="icon-info-sign"></i>
+                                </button>
+                                <button class="btn" data-bind="click: $root.openSuperSet">
+                                    <i class="icon-leaf"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+    </div>
+    <!-- Button to trigger modal -->
+    <a href="#modal-workout" role="button" class="btn" data-toggle="modal" data-keyboard="false"
+       data-backdrop="false"><i class="icon-plus"></i></a>
+    <!-- Modal -->
+    <div id="modal-workout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true" data-bind="with: workout">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Add Workout</h3>
+        </div>
+        <form data-bind="submit: $root.saveWorkout">
+            <div class="modal-body">
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label">
+                                Name</label>
+                            <div class="controls">
+                                <input type="text" name="name" placeholder="Name" data-bind="value: Name" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">
+                                State</label>
+                            <div class="controls">
+                                <select data-bind='options: $root.states, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: StateId'>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="name">
+                                DateScheduled</label>
+                            <div class="controls">
+                                <input type="text" name="dateScheduled" placeholder="DateScheduled" data-bind="value: DateScheduled" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="name">
+                                DateCompleted</label>
+                            <div class="controls">
+                                <input type="text" name="dateCompleted" placeholder="DateCompleted" data-bind="value: DateCompleted" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label">
+                                Description</label>
+                            <div class="controls">
+                                <textarea name="description" placeholder="Description" rows="5" cols="5" data-bind="value: Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">
+                                Note</label>
+                            <div class="controls">
+                                <textarea name="note" placeholder="Note" rows="5" cols="5" data-bind="value: Note"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">
+                    Close</button>
+                <button class="btn btn-primary" type="submit">
+                    Save</button>
+            </div>
+        </form>
+    </div>
+    
+@*    <!-- Button to trigger modal -->
+    <a href="#modal-exercise" role="button" class="btn" data-toggle="modal" data-keyboard="false" data-backdrop="false"><i class="icon-plus"></i></a>
+    <!-- Modal -->
+    <div id="modal-exercise" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true" data-bind="with: workout">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Add Workout</h3>
+        </div>
+        <form data-bind="submit: $root.saveWorkout">
+            <div class="modal-body">
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label">
+                                Resistance</label>
+                            <div class="controls">
+                                <input type="text" name="reps" placeholder="Reps" data-bind="value: Reps" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">
+                                State</label>
+                            <div class="controls">
+                                <select data-bind='options: $root.states, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: StateId'>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="name">
+                                DateScheduled</label>
+                            <div class="controls">
+                                <input type="text" name="sets" placeholder="Sets" data-bind="value: Sets" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="name">
+                                DateCompleted</label>
+                            <div class="controls">
+                                <input type="text" name="dateCompleted" placeholder="DateCompleted" data-bind="value: DateCompleted" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label">
+                                Description</label>
+                            <div class="controls">
+                                <textarea name="description" placeholder="Description" rows="5" cols="5" data-bind="value: Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">
+                                Note</label>
+                            <div class="controls">
+                                <textarea name="note" placeholder="Note" rows="5" cols="5" data-bind="value: Note"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">
+                    Close</button>
+                <button class="btn btn-primary" type="submit">
+                    Save</button>
+            </div>
+        </form>
+    </div>*@
+</div>
+
+
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/knockout.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function WorkoutViewModel () {
+        var self = this;
+        self.Id = ko.observable();
+        self.ParentId = ko.observable();
+        self.MemberId = ko.observable(@memberId);
+        self.Name = ko.observable();
+        self.DateScheduled = ko.observable();
+        self.DateCompleted = ko.observable();
+        self.Description = ko.observable();
+        self.RateId = ko.observable();
+        self.Rate = ko.observable();
+        self.Note = ko.observable();
+        self.StateId = ko.observable();
+        self.State = ko.observable();
+        self.CreatedDate = ko.observable();
+        self.UpdatedDate = ko.observable();
+        self.SortOrder = ko.observable();
+    }
+
+    function RoutineViewModel() {
+        var self = this;
+        self.Id = ko.observable();
+        self.DocumentId = ko.observable();
+        self.ExerciseId = ko.observable();
+        self.UserId = ko.observable();
+        self.UserType = ko.observable();
+        self.ObjectId = ko.observable();
+        self.ObjectType = ko.observable();
+        self.StateId = ko.observable();
+        self.State = ko.observable();
+        //self.Exercise = ko.observable();
+        self.CreatedDate = ko.observable();
+        self.StartedDate = ko.observable();
+        self.CompletedDate = ko.observable();
+        self.CanceledDate = ko.observable();
+        self.SortOrder = ko.observable();
+        self.Reps = ko.observable();
+        self.Sets = ko.observable();
+        self.Resistance = ko.observable();
+        self.UnitId = ko.observable();
+        //self.Unit = ko.observable();
+        self.Note = ko.observable();
+    }
+
+    function SuperSetViewModel() {
+        var self = this;
+        self.Id = ko.observable();
+        self.WorkoutId = ko.observable();
+        self.Reps = ko.observable();
+        self.Sets = ko.observable();
+        self.ResistanceId = ko.observable();
+        self.Resistance = ko.observable();
+        self.UnitId = ko.observable();
+        self.Unit = ko.observable();
+        self.Note = ko.observable();
+    }
+
+    function WorkoutsViewModel() {
+        var self = this;
+        self.workouts = ko.observableArray();
+        self.workout = new WorkoutViewModel();
+        self.routines = ko.observableArray([]);
+        self.superset = ko.observable();
+        self.states = ko.observableArray();
+        self.addRoutine = function() {
+            self.routines.push(new RoutineViewModel());
+        };
+        self.saveWorkout = function () {
+            $.post('/api/member/InsertWorkout',  ko.toJS(self.workout), function (data) {
+                self.workouts.push(data);
+                $('#modal-workout').modal('hide');
+            });
+        };
+        self.deleteWorkout = function (workout) {
+            $.post('/api/member/DeleteWorkout', { id: workout.Id }, function (data) {
+                self.workouts.remove(workout);
+            });
+        };
+        self.getWorkout = function () {
+            $('#content-workout').ajaxLoading();
+            $.ajax({
+                type: "GET",
+                async: false,
+                //cache: false,
+                url: '/api/member/SelectWorkoutByMember',
+                data: { id: @memberId },
+                //dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    self.workouts(data);
+                     $('#content-workout').closeLoading();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+         self.openRoutine = function (workout) {
+            parent.right.document.location.href = '/template.aspx?view=routine&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id;
+        };
+         self.openSuperSet = function (workout) {
+            parent.right.document.location.href = '/template.aspx?view=topic&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+        self.getDropdown = function() {
+            $.get('/api/member/GetUmbracoPreValue', { id: 1077 }, function(data) {
+                self.states(data);
+            });
+        };
+    }
+
+    $(document).ready(function() {
+        $('input[name="dateScheduled"]').datepicker();
+        $('input[name="dateCompleted"]').datepicker();
+        
+        var model = new WorkoutsViewModel();
+        ko.applyBindings(model, $('#content-workout')[0]);
+        model.getWorkout();
+        model.getDropdown();
+    });
+</script>

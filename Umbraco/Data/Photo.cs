@@ -17,7 +17,9 @@ public class Photo
 	}
 
     public string FileName { get; set; }
-    public string ContentType { get; set; }
-    public long ContentLength { get; set; }
-    public MemoryStream InputStream { get; set; }
+    //public string ContentType { get; set; }
+    //public long ContentLength { get; set; }
+    //public MemoryStream InputStream { get; set; }
+    public byte[] PhotoArray { get; set; }
+    public string Base64 { get; set; }
 }

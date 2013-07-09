@@ -1,0 +1,442 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Section.cshtml";
+    string gymnastId = Request.QueryString["gymnastid"];
+    string memberId = Request.QueryString["memberid"];
+    Dictionary<string, string> model = new Dictionary<string, string>
+        {
+            {"gymnastid", gymnastId},
+            {"memberid", memberId}
+        };
+}
+@*<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span10">
+            <!--Body content-->
+            <div class="tabbable tabs-left">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#gymnast">
+                            <div class="icon-section">
+                                <img src="https://www.google.com/images/icons/product/contacts-32.png" alt="Gymnast" />    
+                            </div>
+                            <div class="title-section">
+                                Gymnast
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#measurement">
+                            <div class="icon-section">
+                                <img src="https://www.google.com/images/icons/product/gplus-32.png" alt="Measurement" />    
+                            </div>
+                            <div class="title-section">
+                                Measurement
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#workout">
+                            <div class="icon-section">
+                                <img src="https://www.google.com/images/icons/product/youtube-32.png" alt="Workout" />    
+                            </div>
+                            <div class="title-section">
+                                Workout
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#chat">
+                            <div class="icon-section">
+                                <img src="https://www.google.com/images/icons/product/chrome-32.png" alt="Chat" />    
+                            </div>
+                            <div class="title-section">
+                                Chat
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#topic">
+                            <div class="icon-section">
+                                <img src="https://www.google.com/images/icons/product/search-32.png" alt="Topic" />    
+                            </div>
+                            <div class="title-section">
+                                Topic
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="gymnast" class="tab-pane active">
+                        @Html.Partial("_Client", model)
+                    </div>
+                    <div id="measurement" class="tab-pane">
+                        @Html.Partial("_Measurement")
+                    </div>
+                    <div id="workout" class="tab-pane">
+                        @Html.Partial("_Workout", model)
+                    </div>
+                    <div id="chat" class="tab-pane">
+                        @Html.Partial("_Chat", model)
+                    </div>
+                    <div id="topic" class="tab-pane">
+                         @Html.Partial("_Topic")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+@*<style type="text/css">
+    .section {
+        position: relative;
+    }
+    .header-section {
+        cursor: pointer;
+        -moz-user-select: text;
+        background-color: rgb(255, 255, 255);
+        opacity: 1;
+    }
+    .icon-section {
+        display: inline-block;
+        height: 32px;
+        width: 32px;
+    }
+    .icon-section img {
+        border: 0px none;
+    }
+    .title-section {
+        display: inline-block;
+        font-size: 16px;
+        max-width: 717px;
+        padding-left: 10px;
+        position: relative;
+        top: 10px;
+        word-wrap: break-word;
+    }
+    .content-section {
+        overflow: hidden;
+    }
+</style>
+*@
+
+
+
+<div id="content-dashboard" class="container-fluid">
+    <div class="row-fluid">
+        <div class="page-header">
+            <img src="https://www.google.com/images/icons/product/contacts-32.png" style="float: left; padding-right: 10px;" alt="Gymnast" />
+            <h1>Gymnast</h1>
+        </div>
+        <div class="row-fluid" >
+            <div class="span9">
+                <div class="span3">
+                    <div class="thumbnail">
+                        <img data-bind="attr: { src: avatar }" alt="Photo Profile" width="220" />
+                    </div>
+                </div>
+                <div class="span3" data-bind="with: account">
+                    <div class="control-group">
+                        <label class="control-label" >
+                            Current Weight</label>
+                        <div class="controls" data-bind="if: measurements().length > 0">
+                            <span class="input-large uneditable-input" data-bind="text: measurements()[1].Measurement.Weight" ></span>
+                        </div>
+                        <div class="controls" data-bind="ifnot: measurements().length > 0">
+                            <span class="input-large uneditable-input" ></span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" >
+                            StartWeight</label>
+                        <div class="controls">
+                            <span class="input-large uneditable-input" data-bind="text: StartWeight"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" >
+                            GoalWeight</label>
+                        <div class="controls">
+                            <span class="input-large uneditable-input" data-bind="text: GoalWeight"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="span3">
+                    <button class="btn btn-primary" data-bind="click: openGymnast">More</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="page-header">
+            <img src="https://www.google.com/images/icons/product/contacts-32.png" style="float: left; padding-right: 10px;" alt="Measurement" />
+            <h1 >Measurement</h1>
+        </div>
+        <div class="row-fluid">
+            <div class="span9">
+                <ul class="thumbnails" >
+                    <li class="span3" >
+                         <div >
+                        <h4>FIRST PHOTO</h4>
+                    </div>
+                        <a class="thumbnail" href="#" data-bind="if: measurements().length > 0">
+                            <img data-bind="attr: { src: measurements()[0].Photos[0].Base64 }" alt="" width="220" />
+                        </a>
+                        <a class="thumbnail" href="#" data-bind="ifnot: measurements().length > 0">
+                            <img src="" alt="None" width="220" />
+                        </a>
+                        <p>
+                            
+                        </p>
+                    </li>
+                    <li class="span3">
+                          <div >
+                        <h4>MOST RECENT PHOTO</h4>
+                    </div>
+                        <a class="thumbnail" href="#" data-bind="if: measurements().length > 0">
+                            <img data-bind="attr: { src: measurements()[1].Photos[0].Base64 }" alt="" width="220" />
+                        </a>
+                        <a class="thumbnail" href="#" data-bind="ifnot: measurements().length > 0">
+                            <img src="" alt="None" width="220"  />
+                        </a>
+                        <p>
+                            
+                        </p>
+                    </li>
+                    <li class="span3">
+                        <button class="btn btn-primary" data-bind="click: openMeasurement">More</button>
+                    </li>
+                </ul>
+        </div>
+    </div>
+</div>
+    <div class="row-fluid">
+        <div class="page-header">
+            <img src="https://www.google.com/images/icons/product/contacts-32.png" style="float: left; padding-right: 10px;" alt="Workout" />
+            <h1>Workout</h1>
+        </div>
+        <div class="row-fluid">
+            <div class="span9">
+                <div class="span3">
+                    <div>TOTAL <span data-bind="text: numberWorkout"></span></div>
+                </div>
+                <div class="span3">
+                    <div>VIEWED <span data-bind="text: numberViewedWorkout"></span></div>
+                </div>
+                <div class="span3">
+                      <button class="btn btn-primary" data-bind="click: openWorkout">More</button>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span9">
+                <div class="span3">
+                    <div>NOT VIEWED <span data-bind="text: numberNotViewedWorkout"></span></div>
+                </div>
+                <div class="span3">
+                    <div>COMPLETE <span data-bind="text: numberCompleteWorkout"></span></div>
+                </div>
+                <div class="span3">
+                    
+                </div>
+            </div>
+        </div>
+                   <div class="row-fluid">
+            <div class="span9">
+                <div class="span3">
+                   <div>NOT COMPLETE <span data-bind="text: numberNotCompleteWorkout"></span></div>
+                </div>
+                <div class="span3">
+                    
+                </div>
+                <div class="span3">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="page-header">
+            <img src="https://www.google.com/images/icons/product/contacts-32.png" style="float: left; padding-right: 10px;" alt="Chat" />
+            <h1>Chat</h1>
+        </div>
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <div class="span9">
+                    <div class="span3">
+                        <div>TOTAL <span data-bind="text: numberChat"></span></div>
+                    </div>
+                    <div class="span3">
+                        <div>UNREAD <span data-bind="text: numberUnreadChat"></span></div>
+                    </div>
+                    <div class="span3">
+                          <button class="btn btn-primary" data-bind="click: openChat">More</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span9">
+                    <div >
+                        <h4>RECENT CHATS</h4>
+                    </div>
+                    <ul class="thumbnails" data-bind="foreach: chats">
+                        <li class="span3">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h3 data-bind="text: Subject">
+                                    </h3>
+                                    <small data-bind="text: CreatedDate"></small>
+                                    <p></p>
+                                    <p>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span9">
+                    <div >
+                        <h4>UNREAD CHATS</h4>
+                    </div>
+                    <ul class="thumbnails" data-bind="foreach: unreadChats">
+                        <li class="span3">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h3 data-bind="text: Subject">
+                                    </h3>
+                                    <small data-bind="text: CreatedDate"></small>
+                                    <p></p>
+                                    <p>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="page-header">
+            <img src="https://www.google.com/images/icons/product/contacts-32.png" style="float: left; padding-right: 10px;" alt="Topic" />
+            <h1>Topic</h1>
+        </div>
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <div class="span9">
+                    <div class="span3">
+                        <div>TOTAL <span data-bind="text: numberTopic"></span></div>
+                    </div>
+                    <div class="span3">
+                    </div>
+                    <div class="span3">
+                        <button class="btn btn-primary" data-bind="click: openTopic">More</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span9">
+                    <div >
+                        <h4>Recent Topics</h4>
+                    </div>
+                    <ul class="thumbnails" data-bind="foreach: topics">
+                        <li class="span3">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h3 data-bind="text: Name">
+                                    </h3>
+                                    <small data-bind="text: CreatedDate"></small>
+                                    <p>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/knockout.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function DashboaordViewModel(data) {
+        var self = this;
+        self.measurements = ko.observableArray(data.Measurements);
+        self.account = ko.observable(data.Account);
+        self.avatar = ko.observable(data.Avatar);
+        self.chats = ko.observableArray(data.Chats);
+        self.unreadChats = ko.observableArray(data.UnreadChats);
+        self.numberChat = ko.observable(data.NumberChat);
+        self.numberUnreadChat = ko.observable(data.NumberUnreadChat);
+        self.topics = ko.observableArray(data.Topics);
+        self.numberTopic = ko.observable(data.NumberTopic);
+        self.numberWorkout = ko.observable(data.NumberWorkout);
+        self.numberViewedWorkout = ko.observable(data.NumberViewedWorkout);
+        self.numberNotViewedWorkout = ko.observable(data.NumberNotViewedWorkout);
+        self.numberCompleteWorkout = ko.observable(data.NumberCompleteWorkout);
+        self.numberNotCompleteWorkout = ko.observable(data.NumberNotCompleteWorkout);        
+        self.openGymnast = function () {
+            parent.right.document.location.href = '/template.aspx?view=gymnast&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+        self.openMeasurement = function () {
+            parent.right.document.location.href = '/template.aspx?view=measurement&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+        self.openWorkout = function () {
+            parent.right.document.location.href = '/template.aspx?view=workout&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+         self.openChat = function () {
+            parent.right.document.location.href = '/template.aspx?view=chat&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+        self.openTopic = function() {
+            parent.right.document.location.href = '/template.aspx?view=topic&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+    }
+    
+
+    $(document).ready(function () {
+
+        $('#content-dashboard').ajaxLoading();
+        $.ajax({
+            type: "GET",
+            async: false,
+            //cache: false,
+            url: '/api/member/GetDashboardInfomation',
+            data: { gymnastId: @gymnastId, memberId: @memberId },
+            //dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success: function(data) {
+            //var model = ;
+            //model.account(data.Account);
+            //model.avatar(data.Avatar);
+            //model.chats(data.Chats);
+            //model.unreadChats(data.UnreadChats);
+            //model.numberChat (data.NumberChat);
+            //model.numberUnreadChat(data.NumberUnreadChat);
+            //model.topics(data.Topics);
+            //model.numberTopic (data.NumberTopic);
+            //model.measurements (data.Measurements);
+            //model.numberWorkout(data.NumberWorkout);
+            //model.numberViewedWorkout (data.NumberViewedWorkout);
+            //model.numberNotViewedWorkout (data.NumberNotViewedWorkout);
+            //model.numberCompleteWorkout (data.NumberCompleteWorkout);
+            //model.numberNotCompleteWorkout(data.NumberNotCompleteWorkout);
+                ko.applyBindings(DashboaordViewModel(data), $('#content-dashboard')[0]);
+                console.log(data.Measurements);
+                $('#content-dashboard').closeLoading();
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+            }
+        });        
+       
+        
+    });
+</script>

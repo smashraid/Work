@@ -1,0 +1,126 @@
+@model Dictionary<string, string>
+@{
+    Dictionary<string, string> x = (Dictionary<string, string>)Model;
+    string gymnastId = Model["gymnastid"];
+    string memberId = Model["memberid"];
+    string topicId = Model["topicid"];
+    string topicTitle = Model["topictitle"];
+}
+<div id="content-post" >
+    <fieldset>
+        <legend>Post</legend>
+        
+        <div class="form-inline" data-bind="with: post">
+            <input type="text" name="Message" placeholder="Message" value="" data-bind="value: Message" />
+            <button class="btn" data-bind="click: $root.savePost, visible: !$root.IsEdit(), enable: Message() != '', valueUpdate:'afterkeydown'"" ><i class="icon-plus"></i></button>
+            <button class="btn" data-bind="click: $root.getPost, visible: !$root.IsEdit()"><i class="icon-refresh"></i></button>
+            <input type="hidden" name="Id" value=" " data-bind="text: Id" />
+            <button class="btn" data-bind="click: $root.updatePost, visible: $root.IsEdit" ><i class="icon-ok"></i></button>
+            <button class="btn" data-bind="click: $root.cancelPost, visible: $root.IsEdit"><i class="icon-remove"></i></button>
+        </div><br/>
+    </fieldset>
+    <div>
+        <h3>@topicTitle</h3>
+        <div data-bind="foreach: posts" class="span10">
+            <div class="media">
+                <a class="pull-left" href="#">
+                </a>
+                <div class="media-body">
+                    <h4  class="media-heading"><span data-bind="text: FirstName"></span> <span data-bind="text: LastName"></span></h4>
+                    <small data-bind="text: CreatedDate"></small>
+                    <p data-bind="text: Message"></p>
+                    <button class="btn" data-bind="click: $root.editPost, visible: IsOwner"><i class="icon-pencil"></i></button>
+                    <button class="btn" data-bind="click: $root.deletePost, visible: IsOwner"><i class="icon-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/knockout.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function PostViewModel() {
+        var self = this;
+        self.Id = ko.observable(0);
+        self.Message = ko.observable("");
+        self.TopicId = ko.observable(@topicId);
+        self.UserId = ko.observable();
+        self.UserType = ko.observable();
+        self.User = ko.observable();
+        self.FirstName = ko.observable();
+        self.LastName = ko.observable();
+        self.CreatedDate = ko.observable();
+        self.UpdatedDate = ko.observable();
+        self.IsOwner = ko.observable();
+        self.ReportAbuse = ko.observable();
+    }
+
+    function PostsViewModel() {
+        var self = this;
+        self.posts = ko.observableArray();
+        self.post = new PostViewModel();
+        self.IsEdit = ko.observable(false);
+        //self.deleteTopic = function() {
+        //    $.post('/umbraco/surface/HelperSurface/DeleteTopic', { id: $.urlParam('id') }, function(data) {
+        //        parent.right.document.location.href = '/messageboard.aspx';
+        //    });
+        //};
+        //self.posts = ko.observableArray(ko.utils.arrayMap(posts, function(post) {
+        //  var id = $.urlParam('id');  
+        //  return { Id: post.Id, Message: post.Message, User: post.User, CreatedDate: post.CreatedDate, IsOwner: post.IsOwner };
+        //}));
+        self.savePost = function() {
+            $.post('/api/member/InsertPost',  ko.toJS(self.post) , function (data) {
+                self.posts.unshift(data);
+                self.post.Message("");
+            });
+        };
+         self.editPost = function (talk) {
+            self.post.Message(talk.Message);
+            self.post.Id(talk.Id);
+            self.IsEdit(true);
+        };
+        self.cancelPost = function () {
+            self.post.Message("");
+            self.post.Id(0);
+            self.IsEdit(false);
+        };
+        self.updatePost = function () {
+            $.post('/api/member/UpdatePost', ko.toJS(self.post) , function (data) {
+                self.getPost();
+                self.cancelPost();
+            });
+        };
+         self.deletePost = function(post) {
+            $.post('/api/member/DeletePost', { id: post.Id }, function (data) {
+                self.posts.remove(post);
+            });
+        };
+        self.getPost = function () {
+            $('#content-post').ajaxLoading();
+            $.ajax({
+                type: "GET",
+                async: false,
+                //cache: false,
+                url: '/api/member/SelectPost',
+                data: { id: @topicId },
+                //dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    self.posts(data);
+                    console.log(data);
+                     $('#content-post').closeLoading();
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+    }
+
+    $(document).ready(function() {
+        var model = new PostsViewModel();
+        ko.applyBindings(model, $('#content-post')[0]);
+        model.getPost();
+    });
+</script>

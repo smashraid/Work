@@ -6,6 +6,6 @@ using System.Text;
 public class PhotoViewModel
 {
     public int Id { get; set; }
-    public IEnumerable<byte[]> Photos { get; set; }
+    public IEnumerable<Photo> Photos { get; set; }
 }
 

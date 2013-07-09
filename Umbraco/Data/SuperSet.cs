@@ -16,5 +16,6 @@ public class SuperSet
     public int? UnitId { get; set; }
     public string Unit { get; set; }
     public string Note { get; set; }
+    public DateTime CreatedDate { get; set; }
 }
 

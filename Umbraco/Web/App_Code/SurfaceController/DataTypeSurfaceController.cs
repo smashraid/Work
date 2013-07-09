@@ -636,7 +636,7 @@ public class DataTypeSurfaceController : Umbraco.Web.Mvc.SurfaceController
         List<string> thumbails = new List<string>(imagesFolder.Where(s => s.Contains("_thumb")));
         List<string> images = new List<string>(imagesFolder.Where(s => !s.Contains("_thumb")));
 
-        return PartialView("_Measurement", new MeasurementViewModel { Measurement = measurement, Thumbails = thumbails, Images = images });
+        return PartialView("_Measurement", new Measurement123ViewModel { Measurement = measurement, Thumbails = thumbails, Images = images });
     }
 
     #region DataAccess
@@ -901,7 +901,7 @@ public class DataTypeSurfaceController : Umbraco.Web.Mvc.SurfaceController
     #endregion
 }
 
-public class MeasurementViewModel
+public class Measurement123ViewModel
 {
     public Measurement Measurement { get; set; }
     public List<string> Images { get; set; }

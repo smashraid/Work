@@ -30,6 +30,9 @@ public class Account
     public string LoginName { get; set; }
     public string Password { get; set; }
 
+    public int? PurchaseId { get; set; }
+    public string Purchase { get; set; }
+
     #region UserInformation
 
     public string Gender { get; set; }
