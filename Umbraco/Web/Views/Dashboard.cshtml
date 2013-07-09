@@ -1,6 +1,7 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Section.cshtml";
+    ViewBag.Title = "Dashboard";
     string gymnastId = Request.QueryString["gymnastid"];
     string memberId = Request.QueryString["memberid"];
     Dictionary<string, string> model = new Dictionary<string, string>
