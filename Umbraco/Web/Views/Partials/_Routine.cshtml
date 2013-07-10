@@ -4,6 +4,7 @@
     string gymnastId = Model["gymnastid"];
     string memberId = Model["memberid"];
     string workoutId = Model["workoutid"];
+    string workoutTitle = Model["workouttitle"];
 }
 @*<button data-bind="click: add, clickBubble: false" class="btn btn-primary" id="add">
     <i class="ui-icon ui-icon-plus"></i>
@@ -13,7 +14,14 @@
 <div id="content-routine">
     <div>
         <fieldset>
-            <legend>Routine</legend>
+            <legend>Routine - @workoutTitle</legend>
+            <div>
+                <!-- Button to trigger modal -->
+                @*<a href="#modal-routine" role="button" class="btn" data-toggle="modal" data-keyboard="false" data-backdrop="false"><i class="icon-plus"></i></a>*@
+                <button type="button" class="btn" data-bind="click: openModal" ><i class="icon-plus"></i></button>
+                <button class="btn" data-bind="click: $root.getRoutine"><i class="icon-refresh"></i></button>
+            </div>
+            <br/>
             <div class="row-fluid">
                 <table class="table table-striped table-hover table-condensed">
                     <caption>
@@ -55,14 +63,11 @@
                             <td data-bind="text: Unit">
                             </td>
                             <td>
-                                <button class="btn" data-bind="click: $root.deleteRoutine">
-                                    <i class="ui-icon ui-icon-trash"></i>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Edit" data-bind="click: $root.updateRoutine">
+                                    <i class="icon-pencil"></i>
                                 </button>
-                                <button class="btn" data-bind="click: $root.updateRoutine">
-                                    <i class="ui-icon ui-icon-pencil"></i>
-                                </button>
-                                <button class="btn" data-bind="click: $root.historyRoutine">
-                                    <i class="ui-icon ui-icon-clipboard"></i>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Delete" data-bind="click: $root.deleteRoutine">
+                                    <i class="icon-trash"></i>
                                 </button>
                             </td>
                         </tr>
@@ -71,9 +76,7 @@
             </div>
         </fieldset>
     </div>
-    <!-- Button to trigger modal -->
-    @*<a href="#modal-routine" role="button" class="btn" data-toggle="modal" data-keyboard="false" data-backdrop="false"><i class="icon-plus"></i></a>*@
-    <button type="button" class="btn" data-bind="click: openModal" ><i class="icon-plus"></i></button>
+
     <!-- Modal -->
     <div id="modal-routine" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
@@ -109,9 +112,8 @@
                             Resistence
                         </label>
                         <div class="controls">
-                            <input type="text" name="resistance" id="resistance" class="input-small" data-bind="value: Routine.Resistance" />
-                            <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId'
-                                class="span4">
+                            <input type="text" class="input-small" data-bind="value: Routine.Resistance" />
+                            <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' class="span4">
                             </select>
                         </div>
                     </div>
@@ -122,7 +124,7 @@
                             Sets
                         </label>
                         <div class="controls">
-                            <input type="text" name="sets" id="sets" data-bind="value: Routine.Sets" />
+                            <input type="text" data-bind="value: Routine.Sets" />
                         </div>
                     </div>
                     <div class="control-group">
@@ -130,20 +132,56 @@
                             Reps
                         </label>
                         <div class="controls">
-                            <input type="text" name="reps" id="reps" data-bind="value: Routine.Reps" />
+                            <input type="text" data-bind="value: Routine.Reps" />
                         </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label">
                             Note</label>
                         <div class="controls">
-                            <textarea name="note" placeholder="Note" rows="5" cols="5" data-bind="value: Routine.Note"></textarea>
+                            <textarea placeholder="Note" rows="5" cols="5" data-bind="value: Routine.Note"></textarea>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
+                <div class="span12">
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-info" data-bind="click: addStory">Add Story</button>
+                        </div>
+                    </div>
+                    <table class="table table-striped table-hover table-condensed">
+                        <caption>
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: Stories">
+                            <tr>
+                                <td>
+                                    <select class="span6" data-bind='options: $root.trainings, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: TrainingId' >
+                                    </select>
+                                    <select class="span6" data-bind='options: $root.actions, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: ActionId' >
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="span3" data-bind='options: $root.types, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: TypeId' >
+                                    </select>
+                                    <input type="text" class="input-small" data-bind="value: Value" />
+                                    <select class="span4" data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: UnitId' >
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td >
+                                    <textarea class="input-large" name="note" placeholder="Note" rows="4" cols="4" data-bind="value: Note"></textarea>
+                                </td>
+                                <td><button class="btn btn-danger" data-bind="click: $parent.deleteStory">Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -233,7 +271,17 @@
     function Model() {
         var self = this;
         self.Routine = new RoutineViewModel();
-        self.Stories = ko.observableArray([new StoryViewModel()]);
+        self.Stories = ko.observableArray([]);
+        self.addStory = function() {
+            self.Stories.push(new StoryViewModel());
+            //self.routines.push(self.routine);
+            //self.routine(undefined);
+        };
+        self.deleteStory = function(story) {
+            self.Stories.remove(story);
+            //self.routines.push(self.routine);
+            //self.routine(undefined);
+        };
     }
 
     function RoutineViewModel() {
@@ -296,6 +344,8 @@
         self.superset = ko.observable();
         self.types = ko.observableArray();
         self.units = ko.observableArray();
+        self.actions = ko.observableArray();
+        self.trainings = ko.observableArray();
         //self.routine = new RoutineViewModel();
         self.addRoutine = function() {
             self.newRoutines.push(new Model());
@@ -321,13 +371,10 @@
             });
         };
         self.deleteRoutine = function(routine) {
-            alert(routine.Exercise + " deleted");
+            alert('Delete: ' + ko.toJSON(routine));
         };
         self.updateRoutine = function(routine) {
-            alert(routine.Exercise + " updated");
-        };
-        self.historyRoutine = function(routine) {
-            alert("showing historical");
+            alert('Update: ' + ko.toJSON(routine));
         };
         self.getRoutine = function() {
             $('#content-routine').ajaxLoading();
@@ -357,6 +404,12 @@
             });
             $.get('/api/member/GetUmbracoPreValue', { id: 1075 }, function(data) {
                 self.units(data);
+            });
+            $.get('/api/member/GetUmbracoPreValue', { id: 1067 }, function(data) {
+                self.actions(data);
+            });
+            $.get('/api/member/GetUmbracoPreValue', { id: 1073 }, function(data) {
+                self.trainings(data);
             });
         };
         self.openModal = function() {

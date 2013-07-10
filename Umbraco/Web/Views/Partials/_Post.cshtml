@@ -11,12 +11,12 @@
         <legend>Post</legend>
         
         <div class="form-inline" data-bind="with: post">
-            <input type="text" name="Message" placeholder="Message" value="" data-bind="value: Message" />
-            <button class="btn" data-bind="click: $root.savePost, visible: !$root.IsEdit(), enable: Message() != '', valueUpdate:'afterkeydown'"" ><i class="icon-plus"></i></button>
+            <input type="text" name="Message" placeholder="Message" value="" data-bind="value: Message, valueUpdate:'afterkeydown'" />
+            <button class="btn" data-bind="click: $root.savePost, visible: !$root.IsEdit(), enable: Message() != ''" ><i class="icon-plus"></i></button>
             <button class="btn" data-bind="click: $root.getPost, visible: !$root.IsEdit()"><i class="icon-refresh"></i></button>
             <input type="hidden" name="Id" value=" " data-bind="text: Id" />
-            <button class="btn" data-bind="click: $root.updatePost, visible: $root.IsEdit" ><i class="icon-ok"></i></button>
-            <button class="btn" data-bind="click: $root.cancelPost, visible: $root.IsEdit"><i class="icon-remove"></i></button>
+            <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Save" data-bind="click: $root.updatePost, visible: $root.IsEdit" ><i class="icon-ok"></i></button>
+            <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Cancel" data-bind="click: $root.cancelPost, visible: $root.IsEdit"><i class="icon-remove"></i></button>
         </div><br/>
     </fieldset>
     <div>
@@ -29,8 +29,8 @@
                     <h4  class="media-heading"><span data-bind="text: FirstName"></span> <span data-bind="text: LastName"></span></h4>
                     <small data-bind="text: CreatedDate"></small>
                     <p data-bind="text: Message"></p>
-                    <button class="btn" data-bind="click: $root.editPost, visible: IsOwner"><i class="icon-pencil"></i></button>
-                    <button class="btn" data-bind="click: $root.deletePost, visible: IsOwner"><i class="icon-trash"></i></button>
+                    <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Edit" data-bind="click: $root.editPost, visible: IsOwner"><i class="icon-pencil"></i></button>
+                    <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Delete" data-bind="click: $root.deletePost, visible: IsOwner"><i class="icon-trash"></i></button>
                 </div>
             </div>
         </div>

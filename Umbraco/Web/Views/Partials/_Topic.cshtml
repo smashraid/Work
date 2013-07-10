@@ -14,13 +14,13 @@
                 </div>*@
                 <div style="margin-bottom: 0.5em;">
                     @*<textarea name="description" placeholder="Description" data-bind="value: Description" cols="10" rows="3" class="input-xxlarge" ></textarea>    *@
-                    <textarea name="name" placeholder="Name" data-bind="value: Name" cols="10" rows="3" class="input-xxlarge" ></textarea>    
+                    <textarea name="name" placeholder="Name" data-bind="value: Name, valueUpdate:'afterkeydown'" cols="10" rows="3" class="input-xxlarge" ></textarea>    
                 </div>
-                <button class="btn" data-bind="click: $root.saveTopic, visible: !$root.IsEdit(), enable: Name() != '', valueUpdate:'afterkeydown'" ><i class="icon-plus"></i></button>
+                <button class="btn" data-bind="click: $root.saveTopic, visible: !$root.IsEdit(), enable: Name() != ''" ><i class="icon-plus"></i></button>
                 <button class="btn" data-bind="click: $root.getTopic, visible: !$root.IsEdit()"><i class="icon-refresh"></i></button>
                 <input type="hidden" name="Id" value=" " data-bind="text: Id" />
-                <button class="btn" data-bind="click: $root.updateTopic, visible: $root.IsEdit" ><i class="icon-ok"></i></button>
-                <button class="btn" data-bind="click: $root.cancelTopic, visible: $root.IsEdit"><i class="icon-remove"></i></button>
+                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Save" data-bind="click: $root.updateTopic, visible: $root.IsEdit" ><i class="icon-ok"></i></button>
+                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Cancel" data-bind="click: $root.cancelTopic, visible: $root.IsEdit"><i class="icon-remove"></i></button>
             </div>
             <br/>
         </fieldset>
@@ -32,9 +32,9 @@
                         <h4 class="media-heading" data-bind="text: Name"></h4>
                             <small data-bind="text: CreatedDate"></small>
                             <p>
-                                <button class="btn" data-bind="click: $root.openPost"><i class="icon-ok-sign"></i></button>
-                                <button class="btn" data-bind="click: $root.editTopic, visible: IsOwner"><i class="icon-pencil"></i></button>
-                                <button class="btn" data-bind="click: $root.deleteTopic, visible: IsOwner"><i class="icon-trash"></i></button>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Post" data-bind="click: $root.openPost"><i class="icon-list-alt"></i></button>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Edit" data-bind="click: $root.editTopic, visible: IsOwner"><i class="icon-pencil"></i></button>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Delete" data-bind="click: $root.deleteTopic, visible: IsOwner"><i class="icon-trash"></i></button>
                             </p>
                     </div>
                 </li>

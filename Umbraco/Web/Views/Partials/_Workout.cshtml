@@ -8,6 +8,13 @@
     <div>
         <fieldset>
             <legend>Workout</legend>
+            <div>
+                <!-- Button to trigger modal -->
+                @*<a href="#modal-workout" role="button" class="btn" data-toggle="modal" data-keyboard="false" data-backdrop="false"><i class="icon-plus"></i></a>*@
+                <button type="button" class="btn" data-bind="click: openModal" ><i class="icon-plus"></i></button>
+                <button class="btn" data-bind="click: $root.getWorkout"><i class="icon-refresh"></i></button>
+            </div>
+            <br/>
             <div class="row-fluid">
                 <table class="table table-striped table-hover table-condensed">
                     <caption>
@@ -44,14 +51,17 @@
                             <td data-bind="text: SortOrder">
                             </td>
                             <td>
-                                <button class="btn" data-bind="click: $root.deleteWorkout">
-                                    <i class="icon-remove"></i>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Edit" data-bind="click: $root.editWorkout">
+                                    <i class="icon-pencil"></i>
                                 </button>
-                                <button class="btn" data-bind="click: $root.openRoutine">
-                                    <i class="icon-info-sign"></i>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Delete" data-bind="click: $root.deleteWorkout">
+                                    <i class="icon-trash"></i>
                                 </button>
-                                <button class="btn" data-bind="click: $root.openSuperSet">
-                                    <i class="icon-leaf"></i>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Routine" data-bind="click: $root.openRoutine">
+                                    <i class="icon-time"></i>
+                                </button>
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Superset" data-bind="click: $root.openSuperSet">
+                                    <i class="icon-bullhorn"></i>
                                 </button>
                             </td>
                         </tr>
@@ -60,15 +70,13 @@
             </div>
         </fieldset>
     </div>
-    <!-- Button to trigger modal -->
-    <a href="#modal-workout" role="button" class="btn" data-toggle="modal" data-keyboard="false"
-       data-backdrop="false"><i class="icon-plus"></i></a>
     <!-- Modal -->
     <div id="modal-workout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true" data-bind="with: workout">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Add Workout</h3>
+            <h3 data-bind="if: !$root.IsEdit()" id="myModalLabel">Add Workout</h3>
+            <h3 data-bind="if: $root.IsEdit()" id="myModalLabel">Edit Workout</h3>
         </div>
         <form data-bind="submit: $root.saveWorkout">
             <div class="modal-body">
@@ -79,6 +87,7 @@
                                 Name</label>
                             <div class="controls">
                                 <input type="text" name="name" placeholder="Name" data-bind="value: Name" />
+                                <input type="hidden" name="Id" value=" " data-bind="text: Id" />
                             </div>
                         </div>
                         <div class="control-group">
@@ -123,15 +132,14 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">
-                    Close</button>
-                <button class="btn btn-primary" type="submit">
-                    Save</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary" type="submit" data-bind="visible: !$root.IsEdit()">Save</button>
+                <button class="btn btn-primary" type="button" data-bind="click: $root.updateWorkout, visible: $root.IsEdit">Update</button>
             </div>
         </form>
     </div>
     
-@*    <!-- Button to trigger modal -->
+    @*    <!-- Button to trigger modal -->
     <a href="#modal-exercise" role="button" class="btn" data-toggle="modal" data-keyboard="false" data-backdrop="false"><i class="icon-plus"></i></a>
     <!-- Modal -->
     <div id="modal-exercise" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -270,12 +278,19 @@
         self.routines = ko.observableArray([]);
         self.superset = ko.observable();
         self.states = ko.observableArray();
+        self.IsEdit = ko.observable(false);
         self.addRoutine = function() {
             self.routines.push(new RoutineViewModel());
         };
         self.saveWorkout = function () {
             $.post('/api/member/InsertWorkout',  ko.toJS(self.workout), function (data) {
                 self.workouts.push(data);
+                $('#modal-workout').modal('hide');
+            });
+        };
+        self.updateWorkout = function () {
+            $.post('/api/member/UpdateWorkout',  ko.toJS(self.workout), function (data) {
+                self.getWorkout();
                 $('#modal-workout').modal('hide');
             });
         };
@@ -304,8 +319,22 @@
                 }
             });
         };
+        self.openModal = function() {
+            $('#modal-workout').modal('show');
+        };
+        self.editWorkout = function(workout) {
+            self.workout.Id(workout.Id);
+            self.workout.Name(workout.Name);
+            self.workout.DateScheduled(workout.DateScheduled);
+            self.workout.DateCompleted(workout.DateCompleted);
+            self.workout.Description(workout.Description);
+            self.workout.Note(workout.Note);
+            self.workout.StateId(workout.StateId);
+            self.IsEdit(true);
+            self.openModal();
+        };
          self.openRoutine = function (workout) {
-            parent.right.document.location.href = '/template.aspx?view=routine&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id;
+            parent.right.document.location.href = '/template.aspx?view=routine&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id + '&workouttitle=' + workout.Name;
         };
          self.openSuperSet = function (workout) {
             parent.right.document.location.href = '/template.aspx?view=topic&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
@@ -325,5 +354,22 @@
         ko.applyBindings(model, $('#content-workout')[0]);
         model.getWorkout();
         model.getDropdown();
+        
+        $('#modal-workout').modal({
+            keyboard: false,
+            backdrop:false,
+            show: false
+        });
+
+        $('#modal-workout').on('hidden', function() {
+            model.workout.Id(undefined);
+            model.workout.Name(undefined);
+            model.workout.DateScheduled(undefined);
+            model.workout.DateCompleted(undefined);
+            model.workout.Description(undefined);
+            model.workout.Note(undefined);
+            model.workout.StateId(undefined);
+            model.IsEdit(false);
+        });
     });
 </script>

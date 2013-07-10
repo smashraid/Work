@@ -1,7 +1,10 @@
 ﻿@{
     Layout = "_Section.cshtml";
     string view = Request.QueryString["view"];
-    ViewBag.Title = char.ToUpper(view[0]) + view.Substring(1);
+    if (!string.IsNullOrEmpty(view))
+    {
+        ViewBag.Title = char.ToUpper(view[0]) + view.Substring(1);
+    }
     string gymnastId = Request.QueryString["gymnastid"];
     string memberId = Request.QueryString["memberid"];
     string chatId = Request.QueryString["chatid"];
@@ -9,6 +12,7 @@
     string topicId = Request.QueryString["topicid"];
     string topicTitle = Request.QueryString["topictitle"];
     string workoutId = Request.QueryString["workoutid"];
+    string workoutTitle = Request.QueryString["workouttitle"];
     Dictionary<string, string> model = new Dictionary<string, string>
         {
             {"gymnastid", gymnastId},
@@ -16,6 +20,7 @@
             {"chatid", chatId},
             {"chattitle", chatTitle},
             {"workoutid", workoutId},
+            {"workouttitle", workoutTitle},
             {"topicid", topicId},
             {"topictitle", topicTitle}
         };
