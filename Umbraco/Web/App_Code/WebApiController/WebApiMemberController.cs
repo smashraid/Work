@@ -1073,6 +1073,16 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
+    public IEnumerable<CategoryViewModel> GetCategories()
+    {
+        int id = Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Category));
+        return UmbracoCustom.DataTypeValue(id).Select(u => new UmbracoPreValue {Id = u.Id, Value = u.Value}).Select(category => new CategoryViewModel
+            {
+                Id = category.Id, Value = category.Value, Exercises = GetExerciseByCategory(category.Id)
+            }).ToList();
+    }
+
+    [HttpGet]
     public List<Exercise> GetExerciseByCategory(int categoryid, int trainerid = 0)
     {
         User user = umbraco.BusinessLogic.User.GetCurrent();

@@ -64,6 +64,7 @@
     <Compile Include="Topic.cs" />
     <Compile Include="UmbracoPreValue.cs" />
     <Compile Include="UmbracoUser.cs" />
+    <Compile Include="ViewModel\CategoryViewModel.cs" />
     <Compile Include="ViewModel\ChatViewModel.cs" />
     <Compile Include="ViewModel\DashboardViewModel.cs" />
     <Compile Include="ViewModel\GymnastViewModel.cs" />
