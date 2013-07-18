@@ -615,11 +615,11 @@ public class DataTypeSurfaceController : Umbraco.Web.Mvc.SurfaceController
                                           new[]
                                                       {
                                                           item.Id.ToString(),
-                                                          item.TemplateName,
-                                                          item.Exercise.Category,
-                                                          item.Exercise.ExerciseName,
-                                                          item.Exercise.Type,
-                                                          item.Exercise.Unit
+                                                          //item.TemplateName,
+                                                          //item.Exercise.Category,
+                                                          //item.Exercise.ExerciseName,
+                                                          //item.Exercise.Type,
+                                                          //item.Exercise.Unit
                                                       }
             })).ToArray()
         };
@@ -790,20 +790,20 @@ public class DataTypeSurfaceController : Umbraco.Web.Mvc.SurfaceController
             templates.Add(new TemplateWorkout
             {
                 Id = Convert.ToInt32(reader.GetValue(0)),
-                TemplateName = reader.GetValue(1).ToString(),
-                Exercise = new Exercise
-                {
-                    TrainerId = Convert.ToInt32(reader.GetValue(2)),
-                    Id = Convert.ToInt32(reader.GetValue(3)),
-                    ExerciseName = reader.GetValue(4).ToString(),
-                    Description = reader.GetValue(5).ToString(),
-                    TypeId = Convert.ToInt32(reader.GetValue(6)),
-                    Type = UmbracoCustom.PropertyValue(UmbracoType.Type, reader.GetValue(6)),
-                    UnitId = Convert.ToInt32(reader.GetValue(7)),
-                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(7)),
-                    CategoryId = Convert.ToInt32(reader.GetValue(8)),
-                    Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(8))
-                }
+                //TemplateName = reader.GetValue(1).ToString(),
+                //Exercise = new Exercise
+                //{
+                //    TrainerId = Convert.ToInt32(reader.GetValue(2)),
+                //    Id = Convert.ToInt32(reader.GetValue(3)),
+                //    ExerciseName = reader.GetValue(4).ToString(),
+                //    Description = reader.GetValue(5).ToString(),
+                //    TypeId = Convert.ToInt32(reader.GetValue(6)),
+                //    Type = UmbracoCustom.PropertyValue(UmbracoType.Type, reader.GetValue(6)),
+                //    UnitId = Convert.ToInt32(reader.GetValue(7)),
+                //    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(7)),
+                //    CategoryId = Convert.ToInt32(reader.GetValue(8)),
+                //    Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(8))
+                //}
             });
 
         }

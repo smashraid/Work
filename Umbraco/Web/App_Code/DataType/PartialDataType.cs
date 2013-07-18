@@ -24,8 +24,6 @@ using umbraco.presentation.nodeFactory;
 using Microsoft.ApplicationBlocks.Data;
 using ClientDependency.Core;
 
-
-
 public class PartialControl : Panel
 {
     public string Id { get; set; }
@@ -54,10 +52,12 @@ public class PartialControl : Panel
 
     private string GetView()
     {
-        Uri baseUri = new Uri("http://localhost:21773/");
+        var r = HttpContext.Current.Request;
+        Uri baseUri = new Uri(r.Url.GetLeftPart(UriPartial.Authority));
         HttpClient httpclient = new HttpClient();
         httpclient.BaseAddress = baseUri;
-        string response = httpclient.GetStringAsync("umbraco/surface/DataTypeSurface/GetPartial?name=" + View).Result;
+        string url = string.Format("umbraco/surface/DataTypeSurface/GetPartial?name={0}&id={1}", View, r.QueryString["id"]);
+        string response = httpclient.GetStringAsync(url).Result;
         return new MvcHtmlString(response).ToHtmlString();
     }
 }
@@ -120,8 +120,6 @@ public class Partial : AbstractDataEditor
         get { return new Guid("CD7698FB-595B-4FE3-B1D7-35057FB3F47E"); }
     }
 }
-
-
 
 public class PartialPrevalueEditor : PlaceHolder, IDataPrevalue
 {

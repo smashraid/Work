@@ -84,83 +84,111 @@
             <h3 id="myModalLabel">Add Routine</h3>
         </div>
         <form data-bind="submit: saveRoutine">
-        <div class="modal-body" data-bind="foreach: newRoutines">
-            <div class="row-fluid">
-                <div class="span6">
-                    <div class="control-group">
-                        <label class="control-label" for="category">
-                            Category
-                        </label>
-                        <div class="controls">
-                            <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'></select>
+            <div class="modal-body" data-bind="foreach: newRoutines">
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label" for="category">
+                                Category
+                            </label>
+                            <div class="controls">
+                                <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'></select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="exercise">
-                            Exercise
-                        </label>
-                        <div class="controls">
-                            <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'></select>
+                        <div class="control-group">
+                            <label class="control-label" for="exercise">
+                                Exercise
+                            </label>
+                            <div class="controls">
+                                <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'></select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="resistance">
-                            Resistence
-                        </label>
-                        <div class="controls">
-                            <input type="text" class="input-small" data-bind="value: Routine.Resistance" />
-                            <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' class="span4">
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="span6">
-                    <div class="control-group">
-                        <label class="control-label" for="sets">
-                            Sets
-                        </label>
-                        <div class="controls">
-                            <input type="text" data-bind="value: Routine.Sets" />
-                            <button type="submit" class="btn btn-info" data-bind="click: addStory.bind($data, 35)">Add Story</button>
-                            <div class="form-inline" data-bind="foreach: filterStory(35)">
-                                <div>
-                                    <select class="span3" data-bind='options: $root.trainings, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: TrainingId' ></select>
-                                    <select class="span3" data-bind='options: $root.actions, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: ActionId' ></select>
-                                    <select class="span2" data-bind='options: $root.types, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: TypeId' ></select>
-                                    <input type="text" class="input-small" data-bind="value: Value" />
-                                    <select class="span2" data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: UnitId' ></select>
-                                    <textarea class="input-large" name="note" placeholder="Note" rows="4" cols="4" data-bind="value: Note"></textarea>
-                                    <button class="btn btn-danger" data-bind="click: $parent.deleteStory"><i class="icon-trash"></i></button>
+                        <div class="control-group">
+                            <label class="control-label" for="resistance">
+                                Resistence
+                            </label>
+                            <div class="controls">
+                                <input type="text" class="input-small" data-bind="value: Routine.Resistance" />
+                                <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' class="span4">
+                                </select>
+                                <button type="submit" class="btn btn-info" data-bind="click: addStory.bind($data, 35)"><i class="icon-plus-sign"></i></button>
+                                <div class="form-inline" data-bind="foreach: filterStory(35)">
+                                    <div>
+                                        @*<select class="span3" data-bind='options: $root.trainings, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: TrainingId' ></select>*@
+                                        <input type="hidden" data-bind="text: TrainingId" />
+                                        <select class="span3" data-bind='options: $root.actions, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: ActionId' ></select>
+                                        <select class="span2" data-bind='options: $root.types, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: TypeId' ></select>
+                                        <input type="text" class="input-small" data-bind="value: Value" />
+                                        <select class="span2" data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: UnitId' ></select>
+                                        <textarea class="input-large" name="note" placeholder="Note" rows="4" cols="4" data-bind="value: Note"></textarea>
+                                        <button class="btn btn-danger" data-bind="click: $parent.deleteStory"><i class="icon-trash"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="reps">
-                            Reps
-                        </label>
-                        <div class="controls">
-                            <input type="text" data-bind="value: Routine.Reps" />
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label" for="sets">
+                                Sets
+                            </label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: Routine.Sets" />
+                                <button type="submit" class="btn btn-info" data-bind="click: addStory.bind($data, 34)"><i class="icon-plus-sign"></i></button>
+                                <div class="form-inline" data-bind="foreach: filterStory(34)">
+                                    <div>
+                                        @*<select class="span3" data-bind='options: $root.trainings, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: TrainingId' ></select>*@
+                                        <input type="hidden" data-bind="text: TrainingId" />
+                                        <select class="span3" data-bind='options: $root.actions, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: ActionId' ></select>
+                                        <select class="span2" data-bind='options: $root.types, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: TypeId' ></select>
+                                        <input type="text" class="input-small" data-bind="value: Value" />
+                                        <select class="span2" data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: UnitId' ></select>
+                                        <textarea class="input-large" name="note" placeholder="Note" rows="4" cols="4" data-bind="value: Note"></textarea>
+                                        <button class="btn btn-danger" data-bind="click: $parent.deleteStory"><i class="icon-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">
-                            Note</label>
-                        <div class="controls">
-                            <textarea placeholder="Note" rows="5" cols="5" data-bind="value: Routine.Note"></textarea>
+                        <div class="control-group">
+                            <label class="control-label" for="reps">
+                                Reps
+                            </label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: Routine.Reps" />
+                                <button type="submit" class="btn btn-info" data-bind="click: addStory.bind($data, 33)"><i class="icon-plus-sign"></i></button>
+                                <div class="form-inline" data-bind="foreach: filterStory(33)">
+                                    <div>
+                                        @*<select class="span3" data-bind='options: $root.trainings, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: TrainingId' ></select>*@
+                                        <input type="hidden" data-bind="text: TrainingId" />
+                                        <select class="span3" data-bind='options: $root.actions, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: ActionId' ></select>
+                                        <select class="span2" data-bind='options: $root.types, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: TypeId' ></select>
+                                        <input type="text" class="input-small" data-bind="value: Value" />
+                                        <select class="span2" data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: UnitId' ></select>
+                                        <textarea class="input-large" name="note" placeholder="Note" rows="4" cols="4" data-bind="value: Note"></textarea>
+                                        <button class="btn btn-danger" data-bind="click: $parent.deleteStory"><i class="icon-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">
+                                Note</label>
+                            <div class="controls">
+                                <textarea placeholder="Note" rows="5" cols="5" data-bind="value: Routine.Note"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-success" data-bind="click: $root.addRoutine">Add Exercise</button>
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <button class="btn btn-primary" type="submit">Save</button>
-        </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" data-bind="click: $root.addRoutine">Add Exercise</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
         </form>
     </div>
 </div>
+
 <link href="/css/ui/jquery.ui.css" rel="stylesheet" type="text/css" />
 <script src="/scripts/jquery.js" type="text/javascript"></script>
 <script src="/scripts/bootstrap.js" type="text/javascript"></script>
@@ -371,7 +399,7 @@
                 async: false,
                 //cache: false,
                 url: '/api/member/GetRoutineByWorkout/' + @workoutId,
-                //data: { id: @memberId },
+                //data: { id: memberId },
                 //dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {

@@ -165,6 +165,8 @@
                 </div>
                 <div class="span3">
                     <button class="btn btn-primary" data-bind="click: openGymnast">More</button>
+                    <button class="btn btn-primary" data-bind="click: openTemplateRoutine">Routine</button>
+                    <button class="btn btn-primary" data-bind="click: openTemplateSuperSet">SuperSet</button>
                 </div>
             </div>
         </div>
@@ -398,6 +400,12 @@
         };
         self.openTopic = function() {
             parent.right.document.location.href = '/template.aspx?view=topic&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+        self.openTemplateRoutine = function() {
+            parent.right.document.location.href = '/template.aspx?view=templateroutine&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+        };
+        self.openTemplateSuperSet = function() {
+            parent.right.document.location.href = '/template.aspx?view=templatesuperset&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
         };
     }
     

@@ -539,6 +539,10 @@
     <Content Include="Views\Partials\_Topic.cshtml" />
     <Content Include="Views\Partials\_Workout.cshtml" />
     <Content Include="Views\Partials\_SuperSet.cshtml" />
+    <Content Include="Views\Partials\_TemplateWorkout.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Partials\_TemplateSuperSet.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">

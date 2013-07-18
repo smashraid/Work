@@ -1467,7 +1467,7 @@ public class MemberController : ApiController
                     );
                 routineViewModel.Routine.Id = Convert.ToInt32(parameter.Value);
 
-                foreach (Story story in routineViewModel.Stories)
+                foreach (Story story in routineViewModel.Stories.Where(s => s.ActionId != 0))
                 {
                     SetStoryUser(story);
 
@@ -1730,7 +1730,8 @@ public class MemberController : ApiController
                     StateId = reader.IsDBNull(11) ? (int?)null : Convert.ToInt32(reader.GetValue(11)),
                     State = UmbracoCustom.PropertyValue(UmbracoType.State, reader.GetValue(11)),
                     SortOrder = Convert.ToInt32(reader.GetValue(12)),
-                    CreatedDate = Convert.ToDateTime(reader.GetValue(13))
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(13)),
+                    ObjectId = Convert.ToInt32(reader.GetValue(14))
                 });
             }
         }
@@ -1770,7 +1771,8 @@ public class MemberController : ApiController
                         StateId = reader.IsDBNull(11) ? (int?)null : Convert.ToInt32(reader.GetValue(11)),
                         State = UmbracoCustom.PropertyValue(UmbracoType.State, reader.GetValue(11)),
                         SortOrder = Convert.ToInt32(reader.GetValue(12)),
-                        CreatedDate = Convert.ToDateTime(reader.GetValue(13))
+                        CreatedDate = Convert.ToDateTime(reader.GetValue(13)),
+                        ObjectId = Convert.ToInt32(reader.GetValue(14))
                     },
                     Stories = GetStory(Convert.ToInt32(reader.GetValue(5)))
                 });
@@ -1961,6 +1963,38 @@ public class MemberController : ApiController
                     WorkoutId = Convert.ToInt32(reader.GetValue(6).ToString()),
                     CreatedDate = Convert.ToDateTime(reader.GetValue(7))
                 });
+            }
+        }
+        return superSets;
+    }
+
+    [HttpGet]
+    public IEnumerable<SuperSetViewModel> GetSuperSetByWorkout(int id)
+    {
+        Member member = Member.GetCurrentMember();
+        List<SuperSetViewModel> superSets = new List<SuperSetViewModel>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectSuperSet", new SqlParameter { ParameterName = "@WorkoutId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                superSets.Add(new SuperSetViewModel
+                    {
+                        SuperSet = new SuperSet
+                            {
+                                Id = Convert.ToInt32(reader.GetValue(0).ToString()),
+                                Reps = reader.IsDBNull(1) ? (int?) null : Convert.ToInt32(reader.GetValue(1)),
+                                Sets = reader.IsDBNull(2) ? (int?) null : Convert.ToInt32(reader.GetValue(2)),
+                                ResistanceId = Convert.ToInt32(reader.GetValue(3)),
+                                Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
+                                UnitId = reader.IsDBNull(4) ? (int?) null : Convert.ToInt32(reader.GetValue(4)),
+                                Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
+                                Note = reader.GetValue(5).ToString(),
+                                WorkoutId = Convert.ToInt32(reader.GetValue(6).ToString()),
+                                CreatedDate = Convert.ToDateTime(reader.GetValue(7))
+                            },
+                        Routines = GetRoutineStories(Convert.ToInt32(reader.GetValue(0).ToString()))
+                    });
             }
         }
         return superSets;
@@ -2734,7 +2768,8 @@ public class MemberController : ApiController
                     UserId = Convert.ToInt32(reader.GetValue(3)),
                     UserType = Convert.ToInt32(reader.GetValue(4)),
                     CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
-                    IsRead = Convert.ToBoolean(reader.GetValue(6))
+                    IsRead = Convert.ToBoolean(reader.GetValue(6)),
+                    LastTalk = SelectLastTalk(Convert.ToInt32(reader.GetValue(0)))
                 };
                 GetChatUser(chat);
                 chats.Add(chat);
