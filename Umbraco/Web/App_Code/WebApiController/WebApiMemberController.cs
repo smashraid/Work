@@ -1076,9 +1076,11 @@ public class MemberController : ApiController
     public IEnumerable<CategoryViewModel> GetCategories()
     {
         int id = Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Category));
-        return UmbracoCustom.DataTypeValue(id).Select(u => new UmbracoPreValue {Id = u.Id, Value = u.Value}).Select(category => new CategoryViewModel
+        return UmbracoCustom.DataTypeValue(id).Select(u => new UmbracoPreValue { Id = u.Id, Value = u.Value }).Select(category => new CategoryViewModel
             {
-                Id = category.Id, Value = category.Value, Exercises = GetExerciseByCategory(category.Id)
+                Id = category.Id,
+                Value = category.Value,
+                Exercises = GetExerciseByCategory(category.Id)
             }).ToList();
     }
 
@@ -1298,7 +1300,7 @@ public class MemberController : ApiController
                     );
                 routineViewModel.Routine.Id = Convert.ToInt32(parameter.Value);
 
-                foreach (Story story in routineViewModel.Stories.Where(s=>s.ActionId != 0))
+                foreach (Story story in routineViewModel.Stories.Where(s => s.ActionId != 0))
                 {
                     SetStoryUser(story);
 
@@ -1983,11 +1985,11 @@ public class MemberController : ApiController
                         SuperSet = new SuperSet
                             {
                                 Id = Convert.ToInt32(reader.GetValue(0).ToString()),
-                                Reps = reader.IsDBNull(1) ? (int?) null : Convert.ToInt32(reader.GetValue(1)),
-                                Sets = reader.IsDBNull(2) ? (int?) null : Convert.ToInt32(reader.GetValue(2)),
+                                Reps = reader.IsDBNull(1) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
+                                Sets = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
                                 ResistanceId = Convert.ToInt32(reader.GetValue(3)),
                                 Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
-                                UnitId = reader.IsDBNull(4) ? (int?) null : Convert.ToInt32(reader.GetValue(4)),
+                                UnitId = reader.IsDBNull(4) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
                                 Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
                                 Note = reader.GetValue(5).ToString(),
                                 WorkoutId = Convert.ToInt32(reader.GetValue(6).ToString()),
@@ -2140,6 +2142,106 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
+    public HttpResponseMessage InsertEmailMessage(EmailMessage message)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            Member member = Member.GetCurrentMember();
+            SetEmailUser(message);
+            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertEmailMessage",
+               new SqlParameter { ParameterName = "@Id", Value = message.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
+               new SqlParameter { ParameterName = "@UserId", Value = message.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+               new SqlParameter { ParameterName = "@UserType", Value = message.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+               new SqlParameter { ParameterName = "@ObjectId", Value = message.ObjectId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+               new SqlParameter { ParameterName = "@Email", Value = message.Email, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+               new SqlParameter { ParameterName = "@Message", Value = message.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 }
+               );
+
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Message was registered successfully");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    private void SetEmailUser(EmailMessage message)
+    {
+        //message.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
+        User user = umbraco.BusinessLogic.User.GetCurrent();
+        Member member = Member.GetCurrentMember();
+        if (user != null)
+        {
+            message.UserId = user.Id;
+            message.UserType = user.LoginName.ToLower() == "system" ? UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(u => u.Value.ToLower() == "system").Id : UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(u => u.Value.ToLower() == "trainer").Id;
+        }
+        else
+        {
+            message.UserId = member.Id;
+            message.UserType =
+                UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
+                    u => u.Value.ToLower() == "client").Id;
+        }
+    }
+
+    [HttpPost]
+    public HttpResponseMessage InsertPushMessage(PushMessage message)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            Member member = Member.GetCurrentMember();
+            SetPushUser(message);
+            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertPushMessage",
+                  new SqlParameter { ParameterName = "@Id", Value = message.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
+                  new SqlParameter { ParameterName = "@Token", Value = message.Token, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 50 },
+                  new SqlParameter { ParameterName = "@NotificationId", Value = message.NotificationId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                  new SqlParameter { ParameterName = "@UserId", Value = message.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                  new SqlParameter { ParameterName = "@UserType", Value = message.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                  new SqlParameter { ParameterName = "@ObjectId", Value = message.ObjectId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                  new SqlParameter { ParameterName = "@ObjectType", Value = message.ObjectType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                  new SqlParameter { ParameterName = "@Message", Value = message.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+                  );
+
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Message was registered successfully");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    private void SetPushUser(PushMessage message)
+    {
+        //message.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
+        User user = umbraco.BusinessLogic.User.GetCurrent();
+        Member member = Member.GetCurrentMember();
+        if (user != null)
+        {
+            message.UserId = user.Id;
+            message.UserType = user.LoginName.ToLower() == "system" ? UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(u => u.Value.ToLower() == "system").Id : UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(u => u.Value.ToLower() == "trainer").Id;
+        }
+        else
+        {
+            message.UserId = member.Id;
+            message.UserType =
+                UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
+                    u => u.Value.ToLower() == "client").Id;
+        }
+    }
+
+    [HttpPost]
     public HttpResponseMessage SendPush(PushMessage message)
     {
         HttpResponseMessage response = new HttpResponseMessage();
@@ -2193,7 +2295,7 @@ public class MemberController : ApiController
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertTopic",
             parameter,
             new SqlParameter { ParameterName = "@Name", Value = topic.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
-            //new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
+                //new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
             new SqlParameter { ParameterName = "@UserId", Value = topic.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@UserType", Value = topic.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
             );
@@ -2497,7 +2599,7 @@ public class MemberController : ApiController
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateTopic",
             new SqlParameter { ParameterName = "@Id", Value = topic.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@Name", Value = topic.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
-            //new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+                //new SqlParameter { ParameterName = "@Description", Value = topic.Description, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
             );
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Topic successfully updated");

@@ -71,8 +71,7 @@
         </fieldset>
     </div>
     <!-- Modal -->
-    <div id="modal-workout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true" data-bind="with: workout">
+    <div id="modal-workout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-bind="with: workout">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 data-bind="if: !$root.IsEdit()" id="myModalLabel">Add Workout</h3>
@@ -337,7 +336,7 @@
             parent.right.document.location.href = '/template.aspx?view=routine&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id + '&workouttitle=' + workout.Name;
         };
          self.openSuperSet = function (workout) {
-            parent.right.document.location.href = '/template.aspx?view=topic&gymnastid=' + @gymnastId + '&memberid=' + @memberId;
+            parent.right.document.location.href = '/template.aspx?view=superset&&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id + '&workouttitle=' + workout.Name;
         };
         self.getDropdown = function() {
             $.get('/api/member/GetUmbracoPreValue', { id: 1077 }, function(data) {

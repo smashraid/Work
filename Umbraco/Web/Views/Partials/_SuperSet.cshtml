@@ -1,1318 +1,597 @@
-<!DOCTYPE html>
-<html class="i-M" dir="ltr" lang="en">
-    <head>
-        <link href="dashboards_files/chatsupport.css" rel="stylesheet" type="text/css">
-        <title>Dashboard - Account Settings</title>
-        <style>
-            #gb {
-                font:13px/27px Arial,sans-serif;height:102px
-            }
-            #gbz,#gbg {
-                position:absolute;white-space:nowrap;top:0;height:30px;z-index:1000
-            }
-            #gbz {
-                left:0;padding-left:4px
-            }
-            #gbg {
-                right:0;padding-right:5px
-            }
-            #gbs{
-            background:transparent;position:absolute;top:-999px;visibility:hidden;z-index:998;right:0
-            }
-            .gbto #gbs {
-                background:#fff
-            }
-            #gbx3,#gbx4 {
-                background-color:#2d2d2d;background-image:none;_background-image:none;background-position:0 -138px;background-repeat:repeat-x;border-bottom:1px solid #000;font-size:24px;height:29px;_height:30px;opacity:1;filter:alpha(opacity=100);position:absolute;top:0;width:100%;z-index:990
-            }
-            #gbx3 {
-                left:0
-            }
-            #gbx4 {
-                right:0
-            }#gbb {
-                 position:relative
-             }#gbbw{left:0;position:absolute;top:102px;width:100%}.gbtcb{position:absolute;visibility:hidden}#gbz .gbtcb{right:0}#gbg .gbtcb{left:0}.gbxx{display:none !important}.gbxo{opacity:0 !important;filter:alpha(opacity=0) !important}.gbm{position:absolute;z-index:999;top:-999px;visibility:hidden;text-align:left;border:1px solid #bebebe;background:#fff;-moz-box-shadow:-1px 1px 1px rgba(0,0,0,.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,.2);box-shadow:0 2px 4px rgba(0,0,0,.2)}.gbrtl .gbm{-moz-box-shadow:1px 1px 1px rgba(0,0,0,.2)}.gbto .gbm,.gbto #gbs{top:51px;visibility:visible}#gbz .gbm{left:0}#gbg .gbm{right:0}.gbxms{background-color:#ccc;display:block;position:absolute;z-index:1;top:-1px;left:-2px;right:-2px;bottom:-2px;opacity:.4;-moz-border-radius:3px;filter:progid:DXImageTransform.Microsoft.Blur(pixelradius=5);*opacity:1;*top:-2px;*left:-5px;*right:5px;*bottom:4px;-ms-filter:"progid:DXImageTransform.Microsoft.Blur(pixelradius=5)";opacity:1\0/;top:-4px\0/;left:-6px\0/;right:5px\0/;bottom:4px\0/}.gbma{position:relative;top:-1px;border-style:solid dashed dashed;border-color:transparent;border-top-color:#c0c0c0;display:-moz-inline-box;display:inline-block;font-size:0;height:0;line-height:0;width:0;border-width:3px 3px 0;padding-top:1px;left:4px}#gbztms1,#gbi4m1,#gbi4s,#gbi4t{zoom:1}.gbtc,.gbmc,.gbmcc{display:block;list-style:none;margin:0;padding:0}.gbmc{background:#fff;padding:10px 0;position:relative;z-index:2;zoom:1}.gbt{position:relative;display:-moz-inline-box;display:inline-block;line-height:27px;padding:0;vertical-align:top}.gbt{*display:inline}.gbto{box-shadow:0 2px 4px rgba(0,0,0,.2);-moz-box-shadow:0 2px 4px rgba(0,0,0,.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,.2)}.gbzt,.gbgt{cursor:pointer;display:block;text-decoration:none !important}span#gbg6,span#gbg4{cursor:default}.gbts{border-left:1px solid transparent;border-right:1px solid transparent;display:block;*display:inline-block;padding:0 5px;position:relative;z-index:1000}.gbts{*display:inline}.gbzt .gbts{display:inline;zoom:1}.gbto .gbts{background:#fff;border-color:#bebebe;color:#36c;padding-bottom:1px;padding-top:2px}.gbz0l .gbts{color:#fff;font-weight:bold}.gbtsa{padding-right:9px}#gbz .gbzt,#gbz .gbgt,#gbg .gbgt{color:#ccc!important}.gbtb2{display:block;border-top:2px solid transparent}.gbto .gbzt .gbtb2,.gbto .gbgt .gbtb2{border-top-width:0}.gbtb .gbts{background:url(//ssl.gstatic.com/gb/images/h_bedf916a.png);_background:url(//ssl.gstatic.com/gb/images/h8_3dd87cd8.png);background-position:-27px -22px;border:0;font-size:0;padding:29px 0 0;*padding:27px 0 0;width:1px}.gbzt:hover,.gbzt:focus,.gbgt-hvr,.gbgt:focus{background-color:transparent;background-image:none;_background-image:none;background-position:0 -102px;background-repeat:repeat-x;outline:none;text-decoration:none !important}.gbpdjs .gbto .gbm{min-width:99%}.gbz0l .gbtb2{border-top-color:transparent!important}#gbi4s,#gbi4s1{font-weight:bold}#gbg6.gbgt-hvr,#gbg6.gbgt:focus{background-color:transparent;background-image:none}.gbg4a{font-size:0;line-height:0}.gbg4a .gbts{padding:27px 5px 0;*padding:25px 5px 0}.gbto .gbg4a .gbts{padding:29px 5px 1px;*padding:27px 5px 1px}#gbi4i,#gbi4id{left:5px;border:0;height:24px;position:absolute;top:1px;width:24px}.gbto #gbi4i,.gbto #gbi4id{top:3px}.gbi4p{display:block;width:24px}#gbi4id{background-position:-44px -101px}#gbmpid{background-position:0 0}#gbmpi,#gbmpid{border:none;display:inline-block;height:48px;width:48px}#gbmpiw{display:inline-block;line-height:9px;padding-left:20px;margin-top:10px;position:relative}#gbmpi,#gbmpid,#gbmpiw{*display:inline}#gbg5{font-size:0}#gbgs5{padding:5px !important}.gbto #gbgs5{padding:7px 5px 6px !important}#gbi5{background:url(//ssl.gstatic.com/gb/images/h_bedf916a.png);_background:url(//ssl.gstatic.com/gb/images/h8_3dd87cd8.png);background-position:0 0;display:block;font-size:0;height:17px;width:16px}.gbto #gbi5{background-position:-6px -22px}.gbn .gbmt,.gbn .gbmt:visited,.gbnd .gbmt,.gbnd .gbmt:visited{color:#dd8e27 !important}.gbf .gbmt,.gbf .gbmt:visited{color:#900 !important}.gbmt,.gbml1,.gbmlb,.gbmt:visited,.gbml1:visited,.gbmlb:visited{color:#36c !important;text-decoration:none !important}.gbmt,.gbmt:visited{display:block}.gbml1,.gbmlb,.gbml1:visited,.gbmlb:visited{display:inline-block;margin:0 10px}.gbml1,.gbmlb,.gbml1:visited,.gbmlb:visited{*display:inline}.gbml1,.gbml1:visited{padding:0 10px}.gbml1-hvr,.gbml1:focus{outline:none;text-decoration:underline !important}#gbpm .gbml1{display:inline;margin:0;padding:0;white-space:nowrap}.gbmlb,.gbmlb:visited{line-height:27px}.gbmlb-hvr,.gbmlb:focus{outline:none;text-decoration:underline !important}.gbmlbw{color:#ccc;margin:0 10px}.gbmt{padding:0 20px}.gbmt:hover,.gbmt:focus{background:#eee;cursor:pointer;outline:0 solid black;text-decoration:none !important}.gbm0l,.gbm0l:visited{color:#000 !important;font-weight:bold}.gbmh{border-top:1px solid #bebebe;font-size:0;margin:10px 0}#gbd4 .gbmc{background:#f5f5f5;padding-top:0}#gbd4 .gbsbic::-webkit-scrollbar-track:vertical{background-color:#f5f5f5;margin-top:2px}#gbmpdv{background:#fff;border-bottom:1px solid #bebebe;-moz-box-shadow:0 2px 4px rgba(0,0,0,.12);-o-box-shadow:0 2px 4px rgba(0,0,0,.12);-webkit-box-shadow:0 2px 4px rgba(0,0,0,.12);box-shadow:0 2px 4px rgba(0,0,0,.12);position:relative;z-index:1}#gbd4 .gbmh{margin:0}.gbmtc{padding:0;margin:0;line-height:27px}.GBMCC:last-child:after,#GBMPAL:last-child:after{content:'\0A\0A';white-space:pre;position:absolute}#gbmps{*zoom:1}#gbd4 .gbpc,#gbmpas .gbmt{line-height:17px}#gbd4 .gbpgs .gbmtc{line-height:27px}#gbd4 .gbmtc{border-bottom:1px solid #bebebe}#gbd4 .gbpc{display:inline-block;margin:16px 0 10px;padding-right:50px;vertical-align:top}#gbd4 .gbpc{*display:inline}.gbpc .gbps,.gbpc .gbps2{display:block;margin:0 20px}#gbmplp.gbps{margin:0 10px}.gbpc .gbps{color:#000;font-weight:bold}.gbpc .gbpd{margin-bottom:5px}.gbpd .gbmt,.gbpd .gbps{color:#666 !important}.gbpd .gbmt{opacity:.4;filter:alpha(opacity=40)}.gbps2{color:#666;display:block}.gbp0{display:none}.gbp0 .gbps2{font-weight:bold}#gbd4 .gbmcc{margin-top:5px}.gbpmc{background:#fef9db}.gbpmc .gbpmtc{padding:10px 20px}#gbpm{border:0;*border-collapse:collapse;border-spacing:0;margin:0;white-space:normal}#gbpm .gbpmtc{border-top:none;color:#000 !important;font:11px Arial,sans-serif}#gbpms{*white-space:nowrap}.gbpms2{font-weight:bold;white-space:nowrap}#gbmpal{*border-collapse:collapse;border-spacing:0;border:0;margin:0;white-space:nowrap;width:100%}.gbmpala,.gbmpalb{font:13px Arial,sans-serif;line-height:27px;padding:10px 20px 0;white-space:nowrap}.gbmpala{padding-left:0;text-align:left}.gbmpalb{padding-right:0;text-align:right}#gbmpasb .gbps{color:#000}#gbmpal .gbqfbb{margin:0 20px}.gbp0 .gbps{*display:inline}a.gbiba{margin:8px 20px 10px}.gbmpiaw{display:inline-block;padding-right:10px;margin-bottom:6px;margin-top:10px}.gbxv{visibility:hidden}.gbmpiaa{display:block;margin-top:10px}.gbmpia{border:none;display:block;height:48px;width:48px}.gbmpnw{display:inline-block;height:auto;margin:16px 0 18px;vertical-align:top}.gbqfb,.gbqfba,.gbqfbb{-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;cursor:default !important;display:inline-block;font-weight:bold;height:29px;line-height:29px;min-width:54px;*min-width:70px;padding:0 8px;text-align:center;text-decoration:none !important;-moz-user-select:none;-webkit-user-select:none}.gbqfb:focus,.gbqfba:focus,.gbqfbb:focus{border:1px solid #4d90fe;-moz-box-shadow:inset 0 0 0 1px rgba(255, 255, 255, 0.5);-webkit-box-shadow:inset 0 0 0 1px rgba(255, 255, 255, 0.5);box-shadow:inset 0 0 0 1px rgba(255, 255, 255, 0.5);outline:none}.gbqfb-hvr:focus,.gbqfba-hvr:focus,.gbqfbb-hvr:focus{-webkit-box-shadow:inset 0 0 0 1px #fff,0 1px 1px rgba(0,0,0,.1);-moz-box-shadow:inset 0 0 0 1px #fff,0 1px 1px rgba(0,0,0,.1);box-shadow:inset 0 0 0 1px #fff,0 1px 1px rgba(0,0,0,.1)}.gbqfb-no-focus:focus{border:1px solid #3079ed;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none}.gbqfb-hvr,.gbqfba-hvr,.gbqfbb-hvr{-webkit-box-shadow:0 1px 1px rgba(0,0,0,.1);-moz-box-shadow:0 1px 1px rgba(0,0,0,.1);box-shadow:0 1px 1px rgba(0,0,0,.1)}.gbqfb::-moz-focus-inner,.gbqfba::-moz-focus-inner,.gbqfbb::-moz-focus-inner{border:0}.gbqfba,.gbqfbb{border:1px solid #dcdcdc;border-color:rgba(0,0,0,.1);color:#444 !important;font-size:11px}.gbqfb{background-color:#4d90fe;background-image:-webkit-gradient(linear,left top,left bottom,from(#4d90fe),to(#4787ed));background-image:-webkit-linear-gradient(top,#4d90fe,#4787ed);background-image:-moz-linear-gradient(top,#4d90fe,#4787ed);background-image:-ms-linear-gradient(top,#4d90fe,#4787ed);background-image:-o-linear-gradient(top,#4d90fe,#4787ed);background-image:linear-gradient(top,#4d90fe,#4787ed);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#4d90fe',EndColorStr='#4787ed');border:1px solid #3079ed;color:#fff!important;margin:0 0}.gbqfb-hvr{border-color:#2f5bb7}.gbqfb-hvr:focus{border-color:#2f5bb7}.gbqfb-hvr,.gbqfb-hvr:focus{background-color:#357ae8;background-image:-webkit-gradient(linear,left top,left bottom,from(#4d90fe),to(#357ae8));background-image:-webkit-linear-gradient(top,#4d90fe,#357ae8);background-image:-moz-linear-gradient(top,#4d90fe,#357ae8);background-image:-ms-linear-gradient(top,#4d90fe,#357ae8);background-image:-o-linear-gradient(top,#4d90fe,#357ae8);background-image:linear-gradient(top,#4d90fe,#357ae8)}.gbqfb:active{background-color:inherit;-webkit-box-shadow:inset 0 1px 2px rgba(0, 0, 0, 0.3);-moz-box-shadow:inset 0 1px 2px rgba(0, 0, 0, 0.3);box-shadow:inset 0 1px 2px rgba(0, 0, 0, 0.3)}.gbqfba{background-color:#f5f5f5;background-image:-webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#f1f1f1));background-image:-webkit-linear-gradient(top,#f5f5f5,#f1f1f1);background-image:-moz-linear-gradient(top,#f5f5f5,#f1f1f1);background-image:-ms-linear-gradient(top,#f5f5f5,#f1f1f1);background-image:-o-linear-gradient(top,#f5f5f5,#f1f1f1);background-image:linear-gradient(top,#f5f5f5,#f1f1f1);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#f5f5f5',EndColorStr='#f1f1f1')}.gbqfba-hvr,.gbqfba-hvr:active{background-color:#f8f8f8;background-image:-webkit-gradient(linear,left top,left bottom,from(#f8f8f8),to(#f1f1f1));background-image:-webkit-linear-gradient(top,#f8f8f8,#f1f1f1);background-image:-moz-linear-gradient(top,#f8f8f8,#f1f1f1);background-image:-ms-linear-gradient(top,#f8f8f8,#f1f1f1);background-image:-o-linear-gradient(top,#f8f8f8,#f1f1f1);background-image:linear-gradient(top,#f8f8f8,#f1f1f1);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#f8f8f8',EndColorStr='#f1f1f1')}.gbqfbb{background-color:#fff;background-image:-webkit-gradient(linear,left top,left bottom,from(#fff),to(#fbfbfb));background-image:-webkit-linear-gradient(top,#fff,#fbfbfb);background-image:-moz-linear-gradient(top,#fff,#fbfbfb);background-image:-ms-linear-gradient(top,#fff,#fbfbfb);background-image:-o-linear-gradient(top,#fff,#fbfbfb);background-image:linear-gradient(top,#fff,#fbfbfb);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff',EndColorStr='#fbfbfb')}.gbqfbb-hvr,.gbqfbb-hvr:active{background-color:#fff;background-image:-webkit-gradient(linear,left top,left bottom,from(#fff),to(#f8f8f8));background-image:-webkit-linear-gradient(top,#fff,#f8f8f8);background-image:-moz-linear-gradient(top,#fff,#f8f8f8);background-image:-ms-linear-gradient(top,#fff,#f8f8f8);background-image:-o-linear-gradient(top,#fff,#f8f8f8);background-image:linear-gradient(top,#fff,#f8f8f8);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff',EndColorStr='#f8f8f8')}.gbqfba-hvr,.gbqfba-hvr:active,.gbqfbb-hvr,.gbqfbb-hvr:active{border-color:#c6c6c6;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.1);-moz-box-shadow:0 1px 1px rgba(0,0,0,.1);box-shadow:0 1px 1px rgba(0,0,0,.1);color:#222 !important}.gbqfba:active,.gbqfbb:active{-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}#gbql,#gbgsi,#gbgsa,.gbqfi,.gbmai,.gbp0i,.gbmppci,.gbqfh #gbql{background-image:url('//ssl.gstatic.com/gb/images/k1_a31af7ac.png');background-size:294px 45px}@media screen and (min-resolution:1.25dppx),screen and (-o-min-device-pixel-ratio:5/4),screen and (-webkit-min-device-pixel-ratio:1.25),screen and (min-device-pixel-ratio:1.25){#gbql,#gbgsi,#gbgsa,.gbqfi,.gbmai,.gbp0i,.gbmppci,.gbqfh #gbql{background-image:url('//ssl.gstatic.com/gb/images/k2_aca6bcc6.png')}}#gbd1,#gbd1 .gbmc{width:440px;height:190px}#gbd3,#gbd3 .gbmc{width:440px;height:8em}#gb{height:102px;-moz-user-select:-moz-none;-o-user-select:none;-webkit-user-select:none;user-select:none}#gbbw{top:102px;min-width:700px;}#gb.gbet #gbbw,#gb.gbeti #gbbw{min-width:836px;}#gb.gbeu #gbbw,#gb.gbeui #gbbw{min-width:780px;}.gbxx{display:none !important}#gbq,#gbu{position:absolute;top:0px;white-space:nowrap}#gbu{height:71px}#gbu,#gbq1,#gbq3{z-index:987}#gbq{left:0;_overflow:hidden;width:100%;z-index:986}#gbq2{top:0px;z-index:986}#gbu{right:0;height:30px;margin-right:28px;padding-bottom:0;padding-top:20px}#gbx1,#gbx2{background:#f1f1f1;background:-webkit-gradient(radial,100 36,0,100 -40,120,from(#fafafa),to(#f1f1f1)),#f1f1f1;border-bottom:1px solid #666;border-color:#e5e5e5;height:71px;position:absolute;top:0px;width:100%;z-index:985;min-width:700px;}#gb.gbet #gbx1,#gb.gbeti #gbx1{min-width:836px;}#gb.gbeu #gbx1,#gb.gbeui #gbx1{min-width:780px;}#gbx1.gbxngh,#gbx2.gbxngh{background:-webkit-gradient(radial,100 36,0,100 -40,120,from(#ffffff),to(#f1f1f1)),#f1f1f1}#gbx1{left:0}#gbx2{right:0}#gbq1{left:0;margin:0;padding:0;margin-left:44px;position:absolute}.gbes#gbq1{margin-left:0}#gbq3{left:220px;padding-bottom:0;padding-top:20px;position:absolute;top:0px}#gbql{background-repeat:no-repeat;background-position:-178px 0;display:block;height:45px;width:116px}.gbqla{display:inline-block;outline:none;position:relative}.gbqla2{outline:none}.gbqlca{cursor:pointer;cursor:hand;height:100%;position:absolute;top:0;width:100%;left:0}#gbqlt{border:0;border-collapse:collapse;border-spacing:0;margin:0}#gbqlw{display:table-cell;height:71px;padding:0;padding-right:16px;position:relative;vertical-align:middle}#gbqld{border:none;display:block}.gbqldr{max-height:71px;max-width:160px}#gog{height:99px}.gbh{border-top:none}.gbpl,.gbpr,#gbpx1,#gbpx2{border-top:none !important;top:102px !important}.gbpl,.gbpr{margin-top:4px}.gbi5t{color:#666;display:block;margin:1px 15px;text-shadow:none}#gbq2{display:block;margin-left:220px;padding-bottom:0;padding-top:20px}#gbqf{display:block;margin:0;max-width:512px;min-width:200px;white-space:nowrap}.gbexxl#gbq2 #gbqf,.gbexxli#gb #gbqf,.gbexl#gbq2 #gbqf,.gbexli#gb #gbqf{max-width:512px}.gbet#gbq2 #gbqf,.gbeti#gb #gbqf{max-width:434px;min-width:434px}.gbeu#gbqf,.gbeui#gb #gbqf{max-width:319px;min-width:319px}.gbqff{border:none;display:inline-block;margin:0;padding:0;vertical-align:top;width:100%}.gbqff{*display:inline}.gbqfqw,#gbqfb,.gbqfwa{vertical-align:top}#gbqfaa,#gbqfab,#gbqfqwb{position:absolute}#gbqfaa{left:0}#gbqfab{right:0}.gbqfqwb,.gbqfqwc{right:0;left:0}.gbqfqwb{padding:0 8px}#gbqfbw{margin:0 15px;display:inline-block;vertical-align:top}#gbqfbw{*display:inline}.gbqfi{background-position:-33px 0;display:inline-block;height:13px;margin:7px 19px;width:14px}.gbqfi{*display:inline}.gbqfqw{background:#fff;border:1px solid #d9d9d9;border-top:1px solid #c0c0c0;-moz-border-radius:1px;-webkit-border-radius:1px;border-radius:1px;height:27px;}#gbqfqw{position:relative}.gbqfqw-hvr{border:1px solid #b9b9b9;border-top:1px solid #a0a0a0;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}.gbqfwa{display:inline-block;width:100%}.gbqfwa{*display:inline}.gbqfwb{width:40%}.gbqfwc{width:60%}.gbqfwb .gbqfqw{margin-left:10px}.gbqfqw:active,.gbqfqwf{border:1px solid #4d90fe;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);box-shadow:inset 0 1px 2px rgba(0,0,0,.3);outline:none}#gbqfq,#gbqfqb,#gbqfqc{background:transparent;border:none;height:19px;margin-top:4px;padding:0;vertical-align:top;width:100%}#gbqfq:focus,#gbqfqb:focus,#gbqfqc:focus{outline:none}.gbqfif,.gbqfsf{font:16px arial,sans-serif}#gbqfbwa{display:none;text-align:center;height:0}#gbqfbwa .gbqfba{margin:16px 8px}#gbqfsa,#gbqfsb{font:bold 11px/27px Arial,sans-serif !important;vertical-align:top}#gbu .gbm,#gbu #gbs{right:5px}.gbpdjs #gbu .gbm,.gbpdjs #gbu #gbs{right:0}.gbpdjs #gbu #gbd4{right:5px}#gbu .gbgt,#gbu .gbgt:active{color:#666}#gbu .gbt{margin-left:15px}#gbu .gbto{box-shadow:none;-moz-box-shadow:none;-webkit-box-shadow:none}#gbg4{padding-right:16px}#gbd1 .gbmc,#gbd3 .gbmc{padding:0}#gbns{display:none}.gbmwc{right:0;position:absolute;top:-999px;width:440px;z-index:999}#gbwc.gbmwca{top:0}.gbmsg{display:none}.gbmab,.gbmac,.gbmad,.gbmae{left:5px;border-style:dashed dashed solid;border-color:transparent;border-bottom-color:#bebebe;border-width:0 10px 10px;cursor:default;display:-moz-inline-box;display:inline-block;font-size:0;height:0;line-height:0;position:absolute;top:0;width:0;z-index:1000}.gbmab,.gbmac{visibility:hidden}.gbmac{border-bottom-color:#fff}.gbto .gbmab,.gbto .gbmac{visibility:visible}.gbmai{background-position:-163px -40px;opacity:.8;font-size:0;line-height:0;position:absolute;height:4px;width:7px}.gbgt-hvr .gbmai{opacity:1;filter:alpha(opacity=100)}#gbgs3{background-color:#f8f8f8;background-image:-webkit-gradient(linear,left top,left bottom,from(#f8f8f8),to(#ececec));background-image:-webkit-linear-gradient(top,#f8f8f8,#ececec);background-image:-moz-linear-gradient(top,#f8f8f8,#ececec);background-image:-ms-linear-gradient(top,#f8f8f8,#ececec);background-image:-o-linear-gradient(top,#f8f8f8,#ececec);background-image:linear-gradient(top,#f8f8f8,#ececec);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#f8f8f8',EndColorStr='#ececec');border:1px solid #c6c6c6;-moz-border-radius:2px;-o-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;padding:0 10px;position:relative}#gbgsi{background-position:-163px 0;height:10px;opacity:.8;position:absolute;top:8px;_top:10px;width:10px;left:10px}#gbgsa{background-position:-163px -15px;height:11px;position:absolute;top:8px;width:10px;left:100%}.gbgt-hvr #gbgsa{background-position:-18px -32px}#gbg3:active #gbgsa{background-position:0 0}.gbgt-hvr #gbgsi{opacity:1;filter:alpha(opacity=100)}#gbgss{display:inline-block;width:18px}.gbsbc #gbgss{width:7px}#gbi3{zoom:1}.gbsbc #gbi3{display:none}.gbgt-hvr #gbgs3,#gbg3:focus #gbgs3,#gbg3:active #gbgs3{background-color:#ffffff;background-image:-webkit-gradient(linear,left top,left bottom,from(#ffffff),to(#ececec));background-image:-webkit-linear-gradient(top,#ffffff,#ececec);background-image:-moz-linear-gradient(top,#ffffff,#ececec);background-image:-ms-linear-gradient(top,#ffffff,#ececec);background-image:-o-linear-gradient(top,#ffffff,#ececec);background-image:linear-gradient(top,#ffffff,#ececec);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff',EndColorStr='#ececec');border-color:#bbb}#gbg3:active #gbgs3{border-color:#b6b6b6}#gbg3:active #gbgs3{-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.2);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.2);box-shadow:inset 0 1px 2px rgba(0,0,0,.2)}#gbgs3 .gbmab{margin:40px 0 0}#gbgs3 .gbmac{margin:41px 0 0}.gbsr #gbgs3 .gbmac{border-bottom-color:#f5f5f5}.gbsr #gbd3,.gbsr #gbd3 .gbmc{background:#f5f5f5;min-height:268px;width:480px}#gbgs1{display:block;overflow:hidden;position:relative}.gbg1t{top:0}.gbg1ta{-o-transition:top .218s ease-out;-moz-transition:top .218s ease-out;-webkit-transition:top .218s ease-out;transition:top .218s ease-out}.gbg1tb{-o-transition:top .13s ease-in;-moz-transition:top .13s ease-in;-webkit-transition:top .13s ease-in;transition:top .13s ease-in}.gbg1tc{-o-transition:top .13s ease-out;-moz-transition:top .13s ease-out;-webkit-transition:top .13s ease-out;transition:top .13s ease-out}#gbi1a{background-color:#d14836;background-image:-webkit-gradient(linear,left top,left bottom,from(#dd4b39),to(#d14836));background-image:-webkit-linear-gradient(top,#dd4b39,#d14836);background-image:-moz-linear-gradient(top,#dd4b39,#d14836);background-image:-ms-linear-gradient(top,#dd4b39,#d14836);background-image:-o-linear-gradient(top,#dd4b39,#d14836);background-image:linear-gradient(top,#dd4b39,#d14836);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#dd4b39',EndColorStr='#d14836');border:1px solid #c13828;-moz-border-radius:2px;-o-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;display:block;height:27px;width:27px}.gbgt-hvr #gbi1a{background-color:#c53727;background-image:-webkit-gradient(linear,left top,left bottom,from(#dd4b39),to(#c53727));background-image:-webkit-linear-gradient(top,#dd4b39,#c53727);background-image:-moz-linear-gradient(top,#dd4b39,#c53727);background-image:-ms-linear-gradient(top,#dd4b39,#c53727);background-image:-o-linear-gradient(top,#dd4b39,#c53727);background-image:linear-gradient(top,#dd4b39,#c53727);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#dd4b39',EndColorStr='#c53727');border-color:#b0281a;border-bottom-color:#af301f;-moz-box-shadow:0 1px 1px rgba(0,0,0,.2);-webkit-box-shadow:0 1px 1px rgba(0,0,0,.2);box-shadow:0 1px 1px rgba(0,0,0,.2)}#gbg1:focus #gbi1a,#gbg1:active #gbi1a{background-color:#b0281a;background-image:-webkit-gradient(linear,left top,left bottom,from(#dd4b39),to(#b0281a));background-image:-webkit-linear-gradient(top,#dd4b39,#b0281a);background-image:-moz-linear-gradient(top,#dd4b39,#b0281a);background-image:-ms-linear-gradient(top,#dd4b39,#b0281a);background-image:-o-linear-gradient(top,#dd4b39,#b0281a);background-image:linear-gradient(top,#dd4b39,#b0281a);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#dd4b39',EndColorStr='#b0281a');border-color:#992a1b;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}.gbid#gbi1a{background-color:#f8f8f8;background-image:-webkit-gradient(linear,left top,left bottom,from(#f8f8f8),to(#ececec));background-image:-webkit-linear-gradient(top,#f8f8f8,#ececec);background-image:-moz-linear-gradient(top,#f8f8f8,#ececec);background-image:-ms-linear-gradient(top,#f8f8f8,#ececec);background-image:-o-linear-gradient(top,#f8f8f8,#ececec);background-image:linear-gradient(top,#f8f8f8,#ececec);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#f8f8f8',EndColorStr='#ececec');border-color:#c6c6c6}.gbgt-hvr .gbid#gbi1a,#gbg1:focus .gbid#gbi1a,#gbg1:active .gbid#gbi1a{background-color:#ffffff;background-image:-webkit-gradient(linear,left top,left bottom,from(#ffffff),to(#ececec));background-image:-webkit-linear-gradient(top,#ffffff,#ececec);background-image:-moz-linear-gradient(top,#ffffff,#ececec);background-image:-ms-linear-gradient(top,#ffffff,#ececec);background-image:-o-linear-gradient(top,#ffffff,#ececec);background-image:linear-gradient(top,#ffffff,#ececec);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff',EndColorStr='#ececec');border-color:#bbb}#gbg1:active .gbid#gbi1a{border-color:#b6b6b6;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}#gbi1,#gbi1c{left:0;bottom:1px;color:#fff;display:block;font-size:14px;font-weight:bold;position:absolute;text-align:center;text-shadow:0 1px rgba(0,0,0,.1);-moz-transition-property:bottom;-moz-transition-duration:0;-o-transition-property:bottom;-o-transition-duration:0;-webkit-transition-property:bottom;-webkit-transition-duration:0;-moz-user-select:none;-o-user-select:none;-webkit-user-select:none;user-select:none;width:100%}.gbgt-hvr #gbi1,#gbg1:focus #gbi1{text-shadow:0 1px rgba(0,0,0,.3)}.gbids#gbi1,.gbgt-hvr .gbids#gbi1,#gbg1:focus .gbids#gbi1,#gbg1:active .gbids#gbi1{color:#999;text-shadow:none}#gbg1 .gbmab{margin:41px 0 0}#gbg1 .gbmac{margin:42px 0 0}.gb_gbnh #gbgs1,#gbgs1.gbnh{visibility:hidden}.gb_gbnh .gbmab,.gb_gbnh .gbmac{left:1px}.gbng #gbs,.gbng #gbwc,.gbng #gbg1 .gbmac{border-bottom-color:#e5e5e5}.gbng #gbs,.gbng #gbwc{background-color:#e5e5e5}.gbng #gbd1,.gbng #gbd1 .gbmc,.gbng #gbwc,.gbng #gbs,.gbng #gbsf{width:400px}.gbng .gbmsg{visibility:hidden}.gb_gbsh .gbmab,.gb_gbsh .gbmac{left:9px;border-width:0 6px 6px}.gb_gbsh .gbng .gbmab,.gb_gbsh .gbng .gbmac{left:6px}.gb_gbsh #gbg1 .gbmab,.gb_gbsh #gbg3 .gbmab{margin:31px 0 0}.gb_gbsh #gbg1 .gbmac,.gb_gbsh #gbg3 .gbmac{margin:32px 0 0}.gb_gbsh .gbtn.gbto #gbd1,.gb_gbsh .gbtn.gbto #gbs{-webkit-transform:translateX(-354px)}.gb_gbsh .gbng .gbtn.gbto #gbd1,.gb_gbsh .gbng .gbtn.gbto #gbs{-webkit-transform:translateX(-314px)}.gb_gbsh .gbtsb #gbd3,.gb_gbsh .gbtsb #gbs{-webkit-transform:translateX(55px)}.gb_gbsh .gbng .gbtsb #gbd3,.gb_gbsh .gbng .gbtsb #gbs{-webkit-transform:translateX(-350px)}.gb_gbsh.gb_gbshc .gbtn.gbto #gbd1,.gb_gbsh.gb_gbshc .gbtn.gbto #gbs{-webkit-transform:translateX(-144px)}.gb_gbsh.gb_gbshc .gbng .gbtn.gbto #gbd1,.gb_gbsh.gb_gbshc .gbng .gbtn.gbto #gbs{-webkit-transform:translateX(-104px)}.gb_gbsh.gb_gbshc .gbtsb #gbd3,.gb_gbsh.gb_gbshc .gbtsb #gbs{-webkit-transform:translateX(270px)}.gb_gbsh.gb_gbshc .gbng .gbtsb #gbd3,.gb_gbsh.gb_gbshc .gbng .gbtsb #gbs{-webkit-transform:translateX(-140px)}.gb_gbsh .gbtn.gbto #gbd1,.gb_gbsh .gbtn.gbto #gbs,.gb_gbsh .gbtsb.gbto #gbd3,.gb_gbsh .gbtsb.gbto #gbs,.gb_gbsh.gb_gbshc .gbtsb.gbto #gbd3,.gb_gbsh.gb_gbshc .gbtsb.gbto #gbs,.gb_gbsh.gb_gbshc .gbtn.gbto #gbd1,.gb_gbsh.gb_gbshc .gbtn.gbto #gbs{top:37px;-o-transform:translateX(0);-moz-transform:translateX(0)}.gb_gbsh #gbdw,.gb_gbsh #gb .gbes#gbu,.gb_gbsh #gb #gbu,.gb_gbsh .gbtn,.gb_gbsh .gbtsb{position:fixed;transform:translateZ(0);-moz-transform:translateZ(0);-o-transform:translateZ(0);-webkit-transform:translateZ(0);z-index:987}.gb_gbsh.gb_gbsf #gb #gbu{position:absolute}.gbtn{transition:right.15s cubic-bezier(0,1.12,.39,.98);-moz-transition:right.15s cubic-bezier(0,1.12,.39,.98);-o-transition:right.15s cubic-bezier(0,1.12,.39,.98);-webkit-transition:right.15s cubic-bezier(0,1.12,.39,.98)}.gb_gbsh #gb .gbes#gbu,.gb_gbsh #gb #gbu{top:0}.gb_gbsh.gb_gbsf #gb #gbu{top:102px}.gb_gbsh.gb_gbsf #gb .gbes#gbu{top:70px}.gb_gbsh #gbu{visibility:hidden}.gb_gbsh .gbtn,.gb_gbsh #gbwc{visibility:visible}.gb_gbsh .gbtsb.gbto{right:60px;top:7px;width:29px}@-webkit-keyframes gb__sn{0%,49%{opacity:0}50%{opacity:1;top:-30px}100%{opacity:1;top:7px}}@-moz-keyframes gb__sn{0%,49%{opacity:0}50%{opacity:1;top:-30px}100%{opacity:1;top:7px}}@-o-keyframes gb__sn{0%,49%{opacity:0}50%{opacity:1;top:-30px}100%{opacity:1;top:7px}}@keyframes gb__sn{0%,49%{opacity:0}50%{opacity:1;top:-30px}100%{opacity:1;top:7px}}.gb_gbsh .gbtn{right:60px;animation:gb__sn .15s;-webkit-animation:gb__sn .15s;-moz-animation:gb__sn .15s;-o-animation:gb__sn .15s;top:7px}.gb_gbsh.gb_gbshc .gbtn,.gb_gbsh.gb_gbshc .gbtsb.gbto{right:270px}#gbi4t{display:block;margin:1px 0;overflow:hidden;text-overflow:ellipsis}#gbg6 #gbi4t,#gbg4 #gbgs4d{color:#666;text-shadow:none}#gb_70,#gb_71{margin-right:15px;display:inline-block}#gb_70 .gbit,#gb_71 .gbit,#gbg7 .gbit{margin:0 15px;display:block}#gbgs4,.gbgs{background-color:#f8f8f8;background-image:-webkit-gradient(linear,left top,left bottom,from(#f8f8f8),to(#ececec));background-image:-webkit-linear-gradient(top,#f8f8f8,#ececec);background-image:-moz-linear-gradient(top,#f8f8f8,#ececec);background-image:-ms-linear-gradient(top,#f8f8f8,#ececec);background-image:-o-linear-gradient(top,#f8f8f8,#ececec);background-image:linear-gradient(top,#f8f8f8,#ececec);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#f8f8f8',EndColorStr='#ececec');border:1px solid #c6c6c6;display:block;-moz-border-radius:2px;-o-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;position:relative}#gbu #gb_70{color:#fff;font-size:11px;font-weight:bold;text-transform:uppercase}#gb_70 .gbgs{background-color:#d14836;background-image:-webkit-gradient(linear,left top,left bottom,from(#dd4b39),to(#d14836));background-image:-webkit-linear-gradient(top,#dd4b39,#d14836);background-image:-moz-linear-gradient(top,#dd4b39,#d14836);background-image:-ms-linear-gradient(top,#dd4b39,#d14836);background-image:-o-linear-gradient(top,#dd4b39,#d14836);background-image:linear-gradient(top,#dd4b39,#d14836);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#dd4b39',EndColorStr='#d14836');border:1px solid transparent}#gb_70.gbgt-hvr .gbgs{background-color:#c53727;background-image:-webkit-gradient(linear,left top,left bottom,from(#dd4b39),to(#c53727));background-image:-webkit-linear-gradient(top,#dd4b39,#c53727);background-image:-moz-linear-gradient(top,#dd4b39,#c53727);background-image:-ms-linear-gradient(top,#dd4b39,#c53727);background-image:-o-linear-gradient(top,#dd4b39,#c53727);background-image:linear-gradient(top,#dd4b39,#c53727);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#dd4b39',EndColorStr='#c53727');border-color:#b0281a;border-bottom-color:#af301f;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.1);-moz-box-shadow:0 1px 1px rgba(0,0,0,.1);box-shadow:0 1px 1px rgba(0,0,0,.1)}#gb_70:active .gbgs,#gb_70.gbgt-hvr:active .gbgs{background-color:#b0281a;background-image:-webkit-gradient(linear,left top,left bottom,from(#dd4b39),to(#b0281a));background-image:-webkit-linear-gradient(top,#dd4b39,#b0281a);background-image:-moz-linear-gradient(top,#dd4b39,#b0281a);background-image:-ms-linear-gradient(top,#dd4b39,#b0281a);background-image:-o-linear-gradient(top,#dd4b39,#b0281a);background-image:linear-gradient(top,#dd4b39,#b0281a);border-color:#992a1b;-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}#gbgs4d{display:inline-block;position:relative;z-index:1000}#gbgs4dn{display:inline-block;overflow:hidden;text-overflow:ellipsis}.gbgt-hvr #gbgs4d{background-color:transparent;background-image:none}.gbg4p{margin-top:0px}#gbg4 #gbgs4{height:27px;position:relative;width:27px}.gbgt-hvr #gbgs4,#gbg4:focus #gbgs4,#gbg4:active #gbgs4,#gbg_70:focus .gbgs,#gbg_71:focus .gbgs,#gbg_70:active .gbgs,#gbg_71:active .gbgs,#gbg7:focus .gbgs,#gbg7:active .gbgs{background-color:#ffffff;background-image:-webkit-gradient(linear,left top,left bottom,from(#ffffff),to(#ececec));background-image:-webkit-linear-gradient(top,#ffffff,#ececec);background-image:-moz-linear-gradient(top,#ffffff,#ececec);background-image:-ms-linear-gradient(top,#ffffff,#ececec);background-image:-o-linear-gradient(top,#ffffff,#ececec);background-image:linear-gradient(top,#ffffff,#ececec);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff',EndColorStr='#ececec');border-color:#bbb}#gbg4:active #gbgs4,#gb_70:active .gbgs,#gb_71:active .gbgs,#gbg7:active .gbgs{border-color:#b6b6b6;-moz-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.3);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}#gbi4i,#gbi4id,#gbi4ip{left:0;height:27px;position:absolute;top:0;width:27px}#gbmpi,#gbmpid{margin-right:0;height:96px;width:96px}#gbi4id{background-position:0 -101px}.gbem #gbi4id,.gbemi #gbi4id{background-position:0 -101px}.gbes #gbi4id,.gbesi #gbi4id{background-position:0 -101px}.gbto #gbi4i,.gbto #gbi4ip,.gbto #gbi4id{top:0}#gbgs4 .gbmai{left:33px;top:12px}#gbgs4d .gbmai{left:100%;margin-left:5px;top:12px}#gbgs4 .gbmab,#gbgs4 .gbmac{left:5px}#gbgs4 .gbmab{margin:40px 0 0}#gbgs4 .gbmac{margin:41px 0 0;border-bottom-color:#fef9db}.gbemi .gbg4p,.gbem.gbg4p{margin-top:0px}.gbesi .gbg4p,.gbes.gbg4p{margin-top:0px}.gbemi #gbg4 #gbgs4,.gbem #gbg4 #gbgs4,.gbemi #gbg4 #gbi4i,.gbem #gbg4 #gbi4i,.gbemi #gbg4 #gbi4id,.gbem #gbg4 #gbi4id,.gbemi #gbg4 #gbi4ip,.gbem #gbg4 #gbi4ip{height:27px;width:27px}.gbesi #gbg4 #gbgs4,.gbes #gbg4 #gbgs4,.gbesi #gbi4i,.gbes #gbi4i,.gbesi #gbi4id,.gbes #gbi4id,.gbesi #gbi4ip,.gbes #gbi4ip{height:27px;width:27px}.gbemi #gbgs4 .gbmai,.gbem #gbgs4 .gbmai{left:33px;top:12px}.gbesi #gbgs4 .gbmai,.gbes #gbgs4 .gbmai{left:33px;top:12px}.gbemi#gb #gbg4 #gbgs4 .gbmab,.gbem#gbg4 #gbgs4 .gbmab{left:5px;margin:40px 0 0}.gbemi#gb #gbg4 #gbgs4 .gbmac,.gbem#gbg4 #gbgs4 .gbmac{left:5px;margin:41px 0 0}.gbesi#gb #gbg4 #gbgs4 .gbmab,.gbes#gbg4 #gbgs4 .gbmab{left:5px;margin:30px 0 0}.gbesi#gb #gbg4 #gbgs4 .gbmac,.gbes#gbg4 #gbgs4 .gbmac{left:5px;margin:31px 0 0}#gbgs4d .gbmab{margin:41px 0 0}#gbgs4d .gbmac{margin:42px 0 0;border-bottom-color:#fef9db}#gbgs4d .gbmab,#gbgs4d .gbmac{left:50%;margin-left:-5px}#gbmppc{position:relative}#gbmppc .gbmt{padding-left:55px;padding-bottom:10px;padding-top:10px}.gbmppci{left:20px;background-position:-33px -18px;height:25px;position:absolute;top:11px;width:25px}.gbem#gb,.gbemi#gb{height:102px}.gbes#gb,.gbesi#gb{height:70px}.gbem#gbx1,.gbem#gbx2,.gbem#gbqlw,.gbemi#gb #gbx1,.gbemi#gb #gbx2,.gbemi#gb #gbqlw{height:71px}.gbem#gb #gbbw,.gbemi#gb #gbbw{top:102px}.gbem#gbu,.gbem#gbq2,.gbem#gbq3,.gbemi#gb #gbu,.gbemi#gb #gbq2,.gbemi#gb #gbq3{padding-top:20px}.gbem#gbq2,.gbemi#gb #gbq2{margin-left:204px;padding-bottom:0}.gbexl#gbq2,.gbexli#gb #gbq2,.gbexxl#gbq2,.gbexxli#gb #gbq2{margin-left:220px}.gbem#gbq3,.gbemi#gb #gbq3{left:204px}.gbes#gbx1,.gbes#gbx2,.gbes#gbqlw,.gbesi#gb #gbx1,.gbesi#gb #gbx2,.gbesi#gb #gbqlw{height:57px}.gbes#gb #gbbw,.gbesi#gb #gbbw{top:70px}.gbes#gbu,.gbes#gbq2,.gbes#gbq3,.gbesi#gb #gbu,.gbesi#gb #gbq2,.gbesi#gb #gbq3{padding-top:8px}.gbet#gbq2,.gbeti#gb #gbq2,.gbes#gbq2,.gbesi#gb #gbq2{margin-left:176px;padding-bottom:0}.gbeu#gbq2,.gbeui#gb #gbq2{margin-left:136px;padding-bottom:0}.gbemi#gb .gbto #gbd1,.gbemi#gb .gbto #gbd3,.gbemi#gb .gbto #gbd4,.gbemi#gb .gbto #gbs,.gbto .gbem#gbd1,.gbto .gbem#gbd3,.gbto .gbem#gbd4,.gbto .gbem#gbs{top:51px}.gbesi#gb .gbto #gbd1,.gbesi#gb .gbto #gbd3,.gbesi#gb .gbto #gbd4,.gbesi#gb .gbto #gbs,.gbto .gbes#gbd1,.gbto .gbes#gbd3,.gbto .gbes#gbd4,.gbto .gbes#gbs{top:42px}.gbes#gbq3,.gbesi#gb #gbq3{left:176px}.gbem#gbq1,.gbemi#gb #gbq1{margin-left:28px}.gbem#gbql,.gbemi#gb #gbql,.gbes#gbql,.gbesi#gb #gbql,.gbet#gbql,.gbeti#gb #gbql,.gbeu#gbql,.gbeui#gb #gbql{background-position:-63px 0;height:37px;width:95px}.gbet#gbq1,.gbeti#gb #gbq1,.gbes#gbq1,.gbesi#gb #gbq1{margin-left:16px}.gbeu#gbq1,.gbeui#gb #gbq1{margin-left:12px}.gbemi#gb .gbqldr,.gbem#gbqlw .gbqldr{max-height:71px;max-width:160px}.gbem#gbu,.gbemi#gb #gbu{margin-right:12px}.gbet#gbu,.gbeti#gb #gbu,.gbeu#gbu,.gbeui#gb #gbu,.gbes#gbu,.gbesi#gb #gbu{margin-right:0px}.gbeu#gbu .gbt,.gbeui#gb #gbu .gbt,.gbet#gbu .gbt,.gbeti#gb #gbu .gbt,.gbes#gbu .gbt,.gbesi#gb #gbu .gbt{margin-left:6px}.gbeti#gb .gbqldr,.gbet#gbqlw .gbqldr,.gbesi#gb .gbqldr,.gbes#gbqlw .gbqldr{max-height:44px;max-width:144px}.gbeui#gb .gbqldr,.gbeu#gbqlw .gbqldr{max-height:44px;max-width:124px}.gbemi#gb #gbpr,.gbem#gbpr{left:28px}.gbemi#gb .gbqpa,.gbem#gbpr .gbqpa,.gbesi#gb .gbqpa,.gbes#gbpr .gbqpa{width:95px}.gbesi#gb #gbpr,.gbes#gbpr{left:16px}.gbemi#gb #gbgs4d .gbmab,.gbem#gbg4 #gbgs4d .gbmab{margin:41px 0 0}.gbesi#gb #gbgs4d .gbmab,.gbes#gbg4 #gbgs4d .gbmab{margin:33px 0 0}.gbemi#gb #gbgs4d .gbmac,.gbem#gbg4 #gbgs4d .gbmac{margin:42px 0 0}.gbesi#gb #gbgs4d .gbmac,.gbes#gbg4 #gbgs4d .gbmac{margin:34px 0 0}.gbemi#gb #gbgs4d .gbmac,.gbem#gbg4 #gbgs4d .gbmac,.gbesi#gb #gbgs4d .gbmac,.gbes#gbg4 #gbgs4d .gbmac,.gbemi#gb #gbgs4d .gbmab,.gbem#gbg4 #gbgs4d .gbmab,.gbesi#gb #gbgs4d .gbmab,.gbes#gbg4 #gbgs4d .gbmab{margin-left:-5px}#gb #gbx1,#gb #gbx3{left:0}#gbx1,#gb #gbx1,#gbq,#gbu,#gb #gbq,#gb #gbu{top:30px}#gb #gbu{top:30px}#gbzw #gbz{padding-left:0;z-index:991}#gbz .gbto #gbd,#gbz .gbto #gbs{top:29px}#gbx3{min-width:700px;border-color:#000;background-color:#2d2d2d;opacity:1;filter:alpha(opacity=100)}#gbz .gbzt,#gbz .gbgt{color:#bbb !important;font-weight:bold}#gbq .gbgt-hvr,#gbq .gbgt:focus,#gbz .gbz0l .gbts,#gbz .gbzt:hover,#gbz .gbzt:focus,#gbz .gbgt-hvr,#gbz .gbgt:focus,#gbu .gbz0l .gbts,#gbu .gbzt:hover,#gbu .gbzt:focus,#gbu .gbgt-hvr,#gbu .gbgt:focus{background-color:transparent;background-image:none}#gbz .gbz0l .gbts,#gbz .gbzt:hover,#gbz .gbzt:focus,#gbz .gbgt-hvr,#gbz .gbgt:focus{color:#fff!important}#gbz .gbma{border-top-color:#aaa}#gbz .gbzt:hover .gbma,#gbz .gbzt:focus .gbma,#gbz .gbgt-hvr .gbma,#gbz .gbgt:focus .gbma{border-top-color:#fff}#gbq1.gbto{-moz-box-shadow:none;-o-box-shadow:none;-webkit-box-shadow:none;box-shadow:none}#gbz .gbto .gbma,#gbz .gbto .gbzt:hover .gbma,#gbz .gbto .gbzt:focus .gbma,#gbz .gbto .gbgt-hvr .gbma,#gbz .gbto .gbgt:focus .gbma{border-top-color:#000}#gbz .gbto .gbts,#gbd .gbmt{color:#000 !important;font-weight:bold}#gbd .gbmt:hover,#gbd .gbmt:focus{background-color:#f5f5f5}#gbz .gbts{padding:0 9px;z-index:991}#gbz .gbto .gbts{padding-bottom:1px;padding-top:2px;z-index:1000}#gbqlw{cursor:pointer}#gbzw{left:0;height:30px;margin-left:34px;position:absolute;top:0;z-index:991}#gbz{height:30px}.gbemi#gb #gbzw,.gbem#gbzw{height:30px;margin-left:18px}.gbeui#gb #gbzw,.gbeu#gbzw,.gbeti#gb #gbzw,.gbet#gbzw,.gbesi#gb #gbzw,.gbes#gbzw{height:24px;margin-left:6px}.gbeui#gb #gbzw,.gbeu#gbzw{margin-left:2px}.gbemi#gb #gbzw #gbz,.gbem#gbzw #gbz{height:30px}.gbemi#gb #gbx3,.gbem#gbx3{height:29px}.gbesi#gb #gbzw #gbz,.gbes#gbzw #gbz{height:24px}.gbesi#gb #gbx3,.gbes#gbx3{height:23px}#gb.gbet #gbx3,#gb.gbeti #gbx3{min-width:836px;}#gb.gbeu #gbx3,#gb.gbeui #gbx3{min-width:780px;}#gbzw .gbt{line-height:27px}.gbemi#gb #gbzw .gbt .gbem#gbzw .gbt{line-height:27px}.gbesi#gb #gbzw .gbt,.gbes#gbzw .gbt{line-height:19px}.gbqfh#gbq1{display:none}.gbqfh#gbx1,.gbqfh#gbx2,.gbem#gb .gbqfh#gbx1,.gbem#gb .gbqfh#gbx2,.gbemi#gb .gbqfh#gbx1,.gbemi#gb .gbqfh#gbx2,.gbes#gb .gbqfh#gbx1,.gbes#gb .gbqfh#gbx2,.gbesi#gb .gbqfh#gbx1,.gbesi#gb .gbqfh#gbx2,.gbet#gb .gbqfh#gbx1,.gbet#gb .gbqfh#gbx2,.gbeti#gb .gbqfh#gbx1,.gbeti#gb .gbqfh#gbx2,.gbeu#gb .gbqfh#gbx1,.gbeu#gb .gbqfh#gbx2,.gbeui#gb .gbqfh#gbx1,.gbeui#gb .gbqfh#gbx2{border-bottom-width:0;height:0}.gbes#gb,.gbesi#gb{height:70px}.gbes#gbx1,.gbes#gbx2,.gbes#gbqlw,.gbesi#gb #gbx1,.gbesi#gb #gbx2,.gbesi#gb #gbqlw{height:45px}#gb .gbes#gbx1,#gb .gbes#gbx2,.gbesi#gb #gbx1,.gbesi#gb #gbx2,#gb .gbes#gbq,#gb .gbes#gbu,.gbesi#gb #gbq,.gbesi#gb #gbu{top:24px}.gbes#gb #gbbw,.gbesi#gb #gbbw{top:74px !important}.gbpro.gbes#gb #gbbw,.gbpro.gbesi#gb #gbbw{top:104px !important}.gbes#gbu,.gbes#gbq2,.gbes#gbq3,.gbesi#gb #gbu,.gbesi#gb #gbq2,.gbesi#gb #gbq3{padding-top:8px}.gbes#gbq2,.gbesi#gb #gbq2{padding-bottom:0}.gbesi#gb .gbto #gbd1,.gbesi#gb .gbto #gbd3,.gbesi#gb .gbto #gbd4,.gbesi#gb .gbto #gbs,.gbto .gbes#gbd1,.gbto .gbes#gbd3,.gbto .gbes#gbd4,.gbes#gbu .gbto #gbs{top:40px}.gbemi#gb #gbd,.gbem#gbzw #gbd,.gbemi#gb #gbzw .gbto #gbs,.gbem#gbzw .gbto #gbs{top:29px}.gbesi#gb #gbd,.gbes#gbzw #gbd,.gbesi#gb #gbzw .gbto #gbs,.gbes#gbzw .gbto #gbs{top:23px}.gbesi#gb #gbzw .gbto .gbts,.gbes#gbzw .gbto .gbts{padding-bottom:3px}.gbesi#gb #gbg3 .gbmab,.gbes#gbg3 .gbmab,.gbesi#gb #gbgs4 .gbmab,.gbes#gbg4 .gbmab{margin:30px 0 0}.gbesi#gb #gbg1 .gbmab,.gbes#gbg1 .gbmab{margin:31px 0 0}.gbesi#gb #gbg1 .gbmac,.gbes#gbg1 .gbmac{margin:32px 0 0}.gbesi#gb #gbg3 .gbmac,.gbes#gbg3 .gbmac,.gbesi#gb #gbgs4 .gbmac,.gbes#gbg4 .gbmac{margin:31px 0 0}.gbesi#gb #gbgs4d .gbmab,.gbes#gbg4 #gbgs4d .gbmab{margin:31px 0 0}.gbesi#gb #gbgs4d .gbmac,.gbes#gbg4 #gbgs4d .gbmac{margin:32px 0 0}#gbmpicb,#gbmpicp{bottom:0;color:#fff;display:block;font-size:9px;font-weight:bold;position:absolute;text-align:center;text-decoration:none !important;-moz-transition:opacity .218s ease-in-out;-o-transition:opacity .218s ease-in-out;-webkit-transition:opacity .218s ease-in-out;transition:opacity .218s ease-in-out;white-space:normal;width:96px}#gbmpicb{background-color:#4d90fe;opacity:.7;filter:alpha(opacity=70);padding:7px 0;-moz-transition:background-color .218s ease-in-out;-o-transition:background-color .218s ease-in-out;-webkit-transition:background-color .218s ease-in-out;transition:background-color .218s ease-in-out}#gbmpicp{padding:12px 0 7px 0}#gbmpas{max-height:276px}#gbmm{max-height:530px}.gbsb{-webkit-box-sizing:border-box;display:block;position:relative;*zoom:1}.gbsbic{overflow:auto}.gbsbis .gbsbt,.gbsbis .gbsbb{-webkit-mask-box-image:-webkit-gradient(linear,left top,right top,color-stop(0,rgba(0,0,0,.1)),color-stop(.5,rgba(0,0,0,.8)),color-stop(1,rgba(0,0,0,.1)));left:0;margin-right:0;opacity:0;position:absolute;width:100%}.gbsb .gbsbt:after,.gbsb .gbsbb:after{content:"";display:block;height:0;left:0;position:absolute;width:100%}.gbsbis .gbsbt{background:-webkit-gradient(linear,left top,left bottom,from(rgba(0,0,0,.2)),to(rgba(0,0,0,0)));background-image:-webkit-linear-gradient(top,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:-moz-linear-gradient(top,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:-ms-linear-gradient(top,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:-o-linear-gradient(top,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:linear-gradient(top,rgba(0,0,0,.2),rgba(0,0,0,0));height:6px;top:0}.gbsb .gbsbt:after{border-top:1px solid #ebebeb;border-color:rgba(0,0,0,.3);top:0}.gbsb .gbsbb{-webkit-mask-box-image:-webkit-gradient(linear,left top,right top,color-stop(0,rgba(0,0,0,.1)),color-stop(.5,rgba(0,0,0,.8)),color-stop(1,rgba(0,0,0,.1)));background:-webkit-gradient(linear,left bottom,left top,from(rgba(0,0,0,.2)),to(rgba(0,0,0,0)));background-image:-webkit-linear-gradient(bottom,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:-moz-linear-gradient(bottom,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:-ms-linear-gradient(bottom,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:-o-linear-gradient(bottom,rgba(0,0,0,.2),rgba(0,0,0,0));background-image:linear-gradient(bottom,rgba(0,0,0,.2),rgba(0,0,0,0));bottom:0;height:4px}.gbsb .gbsbb:after{border-bottom:1px solid #ebebeb;border-color:rgba(0,0,0,.3);bottom:0
-            }
-        </style>
-        <script type="text/javascript">        AC_urlprefix = "\/settings";</script>
-        <link rel="stylesheet" href="dashboards_files/rsAItRSTM4PbrgbWTWBBSISthbhleRdzgoBQ.css">
-        <link href="dashboards_files/rsAItRSTOQ9xO0AQ169I8vWnO5P3kmeSWVPw.css" type="text/css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="Ka Sb Cb i-M">
-            <div style="padding-left: 44px;" class="Hb Bc zd">
-                Accounts</div>
-            <div>
-                <div class="O23Xdf cMyGWb Cb jw8FCb i-M">
-                    <div class="mStyfd fzmR">
-                        Dashboard</div>
-                    <div class="Ww">
-                    </div>
-                </div>
-            </div>
-            <div class="UFH67e vJrhmc">
-                <a href="http://support.google.com/accounts?hl=en" class="rUsPUe">
-                    <div style="-moz-user-select: none;" role="button" class="c-P-O a-b a-b-s Nd Kf uvG4mc c-f-g-b"
-                         tabindex="0">
-                        <div class="c-f-g-b-ta">
-                            Help</div>
-                        <div class="c-f-g-b-da">
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div style="top: 102px;" class="Ub X Cb i-M">
-            <div class="kb jb" aria-live="assertive">
-                <div class="a-Yd">
-                    <div aria-atomic="true" aria-live="assertive" class="a-Y a-Y-Qb">
-                        Loading...</div>
-                </div>
-            </div>
-        </div>
-        <div class="Eb Sb">
-            <div class="xa Cb i-M">
-                <div class="Mf ah">
-                    <div class="bm ch">
-                        <div aria-expanded="true" role="tab" tabindex="0" class="cm pb Cb i-M c-N-na c-N-oc">
-                        </div>
-                        <a style="padding-left: 40px;" href="https://www.google.com/settings/account?hl=en" id="nav-account" class="Zl Cb Bc Za i-M">
-                            <div class="bh">Account</div>
-                        </a>
-                        <div style="" class="dm Pd c-N-F">
-                            <a style="padding-left: 40px;" href="https://www.google.com/settings/activity?hl=en" id="nav-activity" class="Zl Cb Bc Za i-M">
-                                <div class="bh">Account Activity</div>
-                            </a>
-                            <a style="padding-left: 40px;" href="https://www.google.com/settings/dashboard?hl=en" id="nav-dashboard" class="Zl Cb Bc Za i-M Pf">
-                                <div class="bh">Dashboard</div>
-                            </a>
-                            <a style="padding-left: 40px;" href="https://www.google.com/settings/exportdata?hl=en" id="nav-exportdata" class="Zl Cb Bc Za i-M">
-                                <div class="bh">Download your data</div>
-                            </a>
-                            <a style="padding-left: 40px;" href="https://www.google.com/settings/me?hl=en" id="nav-me" class="Zl Cb Bc Za i-M">
-                                <div class="bh">Me on the Web</div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="bm ch">
-                        <div aria-expanded="false" role="tab" tabindex="0" class="cm pb Cb i-M c-N-na c-N-nc">
-                        </div>
-                        <a style="padding-left: 40px;" href="https://security.google.com/settings/security?hl=en" id="nav-security" class="Zl Cb Bc Za i-M">
-                            <div class="bh">Security</div>
-                        </a>
-                        <div style="display: none;" class="dm Pd c-N-F">
-                            <a style="padding-left: 40px;" href="https://security.google.com/settings/security/activity?hl=en" id="nav-security/activity" class="Zl Cb Bc Za i-M">
-                                <div class="bh">Recent Activity</div>
-                            </a>
-                        </div>
-                    </div>
-                    <a style="padding-left: 40px;" href="https://www.google.com/settings/privacy?hl=en"
-                       id="nav-privacy" class="Zl Cb Bc Za i-M">
-                        <div class="bh">Profile and privacy</div>
-                    </a>
-                    <a style="padding-left: 40px;" href="https://www.google.com/settings/plus?hl=en" id="nav-plus" class="Zl Cb Bc Za i-M">
-                        <div class="bh">Google+</div>
-                    </a>
-                    <a style="padding-left: 40px;" href="https://www.google.com/settings/products?hl=en"
-                       id="nav-products" class="Zl Cb Bc Za i-M">
-                        <div class="bh">Products</div>
-                    </a>
-                </div>
-            </div>
-            <div style="top: 174px; left: 204px;" class="Od Ha Cb i-M">
-                <div class="fb Cb i-M">
-                    <div class="La Cb i-M">
-                        <div class="Rg xb Sb">
-                            <noscript>
-                                <div class="Ho">
-                                    <div class="Fo">Your browser does not support Javascript or Javascript has been disabled.</div>
-                                    <p>
-                                        As your browser does not support JavaScript or has JavaScript disabled, we are not
-                                        able to display the requested page.
-                                    </p>
-                                    <p>
-                                        <a href="https://www.google.com/settings/general-light">Visit your Account settings page for not supported browsers.</a>
-                                    </p>
-                                </div>
-                            </noscript>
-                            <div class="rBsPib">
-                                <a class="Tb" href="http://support.google.com/accounts?hl=en">
-                                    <div role="button" class="c-P-O a-b a-b-s If ld" tabindex="0">
-                                        Send feedback</div>
-                                </a>
-                            </div>
-                            <div style="display: block;">
-                                <div>
-                                    <div class="cw">
-                                        <div class="Li mi">
-                                            <div class="ri">
-                                                <div style="-moz-user-select: none;" role="button" class="c-P-O a-b a-b-s zc Mi qi" tabindex="0">
-                                                    <img class="a-b-r" style="width: 21px; height: 21px;" src="dashboards_files/collapse_all.png">Collapse all
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="Cw">
-                                        <div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/search-32.gif"></div>
-                                                    <div class="wtfVDb">
-                                                        Account</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Name</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="Fw CM">Saulo Tsuchida</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Primary email</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="Fw FM">stsuchidac@pictoric.com</span></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://www.google.com/accounts/ManageAccount?hl=en">Manage Account</a><br>
-                                                                    <a href="https://www.google.com/accounts/EditPasswd?hl=en">Change Password</a><br> 
-                                                                    <a href="https://www.google.com/accounts/IssuedAuthSubTokens?hl=en">Authorize Account Access</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ifSPoc">
-                                                                <div class="cTQkYb">
-                                                                    Email addresses</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="Fw">
-                                                                        <div class="BM">
-                                                                            stsuchidac@pictoric.com</div>
-                                                                        <div class="BM">
-                                                                            stsuchidac@pictoric.com.pe</div>
-                                                                        <div class="BM">
-                                                                            stsuchidac@pmgaustin.com</div>
-                                                                        <div class="BM">
-                                                                            stsuchidac@pmglima.com</div>
-                                                                        <div class="BM">
-                                                                            stsuchidac@restaurantdomain.com</div>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Websites authorized to access the account</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe EM">1</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ifSPoc">
-                                                                <div class="cTQkYb">
-                                                                    More links</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="si">
-                                                                    <a href="https://www.google.com/intl/en/policies/privacy">Google privacy policy</a><br>
-                                                                    <a href="https://support.google.com/accounts/?hl=en">Privacy and security help</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/calendar-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Calendar</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        My Calendars</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe wN">1</span> <span class="ie Pi wN">calendar</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Country</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="Fw xN">United States</span></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://calendar.google.com/?hl=en">View Calendar</a><br>
-                                                                                                                                  <a href="https://www.google.com/calendar/render?settings=1&amp;hl=en">Manage calendars</a><br>
-                                                                                                                                                                                                                            <a href="https://www.google.com/calendar/render?settings=2&amp;hl=en">Manage mobile
-                                                                                                                                                                                                                                devices</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Time zone</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="Fw DN">(GMT-05:00) Eastern Time</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ifSPoc">
-                                                                <div class="cTQkYb">
-                                                                    stsuchidac@pictoric.com</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div>
-                                                                    <span class="AN">Shared with one domain</span><div class="Ef Dw" title="Items may be visible to others.">
-                                                                                                                  </div>
-                                                                </div>
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <div class="Ff">
-                                                                        <span class="Ic nd">Most recent event:</span> <a href="https://www.google.com/calendar/event?eid=dTV0MGxkOWJ0a3R0djZrNW04cTQ1N29qazQgc3RzdWNoaWRhY0BwaWN0b3JpYy5jb20"
-                                                                                                                         class="Gf">Software Development Patterns - Roy</a> <span class="fd md">on Jun 11, 2013</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/chrome-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Chrome Sync</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Bookmarks</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe TN">6</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Last synced</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="Fw WN">on Feb 15, 2013</span></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://www.google.com/settings/chrome/sync?hl=en">Manage Chrome Sync</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Preferences</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe YN">16</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Themes</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe cO">1</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Applications</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe RN">1</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Open tabs</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe bO">1</span></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/contacts-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Contacts</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        All contacts</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe nO">18</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        My contacts</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe oO">5</span></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://www.google.com/contacts?hl=en">Manage contacts</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div class="dayXxd">
-                                                        <div class="db tse3T  ifSPoc">
-                                                            <div class="cTQkYb">
-                                                                Most contacted</div>
-                                                        </div>
-                                                        <div class="db GDeKqf">
-                                                            <div class="CEnnod">
-                                                                <span></span>
-                                                                <div class="RYwqGe">
-                                                                    ‌</div>
-                                                                <span class="Fw">
-                                                                    <div class="pO">
-                                                                        rvalverde</div>
-                                                                    <div class="pO">
-                                                                        bparrish</div>
-                                                                    <div class="pO">
-                                                                        Roy Payano</div>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/docs-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Docs</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        <a href="https://docs.google.com/?hl=en#owned-by-me" class="rw tO">Mine</a></div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe tO">2</span> <span class="ie Pi tO">documents</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        <a href="https://docs.google.com/?hl=en#shared-with-me" class="rw uO">Shared with me</a></div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe uO">8</span> <span class="ie Pi uO">documents</span></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://docs.google.com/browse?hl=en">Manage documents</a><br>
-                                                                                                                                       <a href="https://support.google.com/docs/bin/answer.py?answer=180199&amp;hl=en">Sharing
-                                                                                                                                           documents</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://docs.google.com/?hl=en#owned-by-me" class="Bw sO">My most recently
-                                                                        edited document</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <div class="Ff sO">
-                                                                        <a href="http://docs.google.com/open?id=0Aj4IHj0hF0j7dGd1X0FMOGlfeWwzRzRrYjRjekd0UFE"
-                                                                           class="Gf sO">Metafitness DataType</a> <span class="fd md sO">on May 24, 2013</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://docs.google.com/?hl=en#shared-with-me" class="Bw sO">Most recently
-                                                                        shared with me</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <div class="Ff sO">
-                                                                        <a href="http://docs.google.com/open?id=0AsH3dopkG5C7dG8wQWhDUGVCZnFxTmp5S1VOX2htRWc"
-                                                                           class="Gf sO">MetaFitness App Bugs-Drive to Completion</a> <span class="fd md sO">on
-                                                                                                                                          Jun 17, 2013</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://docs.google.com/?hl=en#opened-by-me" class="Bw dw">Opened by me</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe dw">11</span> <span class="ie Pi dw">documents</span><div class="Ff dw">
-                                                                                                                                                <span class="Ic nd dw">Most recent:</span> <a href="http://docs.google.com/open?id=0AsH3dopkG5C7dG8wQWhDUGVCZnFxTmp5S1VOX2htRWc"
-                                                                                                                                                                                              class="Gf dw">MetaFitness App Bugs-Drive to Completion</a> <span class="fd md dw">on
-                                                                                                                                                                                                                                                             Jun 17, 2013</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/googlemail-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Gmail</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Conversations</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe JO">6,804</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Most recent</div>
-                                                                    <div title="‌[Restaurant Domain - Bug #7665] (New) RD - Direct Mail, when import an existing member in the file the system creates a memberid again for the same member"
-                                                                         class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <a href="https://mail.google.com/mail/#all/13f5e0cecc49835a" class="kw KO">[Restaurant
-                                                                            Domain - Bug #7665] (New) RD - Direct Mail, when import an existing member in the
-                                                                            file the system creates a memberid again for the same member</a></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://mail.google.com/mail/#settings/chat">Manage Chat History</a><br>
-                                                                                                                                                 <a href="https://mail.google.com/mail/#settings">Settings</a><br>
-                                                                                                                                                                                                              <a href="https://support.google.com/mail/bin/topic.py?topic=1668949&amp;hl=en">Privacy
-                                                                                                                                                                                                                  and security</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://mail.google.com/mail/#inbox" class="Bw ew">Inbox</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe ew">2,886</span> <span class="ie Pi ew">conversations</span><div
-                                                                                                                                                       class="Ff ew">
-                                                                                                                                                       <span class="Ic nd ew">Most recent:</span> <a href="https://mail.google.com/mail/#inbox/13f5e0cecc49835a"
-                                                                                                                                                                                                     class="Gf ew">[Restaurant Domain - Bug #7665] (New) RD - Direct Mail, when import
-                                                                                                                                                                                                      an existing member in the file the system creates a memberid again for the same
-                                                                                                                                                                                                      member</a> <span class="fd md ew">at 3:07 PM</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://mail.google.com/mail/#sent" class="Bw ew">Sent Mail</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe ew">201</span> <span class="ie Pi ew">conversations</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://mail.google.com/mail/#drafts" class="Bw ew">Saved drafts</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe ew">1</span> <span class="ie Pi ew">conversation</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://mail.google.com/mail/#chats" class="Bw ew">Chat history</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe ew">1,126</span> <span class="ie Pi ew">conversations</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://mail.google.com/mail/#spam" class="Bw ew">Spam</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe ew">3</span> <span class="ie Pi ew">conversations</span><div class="Ff ew">
-                                                                                                                                                   <span class="Ic nd ew">Most recent:</span> <a href="https://mail.google.com/mail/#spam/13f48030b4227fa1"
-                                                                                                                                                                                                 class="Gf ew">Father's Day Grill Giveaway at Carino's!</a> <span class="fd md ew">on
-                                                                                                                                                                                                                                                                Jun 15, 2013</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="je">
-                                                <div class="rk0iEc wNh63c">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/gplus-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Google+</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        +1's</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe vw">6</span><div class="Ef Dw vw" title="Items may be visible to others.">
-                                                                                                       </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Most recent +1</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <a href="http://miralavida.pe/" class="kw lQ">DALE UNA NUEVA MIRADA A LA VIDA</a></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://profiles.google.com/me/edit?hl=en">Edit Profile</a><br>
-                                                                                                                                        <a href="https://plus.google.com/circles?hl=en">Edit Circles</a><br>
-                                                                                                                                                                                                        <a href="https://profiles.google.com/me/posts?hl=en">Posts</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="wa9Dtb QScYnd">
-                                                    <div class="kJDmxe">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="je">
-                                                <div class="rk0iEc wNh63c">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/groups-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Groups</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Memberships</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe PO">2</span> <span class="ie Pi PO">groups</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Most recent group</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <a href="https://groups.google.com/group/pmg-chrome-extension-tester?hl=en" class="kw OO">
-                                                                            PMG Chrome Extension Tester</a></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://groups.google.com/groups/mysubs?hl=en">Manage memberships</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="wa9Dtb QScYnd">
-                                                    <div class="kJDmxe">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="je">
-                                                <div class="rk0iEc wNh63c">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/igoogle-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        iGoogle</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                        <div class="Bf">
-                                                            Nothing interesting here.</div>
-                                                    </div>
-                                                </div>
-                                                <div class="ZVwZlc">
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/picasa-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Picasa</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Nickname</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="Fw jQ">Saulo Tsuchida</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Photos</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe kQ">1</span></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://picasaweb.google.com/lh/settings?hl=en#permissions">Privacy</a><br>
-                                                                                                                                                    <a href="https://picasaweb.google.com/lh/settings?hl=en#general">Settings</a><br>
-                                                                                                                                                                                                                                 <a href="https://support.google.com/picasa?hl=en">Help</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://picasaweb.google.com/home?hl=en" class="Bw Sg">Albums</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe Sg">0</span> <span class="ie Pi Sg">public</span><div class="Ef Dw Sg"
-                                                                                                                                             title="Items may be visible to others.">
-                                                                                                                                        </div>
-                                                                    <span class="kc pe Sg">0</span> <span class="ie Pi Sg">unlisted</span><span class="kc pe Sg">1</span>
-                                                                    <span class="ie Pi Sg">sign-in required</span><div class="Ff Sg">
-                                                                                                                      <span class="Ic nd Sg">Most recent:</span> <a href="http://picasaweb.google.com/106710286064184671063/20130508"
-                                                                                                                                                                    class="Gf Sg">2013-05-08</a> <span class="fd md Sg">on May 8, 2013</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://picasaweb.google.com/home?hl=en" class="Bw Tg">Photos</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe Tg">0</span> <span class="ie Pi Tg">public</span><div class="Ef Dw Tg"
-                                                                                                                                             title="Items may be visible to others.">
-                                                                                                                                        </div>
-                                                                    <span class="kc pe Tg">0</span> <span class="ie Pi Tg">unlisted</span><span class="kc pe Tg">1</span>
-                                                                    <span class="ie Pi Tg">sign-in required</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://picasaweb.google.com/106710286064184671063?hl=en" class="Bw gQ">Gallery
-                                                                        URL</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="Fw gQ">https://picasaweb.google.com/106710286064184671063</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ifSPoc">
-                                                                <div class="cTQkYb">
-                                                                    More links</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="si">
-                                                                    <a href="https://picasaweb.google.com/lh/people?isOwner=true&amp;uname=106710286064184671063&amp;hl=en"
-                                                                       class="iQ">Name tags</a><br>
-                                                                                               <a href="https://support.google.com/picasa/answer/39551/?hl=en">Picasa Web Albums album
-                                                                                                   visibility settings</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/profiles-32-2.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Profile</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        About me</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe nQ">1</span> <span class="ie Pi nQ">entry</span><div class="Ef Dw nQ"
-                                                                                                                                                title="Items may be visible to others.">
-                                                                                                                                           </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://profiles.google.com/me/edit?hl=en">Edit Profile</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Name</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="Fw oQ">Saulo Tsuchida</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Profile URL</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <a href="https://plus.google.com/106710286064184671063" class="nw qQ">https://plus.google.com/106710286064184671063</a></div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Birthday</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="Fw mQ">February 23</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    +1's</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="kc pe Yl">6</span></div>
-                                                                <div class="Ff Yl">
-                                                                    <span class="Ic nd Yl">Most recent:</span> <a href="http://miralavida.pe/" class="Gf Yl">
-                                                                                                                   DALE UNA NUEVA MIRADA A LA VIDA</a> <span class="fd md Yl">on Apr 29, 2013</span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ifSPoc">
-                                                                <div class="cTQkYb">
-                                                                    More links</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="si">
-                                                                    <a href="https://support.google.com/accounts/bin/answer.py?answer=112783&amp;hl=en">
-                                                                        About access and privacy of profiles</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div class="je">
-                                                <div class="rk0iEc wNh63c">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/sites-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Sites</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        My Sites</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe dP">0</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Shared with me</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe eP">1,205,057</span><div class="Ef Dw eP" title="Items may be visible to others.">
-                                                                                                               </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://sites.google.com/?hl=en">Manage Sites</a><br>
-                                                                                                                              <a href="https://support.google.com/sites/?hl=en">Help</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="wa9Dtb QScYnd">
-                                                    <div class="kJDmxe">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div class="je">
-                                                <div class="rk0iEc wNh63c">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/talk-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Talk</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Contacts</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe pgh65d">15</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://www.google.com/talk/about.html">About Talk</a><br>
-                                                                                                                                   <a href="https://support.google.com/chat/?hl=en">Help</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="wa9Dtb QScYnd">
-                                                    <div class="kJDmxe">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/webmaster_tools-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        Webmaster Tools</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Sites</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe lR">1</span> <span class="ie Pi lR">total</span><span class="kc pe mR">0</span>
-                                                                        <span class="ie Pi mR">verified</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://www.google.com/webmasters/tools/home?hl=en">Manage my sites</a><br>
-                                                                                                                                                    <a href="https://support.google.com/webmasters/?hl=en">Help</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div class="dayXxd">
-                                                        <div class="db tse3T  ">
-                                                            <div class="cTQkYb">
-                                                                Most recent site</div>
-                                                        </div>
-                                                        <div class="db GDeKqf">
-                                                            <div class="CEnnod">
-                                                                <span></span>
-                                                                <div class="RYwqGe">
-                                                                    ‌</div>
-                                                                <div class="Ff hR">
-                                                                    <a href="https://www.google.com/webmasters/tools/dashboard?siteUrl=http%3A%2F%2Fwww.carinos.com%2F&amp;hl=en"
-                                                                       class="Gf hR">http://www.carinos.com/</a> <span class="fd md hR">on Jun 7, 2013</span></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="je">
-                                                <div aria-expanded="true" role="tab" tabindex="0" class="rk0iEc wNh63c c-N-na c-N-oc">
-                                                    <div class="eRpWzb">
-                                                        <img src="dashboards_files/youtube-32.png"></div>
-                                                    <div class="wtfVDb">
-                                                        YouTube</div>
-                                                    <div class="mjqdgd zLz4Ub Sb">
-                                                    </div>
-                                                </div>
-                                                <div class="EK6kbe">
-                                                    <div class="dayXxd">
-                                                        <div class="l1iy2d">
-                                                            <div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        My videos</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe xR">0</span></div>
-                                                                </div>
-                                                                <div class="db vKuz7">
-                                                                    <div class="cTQkYb">
-                                                                        Favorites</div>
-                                                                    <div class="CEnnod">
-                                                                        <span></span>
-                                                                        <div class="RYwqGe">
-                                                                            ‌</div>
-                                                                        <span class="kc pe pR">0</span></div>
-                                                                </div>
-                                                                <div class="db oKnbdb PHvLdb">
-                                                                    <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Faccount&amp;hl=en">
-                                                                        Manage YouTube account</a><br>
-                                                                                                  <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Faccount_privacy&amp;hl=en">
-                                                                                                      Privacy settings</a><br>
-                                                                                                                          <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Faccount_sharing&amp;hl=en">
-                                                                                                                              Connected accounts</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="" class="wa9Dtb QScYnd c-N-F">
-                                                    <div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Username</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="Fw zR">stsuchidac@pictoric.com</span><div class="Ef Dw zR" title="Items may be visible to others.">
-                                                                                                                      </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    Gender</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                    <span class="Fw rR">Male</span><div class="Ef Dw rR" title="Items may be visible to others.">
-                                                                                                   </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Fmy_videos&amp;hl=en"
-                                                                       class="Bw">My videos</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ">
-                                                                <div class="cTQkYb">
-                                                                    <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Fmy_favorites&amp;hl=en"
-                                                                       class="Bw">Favorites</a></div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="CEnnod">
-                                                                    <span></span>
-                                                                    <div class="RYwqGe">
-                                                                        ‌</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="dayXxd">
-                                                            <div class="db tse3T  ifSPoc">
-                                                                <div class="cTQkYb">
-                                                                    More links</div>
-                                                            </div>
-                                                            <div class="db GDeKqf">
-                                                                <div class="si">
-                                                                    <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Faccount_profile&amp;hl=en">
-                                                                        Manage profile</a><br>
-                                                                                          <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Fmy_history&amp;hl=en">
-                                                                                              Manage history</a><br>
-                                                                                                                <a href="https://www.youtube.com/signin?action_handle_signin=true&amp;next=%2Fmy_search_history&amp;hl=en">
-                                                                                                                    Manage search history</a><br>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-    </body>
-</html>
+@using umbraco.BusinessLogic
+@using umbraco.cms.businesslogic.web
+@model Dictionary<string, string>
+@{
+    Dictionary<string, string> x = (Dictionary<string, string>)Model;
+    string gymnastId = Model["gymnastid"];
+    string memberId = Model["memberid"];
+    string workoutId = Model["workoutid"];
+    string workoutTitle = Model["workouttitle"];
+}
 
+<div id="content-superset">
+    <div>
+        <fieldset>
+            <legend>SuperSet - @workoutTitle</legend>
+            <div>
+                <button class="btn" data-bind="click: openModalSuperSet">
+                    <i class="icon-plus"></i>
+                </button>
+                <button class="btn" data-bind="click: getSuperSet">
+                    <i class="icon-refresh"></i>
+                </button>
+            </div>
+            <br/>
+            <div class="row-fluid">
+                <table class="table table-striped table-hover table-condensed">
+                    <caption>
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th>
+                    
+                            </th>
+                            <th>
+                                Sets
+                            </th>
+                            <th>
+                                Reps
+                            </th>
+                            <th>
+                                Resistance
+                            </th>
+                            <th>
+                                Unit
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: supersets">
+                        <tr>
+                            <td >
+                                <span data-bind="value: IsHide"></span>
+                                <a href="#" data-bind="click: $root.showRoutine, visible: IsHide"> <i class="icon-chevron-right"></i></a>
+                                <a href="#" data-bind="click: $root.hideRoutine, visible: !IsHide()"><i class="icon-chevron-down"></i></a>
+                            </td>
+                            <td data-bind="text: SuperSet.Sets">
+                            </td>
+                            <td data-bind="text: SuperSet.Reps">
+                            </td>
+                            <td data-bind="text: SuperSet.Resistance">
+                            </td>
+                            <td data-bind="text: SuperSet.Unit">
+                            </td>
+                            <td>
+                                <button type="button" class="btn" title="Edit" data-bind="click: $root.editSuperSet">
+                                    <i class="icon-pencil"></i>
+                                </button>
+                                <button type="button" class="btn" title="Delete" data-bind="click: $root.deleteSuperSet">
+                                    <i class="icon-trash"></i>
+                                </button>
+                                <button type="button" class="btn" title="Add Routine" data-bind="click: $root.openModal">
+                                    <i class="icon-plus"></i>
+                                </button>
+                            </td>  
+                        </tr>  
+                        <tr data-bind="visible: !IsHide()">
+                            <td> <i class="ui-icon ui-icon-arrowreturnthick-1-e"></i> </td>     
+                            <td colspan="5">
+                                <div >
+                                    <table class="table table-striped table-hover table-condensed">
+                                        <caption>
+                                        </caption>
+                                        <thead>
+                                            <tr >
+                                                <th>
+                                                    Id
+                                                </th>
+                                                <th>
+                                                    Exercise
+                                                </th>
+                                                <th>
+                                                    Sets
+                                                </th>
+                                                <th>
+                                                    Reps
+                                                </th>
+                                                <th>
+                                                    Resistance
+                                                </th>
+                                                <th>
+                                                    Unit
+                                                </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody data-bind="foreach: Routines">
+                                            <tr>
+                                                <td data-bind="text: Routine.Id">
+                                                </td>
+                                                <td data-bind="text: Routine.Exercise.ExerciseName">
+                                                </td>
+                                                <td data-bind="text: Routine.Sets">
+                                                </td>
+                                                <td data-bind="text: Routine.Reps">
+                                                </td>
+                                                <td data-bind="text: Routine.Resistance">
+                                                </td>
+                                                <td data-bind="text: Routine.Unit">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn" title="Edit" data-bind="click: $root.editRoutine">
+                                                        <i class="icon-pencil"></i>
+                                                    </button>
+                                                    <button type="button" class="btn" title="Delete" data-bind="click: $root.deleteRoutine">
+                                                        <i class="icon-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+    </div>
+    <!-- Modal Routine SuperSet -->
+    <div id="modal-routinesuperset" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+            <h3 data-bind="if: !$root.IsEditRoutine()" >Add Routine</h3>
+            <h3 data-bind="if: $root.IsEditRoutine()" >Edit Routine</h3>
+        </div>
+        <form data-bind="submit: saveRoutine">
+            <div class="modal-body" data-bind="foreach: newRoutines">
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label" >
+                                Category</label>
+                            <div class="controls">
+                                <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'>
+                                </select> 
+                                <input type="hidden" data-bind="text: Routine.Id" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" >
+                                Exercise</label>
+                            <div class="controls">
+                                <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'>
+                                </select>   
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" >
+                                Resistance</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: Routine.Resistance" class="inlineField" />
+                                <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' >
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label">
+                                Sets
+                            </label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: Routine.Sets" />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" >
+                                Reps</label>
+                            <div class="controls">
+                                <input type="text" data-bind="value: Routine.Reps" />
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">
+                                Note</label>
+                            <div class="controls">
+                                <textarea placeholder="Note" rows="5" cols="5" data-bind="value: Routine.Note"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="modal-footer">
+                 <button class="btn btn-success" type="button" data-bind="click: $root.addRoutine">Add</button>
+                 <button class="btn btn-success" type="button" data-bind="click: $root.updateRoutine, visible: $root.IsEditRoutine">Update</button>
+                <button class="btn" type="button" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary" type="submit" data-bind="visible: !$root.IsEditRoutine()">Save</button>
+            </div>
+        </form>
+    </div>
+    <!-- Modal SuperSet-->
+    <div id="modal-superset" class="modal hide fade" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+             <h3 data-bind="if: !$root.IsEditSuperSet()" >Add SuperSet</h3>
+            <h3 data-bind="if: $root.IsEditSuperSet()" >Edit SuperSet</h3>
+        </div>
+        <form data-bind="submit: saveSuperSet">
+            
+            <div class="modal-body" data-bind="with: superset">
+                <div class="row-fluid">
+                    <div class="control-group">
+                        <label class="control-label" >
+                            Resistance</label>
+                        <div class="controls">
+                            <select data-bind='options: $root.resistances, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: ResistanceId'>
+                            </select>
+                            <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: UnitId'>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" >
+                            Sets</label>
+                        <div class="controls">
+                            <input type="text" data-bind="value: Sets" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" >
+                            Reps</label>
+                        <div class="controls">
+                            <input type="text" data-bind="value: Reps" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" >
+                            Note</label>
+                        <div class="controls">
+                            <textarea placeholder="Note" rows="5" cols="5" data-bind="value: Note"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" type="button" data-bind="click: $root.updateSuperSet, visible: $root.IsEditSuperSet">Update</button>
+                <button class="btn" type="button" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary" type="submit" data-bind="visible: !$root.IsEditSuperSet()">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/knockout.js" type="text/javascript"></script>
+<script src="/scripts/knockout.mapping.js" type="text/javascript"></script>
+<script type="text/javascript">
+    function StoryViewModel2(trainingid) {
+        var self = this;
+        self.Id = ko.observable();
+        self.ActionId = ko.observable();
+        self.Action = ko.observable();
+        self.TrainingId = ko.observable(trainingid);
+        self.Training = ko.observable();
+        self.UnitId = ko.observable();
+        self.Unit = ko.observable();
+        self.ObjectId = ko.observable();
+        self.ObjectType = ko.observable();
+        self.Value = ko.observable();
+        self.TypeId = ko.observable();
+        self.Type = ko.observable();
+        self.UserId = ko.observable();
+        self.UserType = ko.observable();
+        self.Note = ko.observable();
+        self.CreatedDate = ko.observable();
+        self.UpdatedDate = ko.observable();
+    }
+
+    function SuperSetViewModel2() {
+        var self = this;
+        self.Id = ko.observable();
+        self.WorkoutId = ko.observable(@workoutId);
+        self.Reps = ko.observable();
+        self.Sets = ko.observable();
+        self.ResistanceId = ko.observable();
+        self.Resistance = ko.observable();
+        self.UnitId = ko.observable();
+        self.Unit = ko.observable();
+        self.Note = ko.observable();
+    }
+
+    function RoutineViewModel2(objectid) {
+        var self = this;
+        self.Id = ko.observable();
+        self.DocumentId = ko.observable();
+        self.CategoryId = ko.observable();
+        self.ExerciseId = ko.observable();
+        self.UserId = ko.observable();
+        self.UserType = ko.observable();
+        self.ObjectId = ko.observable(objectid);
+        self.ObjectType = ko.observable();
+        self.StateId = ko.observable();
+        self.State = ko.observable();
+        self.Exercise = ko.observable();
+        self.CreatedDate = ko.observable();
+        self.StartedDate = ko.observable();
+        self.CompletedDate = ko.observable();
+        self.CanceledDate = ko.observable();
+        self.SortOrder = ko.observable();
+        self.Reps = ko.observable();
+        self.Sets = ko.observable();
+        self.Resistance = ko.observable();
+        self.UnitId = ko.observable();
+        self.Unit = ko.observable();
+        self.Note = ko.observable();
+        self.exercises = ko.observableArray();
+        self.CategoryId.subscribe(function() {
+            $.get('/api/member/GetExerciseByCategory', { categoryid: self.CategoryId() }, function(data) {
+                self.exercises(data);
+            });
+            self.ExerciseId(undefined);
+        });
+    }
+    
+    function Model2(objectid) {
+        var self = this;
+        self.Routine = new RoutineViewModel2(objectid);
+        self.Stories = ko.observableArray();
+        self.addStory = function(trainingid) {
+            self.Stories.push(new StoryViewModel2(trainingid));
+        };
+        self.deleteStory = function(story) {
+            self.Stories.remove(story);
+        };
+        self.filterStory = function(trainingid) {
+            return ko.utils.arrayFilter(self.Stories(), function(story) {
+                return (story.TrainingId() == trainingid);
+            });
+        };
+    }
+
+    function RoutinesViewModel2() {
+        var self = this;
+        self.routines = ko.observableArray();
+        self.supersets = ko.observableArray();
+        self.newRoutines = ko.observableArray();
+        self.categories = ko.observableArray();
+        self.types = ko.observableArray();
+        self.units = ko.observableArray();
+        self.actions = ko.observableArray();
+        self.trainings = ko.observableArray();
+        self.resistances = ko.observableArray();
+        self.superset = new SuperSetViewModel2();
+        self.IsEditRoutine = ko.observable(false);
+        self.IsEditSuperSet = ko.observable(false);
+        //self.routine = new RoutineViewModel();
+        self.addRoutine = function(objectid) {
+            self.newRoutines.push(new Model2(objectid));
+        };
+        self.saveRoutine = function() {
+            var items = ko.toJS(self.newRoutines);
+            var mappedItems = ko.utils.arrayMap(items, function(item) {
+                delete item.exercises;
+                return item;
+            });
+
+            $.ajax({
+                type: "POST",
+                async: false,
+                //cache: false,
+                url: '/api/member/InsertRoutinesSuperSet',
+                data: ko.toJSON(mappedItems),
+                //dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    self.getSuperSet();
+                    self.closeModal();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+        self.editRoutine = function(routine) {
+            alert(ko.toJSON(routine));
+            $.get('/api/member/GetExerciseByCategory', { categoryid: routine.Routine.Exercise.CategoryId }, function(data) {
+                self.newRoutines.removeAll();
+                var item = new Model2(routine.Routine.ObjectId);
+                item.Routine.Id(routine.Routine.Id);
+                item.Routine.CategoryId(routine.Routine.Exercise.CategoryId);
+                item.Routine.exercises(data);
+                item.Routine.ExerciseId(routine.Routine.Exercise.Id);
+                item.Routine.Resistance(routine.Routine.Resistance);
+                item.Routine.UnitId(routine.Routine.UnitId);
+                item.Routine.Sets(routine.Routine.Sets);
+                item.Routine.Reps(routine.Routine.Reps);
+                item.Routine.Note(routine.Routine.Note);
+
+                self.newRoutines.push(item);
+                self.IsEditRoutine(true);
+                self.openModal(undefined);
+            });
+        };
+        self.deleteRoutine = function(routine) {
+            $.post('/api/member/DeleteRoutine/' + routine.Routine.Id , function (data) {
+                self.getSuperSet();
+            });
+        };
+        self.updateRoutine = function() {
+            var items = ko.toJS(self.newRoutines);
+            var mappedItems = ko.utils.arrayMap(items, function(item) {
+                delete item.exercises;
+                return item;
+            });
+            $.post('/api/member/UpdateRoutine',  mappedItems[0].Routine, function (data) {
+                self.getSuperSet();
+                self.closeModal();
+                self.IsEditRoutine(false);
+            });
+        };
+        self.getRoutine = function(id) {
+            $.ajax({
+                type: "GET",
+                async: false,
+                //cache: false,
+                url: '/api/member/GetRoutineByWorkout/' + id,
+                //data: { id: memberId },
+                //dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    self.routines(data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+        self.getDropdown = function() {
+            $.get('/api/member/GetUmbracoPreValue', { id: 1068 }, function(data) {
+                self.categories(data);
+            });
+            $.get('/api/member/GetUmbracoPreValue', { id: 1074 }, function(data) {
+                self.types(data);
+            });
+            $.get('/api/member/GetUmbracoPreValue', { id: 1075 }, function(data) {
+                self.units(data);
+            });
+            $.get('/api/member/GetUmbracoPreValue', { id: 1067 }, function(data) {
+                self.actions(data);
+            });
+            $.get('/api/member/GetUmbracoPreValue', { id: 1073 }, function(data) {
+                self.trainings(data);
+            });
+            $.get('/api/member/GetUmbracoPreValue', { id: 1071 }, function(data) {
+                self.resistances(data);
+            });
+        };
+        self.openModal = function(superset) {
+            if (superset != undefined) {
+                self.addRoutine(superset.SuperSet.Id);
+            }
+            self.IsEditRoutine(false);
+            $('#modal-routinesuperset').modal('show');
+        };
+        self.closeModal = function() {
+            $('#modal-routinesuperset').modal('hide');
+        };
+        
+        //--------------------------------SUPERSET------------------------------------------
+        self.getSuperSet = function() {
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: '/api/member/GetSuperSetByWorkout/' + @workoutId,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function( index, element) {
+                        element.IsHide = ko.observable(true);
+                    });
+                    self.supersets(data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+        self.saveSuperSet = function() {
+            $.ajax({
+                type: "POST",
+                async: false,
+                //cache: false,
+                url: '/api/member/InsertSuperSet',
+                data: ko.toJSON(self.superset),
+                //dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    self.getSuperSet();
+                    self.closeModalSuperSet();
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                }
+            });
+        };
+        self.editSuperSet = function(superset) {
+            self.superset.Id(superset.SuperSet.Id);
+            self.superset.WorkoutId(superset.SuperSet.WorkoutId);
+            self.superset.Reps(superset.SuperSet.Reps);
+            self.superset.Sets(superset.SuperSet.Sets);
+            self.superset.ResistanceId(superset.SuperSet.ResistanceId);
+            //self.superset.Resistance(superset.SuperSet.Resistance);
+            self.superset.UnitId(superset.SuperSet.UnitId);
+            //self.superset.Unit(superset.SuperSet.Unit);
+            self.superset.Note(superset.SuperSet.Note);
+            self.IsEditSuperSet(true);
+            self.openModalSuperSet();
+        };
+        self.deleteSuperSet = function(superset) {
+            $.post('/api/member/DeleteSuperSet/' + superset.SuperSet.Id, function (data) {
+                self.getSuperSet();
+            });
+        };
+        self.updateSuperSet = function() {
+             $.post('/api/member/UpdateSuperSet',  ko.toJS(self.superset), function (data) {
+                self.getSuperSet();
+                self.closeModalSuperSet();
+                 self.IsEditSuperSet(false);
+            });
+        };
+        self.openModalSuperSet = function() {
+            self.IsEditSuperSet(false);
+            $('#modal-superset').modal('show');
+        };
+        self.closeModalSuperSet = function() {
+            $('#modal-superset').modal('hide');
+        };
+        self.showRoutine = function(superset) {
+            superset.IsHide(false);
+        };
+        self.hideRoutine = function(superset) {
+            superset.IsHide(true);
+        };
+    }
+    
+    $(document).ready(function() {
+
+        var model2 = new RoutinesViewModel2();
+        //ko.applyBindings(model2, $('#content-routine')[0]);
+        ko.applyBindings(model2, $('#content-superset')[0]);
+        //ko.applyBindings(model2);
+        model2.getDropdown();
+        model2.getSuperSet();
+        //model2.getRoutine();
+
+        $('#modal-routinesuperset').modal({
+            keyboard: false,
+            backdrop:false,
+            show: false
+        });
+
+        $('#modal-routinesuperset').on('hidden', function() {
+           model2.newRoutines.removeAll();
+        });
+        
+        $('#modal-superset').modal({
+            keyboard: false,
+            backdrop:false,
+            show: false
+        });
+
+        $('#modal-superset').on('hidden', function() {
+            model2.superset.Id(undefined);
+            model2.superset.WorkoutId(undefined);
+            model2.superset.Reps(undefined);
+            model2.superset.Sets(undefined);
+            model2.superset.ResistanceId(undefined);
+            model2.superset.Resistance(undefined);
+            model2.superset.UnitId(undefined);
+            model2.superset.Unit(undefined);
+            model2.superset.Note(undefined);
+        });
+    });
+
+</script>

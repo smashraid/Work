@@ -4,7 +4,7 @@
 
 @{
     var id = Request.QueryString["id"];
-    Document workout = new Document(Convert.ToInt32(1142));
+    Document workout = new Document(Convert.ToInt32(id));
     int workoutId = workout.Id;
     User user = umbraco.BusinessLogic.User.GetCurrent();
     user = new User(0);
@@ -138,40 +138,40 @@
                 </tr>
             </tbody>
         </table>
+        <div id="dialog-routine">
+            <form data-bind="submit: saveRoutine">
+                <fieldset>
+                    <legend></legend>
+                    <div data-bind="foreach: newRoutines">
+                        <label>
+                            Category</label>
+                        <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'>
+                        </select>
+                        <input type="hidden" data-bind="text: Routine.Id" />
+                        <label>
+                            Exercise</label>
+                        <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'>
+                        </select>
+                        <label>
+                            Resistance</label>
+                        <input type="text" class="inlineField" data-bind="value: Routine.Resistance" />
+                        <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' >
+                        </select>
+                        <label>
+                            Sets</label>
+                        <input type="text" data-bind="value: Routine.Sets" />
+                        <label>
+                            Reps</label>
+                        <input type="text" data-bind="value: Routine.Reps" />
+                        <label>
+                            Note</label>
+                        <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Routine.Note"></textarea>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
 
-    </div>
-                            <div id="dialog-routine">
-        <form data-bind="submit: saveRoutine">
-            <fieldset>
-                <legend></legend>
-                <div data-bind="foreach: newRoutines">
-                    <label>
-                        Category</label>
-                    <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'>
-                    </select>
-                    <input type="hidden" data-bind="text: Routine.Id" />
-                    <label>
-                        Exercise</label>
-                    <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'>
-                    </select>
-                    <label>
-                        Resistance</label>
-                    <input type="text" class="inlineField" data-bind="value: Routine.Resistance" />
-                    <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' >
-                    </select>
-                    <label>
-                        Sets</label>
-                    <input type="text" data-bind="value: Routine.Sets" />
-                    <label>
-                        Reps</label>
-                    <input type="text" data-bind="value: Routine.Reps" />
-                    <label>
-                        Note</label>
-                    <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Routine.Note"></textarea>
-                </div>
-            </fieldset>
-        </form>
-    </div>
 
 
 @*<link href="/css/ui/jquery.ui.css" rel="stylesheet" type="text/css" />
@@ -180,39 +180,7 @@
 <script src="/scripts/knockout.js" type="text/javascript"></script>
 <script src="/scripts/knockout.mapping.js" type="text/javascript"></script>*@
 <script type="text/javascript">
-    $("#dialog-routine").dialog({
-        autoOpen: false,
-        resizable: false,
-        height: 440,
-        width: 300,
-        title: 'Add Routine',
-        modal: true,
-        buttons: {
-            "Update": function() {
-            },
-            "Save": function() {
-            },
-            Cancel: function() {
-                $(this).dialog("close");
-            }
-        }
-        //close: function(event, ui) {
-        //model.newRoutines.removeAll();
-            //model.addRoutine();
-            //$( "#dialog-routine" ).dialog({ title: "Add Routine" });
-            //}
-    });
 
-    $('.ui-dialog-buttonset').find('span').each(function(index, element) {
-        if (element.innerHTML == "Save") {
-            $(element).parent().attr('data-bind', 'click: $root.saveRoutine');
-            $(element).parent().addClass('saveroutine');
-        } else if (element.innerHTML == "Update") {
-            $(element).parent().attr('data-bind', 'click: $root.updateRoutine');
-            $(element).parent().addClass('updateroutine');
-            $(element).parent().hide();
-        }
-    });
 
     function StoryViewModel(trainingid) {
         var self = this;
@@ -424,10 +392,11 @@
             });
         };
         self.openModal = function() {
-            $("#dialog-routine").dialog("open");
+            $("#dialog-routine").dialog( "open" );
         };
         self.closeModal = function() {
             $("#dialog-routine").dialog("close");
+            
         };
     }
 
@@ -435,19 +404,58 @@
     $(document).ready(function() {
 
         var model = new RoutinesViewModel();
-        //ko.applyBindings(model, $('#content-routine')[0]);
+        ko.applyBindings(model, document.getElementById('content-routine'));
         //ko.applyBindings(model, $('#template-routine')[0]);
-        ko.applyBindings(model);
+        //ko.applyBindings(model);
         model.getDropdown();
         model.getRoutine();
-
+        $("#dialog-routine").dialog({
+            autoOpen: false,
+            resizable: false,
+            height: 440,
+            width: 300,
+            title: 'Add Routine',
+            modal: true,
+            buttons: {
+                "Update": function() {
+                    model.updateRoutine();
+                },
+                "Save": function() {
+                    model.saveRoutine();
+                },
+                Cancel: function() {
+                    $("#dialog-routine").dialog("close");
+                    //$("#dialog-routine").dialog( "destroy" );
+                }
+            },
+            open: function(event, ui) {
+            },
+            create: function(event, ui) {
+            }
+            //close: function(event, ui) {
+            //model.newRoutines.removeAll();
+                //model.addRoutine();
+                //$( "#dialog-routine" ).dialog({ title: "Add Routine" });
+                //}
+        });
         $("#dialog-routine").on("dialogclose", function(event, ui) {
             model.newRoutines.removeAll();
             model.addRoutine();
             $('.saveroutine').show();
             $('.updateroutine').hide();
-            $( "#dialog-routine" ).dialog({ title: "Add Routine" });
+            $("#dialog-routine").dialog({ title: "Add Routine" });
         });
-    });    
+
+        $('.ui-dialog-buttonset').find('span').each(function(index, element) {
+            if (element.innerHTML == "Save") {
+                $(element).parent().attr('data-bind', 'click: $root.saveRoutine');
+                $(element).parent().addClass('saveroutine');
+            } else if (element.innerHTML == "Update") {
+                $(element).parent().attr('data-bind', 'click: $root.updateRoutine');
+                $(element).parent().addClass('updateroutine');
+                $(element).parent().hide();
+            }
+        });
+    });
 
 </script>
