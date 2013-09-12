@@ -1,8 +1,10 @@
+@using umbraco.cms.businesslogic.member
 @model Dictionary<string, string>
 @{
     Dictionary<string, string> x = (Dictionary<string, string>)Model;
     string gymnastId = Model["gymnastid"];
     string memberId = Model["memberid"];
+    string email = new Member(Convert.ToInt32(memberId)).Email;
 }
 <div id="content-workout">
     <div>
@@ -285,6 +287,7 @@
             $.post('/api/member/InsertWorkout',  ko.toJS(self.workout), function (data) {
                 self.workouts.push(data);
                 $('#modal-workout').modal('hide');
+                self.notificationWorkout(data);
             });
         };
         self.updateWorkout = function () {
@@ -294,7 +297,7 @@
             });
         };
         self.deleteWorkout = function (workout) {
-            $.post('/api/member/DeleteWorkout', { id: workout.Id }, function (data) {
+            $.post('/api/member/DeleteWorkout/'+ workout.Id, function (data) {
                 self.workouts.remove(workout);
             });
         };
@@ -336,11 +339,16 @@
             parent.right.document.location.href = '/template.aspx?view=routine&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id + '&workouttitle=' + workout.Name;
         };
          self.openSuperSet = function (workout) {
-            parent.right.document.location.href = '/template.aspx?view=superset&&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id + '&workouttitle=' + workout.Name;
+            parent.right.document.location.href = '/template.aspx?view=superset&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&workoutid=' + workout.Id + '&workouttitle=' + workout.Name;
         };
         self.getDropdown = function() {
             $.get('/api/member/GetUmbracoPreValue', { id: 1077 }, function(data) {
                 self.states(data);
+            });
+        };
+        self.notificationWorkout = function(workout) {//1172
+            $.get('/api/member/SelectNumberNotViewedWorkout', { id: @memberId } , function(data) {
+                $.post('/api/member/SendTemplateMessage', { Id: 1260, Email: '@email', MessageType: 'workoutid', ObjectId: workout.Id, ObjectType: 20, MemberId: @memberId, Badge: data });
             });
         };
     }

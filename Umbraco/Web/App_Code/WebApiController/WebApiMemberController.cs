@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -39,28 +40,14 @@ using File = System.IO.File;
 using Log = umbraco.BusinessLogic.Log;
 using Property = umbraco.cms.businesslogic.property.Property;
 
+
 public class MemberController : ApiController
 {
-    private PushBroker pushService;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="T:System.Web.Http.ApiController"/> class.
     /// </summary>
     public MemberController()
     {
-        string root = HttpContext.Current.Server.MapPath("~/certificate");
-        string certName = "metafitness.p12";
-        byte[] cert = File.ReadAllBytes(Path.Combine(root, certName));
-
-        //pushService = new PushBroker();
-        //pushService.Events.OnDeviceSubscriptionExpired += new ChannelEvents.DeviceSubscriptionExpired(Events_OnDeviceSubscriptionExpired);
-        //pushService.Events.OnDeviceSubscriptionIdChanged += new ChannelEvents.DeviceSubscriptionIdChanged(Events_OnDeviceSubscriptionIdChanged);
-        //pushService.Events.OnChannelException += new ChannelEvents.ChannelExceptionDelegate(Events_OnChannelException);
-        //pushService.Events.OnNotificationSendFailure += new ChannelEvents.NotificationSendFailureDelegate(Events_OnNotificationSendFailure);
-        //pushService.Events.OnNotificationSent += new ChannelEvents.NotificationSentDelegate(Events_OnNotificationSent);
-
-        //ApplePushChannelSettings settings = new ApplePushChannelSettings(false, cert, "ilovebbq");
-        //pushService.RegisterAppleService(settings);
     }
 
     #region Account
@@ -162,9 +149,10 @@ public class MemberController : ApiController
             StartWeight = member.getProperty("startWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("startWeight").Value) : (decimal?)null,
             GoalWeight = member.getProperty("goalWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("goalWeight").Value) : (decimal?)null,
             //DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
-            UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
+            //UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
             TrainerId = document.getProperty("trainer").Value.ToString() != string.Empty ? Convert.ToInt32(document.getProperty("trainer").Value) : 0,
             EmailAlert = member.getProperty("emailAlert").Value.ToString() == "1",
+            EnablePrivateMessage = member.getProperty("enablePrivateMessage").Value.ToString() == "1",
             PurchaseId = member.getProperty("purchase").Value.ToString() != string.Empty ? Convert.ToInt32(member.getProperty("purchase").Value) : (int?)null,
             Purchase = member.getProperty("purchase").Value.ToString() != string.Empty ? UmbracoCustom.PropertyValue(UmbracoType.Purchase, member.getProperty("purchase")) : string.Empty,
         };
@@ -218,14 +206,12 @@ public class MemberController : ApiController
         {
             MembershipUser user = Membership.GetUser(loginName);
             string newPassword = user.ResetPassword();
-            SmtpClient client = new SmtpClient();
-            MailMessage message = new MailMessage();
-            message.IsBodyHtml = true;
-            message.From = new MailAddress("app@metafitnessatx.com");
-            message.To.Add(user.Email);
-            message.Subject = "MetaFitness Password Reset";
-            message.Body = string.Format("<h2>Password Reset</h2><div>Your password has been reset through the MetaFitness App. You new password is:</div><div></div><div style='background-color: grey; color: white; height: 40px; width: 150px; text-align: center; padding-top: 16px;; font-size: 14pt;'>{0}</div><div></div><div>Your login is your email address.</div><div></div><div>Thank you for using MetaFitness.</div>", newPassword);
-            client.Send(message);
+            SendEmail(new EmailMessage
+                {
+                    Email = user.Email,
+                    Subject = "MetaFitness Password Reset",
+                    Message = string.Format("<h2>Password Reset</h2><div>Your password has been reset through the MetaFitness App. You new password is:</div><div></div><div style='background-color: grey; color: white; height: 40px; width: 150px; text-align: center; padding-top: 16px;; font-size: 14pt;'>{0}</div><div></div><div>Your login is your email address.</div><div></div><div>Thank you for using MetaFitness.</div>", newPassword)
+                });
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Reset Password successfully");
         }
@@ -272,9 +258,10 @@ public class MemberController : ApiController
             StartWeight = member.getProperty("startWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("startWeight").Value) : (decimal?)null,
             GoalWeight = member.getProperty("goalWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("goalWeight").Value) : (decimal?)null,
             //DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
-            UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
+            //UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
             TrainerId = document.getProperty("trainer").Value.ToString() != string.Empty ? Convert.ToInt32(document.getProperty("trainer").Value) : 0,
             EmailAlert = member.getProperty("emailAlert").Value.ToString() == "1",
+            EnablePrivateMessage = member.getProperty("enablePrivateMessage").Value.ToString() == "1",
             PurchaseId = member.getProperty("purchase").Value.ToString() != string.Empty ? Convert.ToInt32(member.getProperty("purchase").Value) : (int?)null,
             Purchase = member.getProperty("purchase").Value.ToString() != string.Empty ? UmbracoCustom.PropertyValue(UmbracoType.Purchase, member.getProperty("purchase")) : string.Empty,
         };
@@ -312,9 +299,10 @@ public class MemberController : ApiController
             StartWeight = member.getProperty("startWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("startWeight").Value) : (decimal?)null,
             GoalWeight = member.getProperty("goalWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("goalWeight").Value) : (decimal?)null,
             //DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
-            UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
+            //UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
             TrainerId = document.getProperty("trainer").Value.ToString() != string.Empty ? Convert.ToInt32(document.getProperty("trainer").Value) : 0,
             EmailAlert = member.getProperty("emailAlert").Value.ToString() == "1",
+            EnablePrivateMessage = member.getProperty("enablePrivateMessage").Value.ToString() == "1",
             PurchaseId = member.getProperty("purchase").Value.ToString() != string.Empty ? Convert.ToInt32(member.getProperty("purchase").Value) : (int?)null,
             Purchase = member.getProperty("purchase").Value.ToString() != string.Empty ? UmbracoCustom.PropertyValue(UmbracoType.Purchase, member.getProperty("purchase")) : string.Empty,
         };
@@ -351,9 +339,10 @@ public class MemberController : ApiController
             member.getProperty("startWeight").Value = account.StartWeight.HasValue ? account.StartWeight.ToString() : string.Empty;
             member.getProperty("goalWeight").Value = account.GoalWeight.HasValue ? account.GoalWeight.ToString() : string.Empty;
             //member.getProperty("dob").Value = account.Birthday.HasValue ? account.Birthday.Value.ToShortDateString() : string.Empty;
-            member.getProperty("useMetric").Value = account.UseMetric ? "1" : "0";
+            //member.getProperty("useMetric").Value = account.UseMetric ? "1" : "0";
             member.getProperty("emailAlert").Value = account.EmailAlert ? "1" : "0";
             member.getProperty("purchase").Value = account.PurchaseId.HasValue ? account.PurchaseId.ToString() : string.Empty;
+            member.getProperty("purchaseTemplate").Value = new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Template))).Children[0].Id;
             member.Save();
             FormsAuthentication.SetAuthCookie(account.LoginName, true);
             //CreateGymnast(new Gymnast { MemberId = member.Id, Name = member.Text });
@@ -529,9 +518,211 @@ public class MemberController : ApiController
         return result;
     }
 
+    [HttpPost]
+    public HttpResponseMessage VerifyReceipt(SubscriptionReceipt receipt)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        SubscriptionReceipt r = new SubscriptionReceipt();
+        Member member = Member.GetCurrentMember();
+        try
+        {
+            Document document = new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Site)));
+            var postData = new Dictionary<string, string>()
+                {
+                    {"receipt-data", receipt.Receipt},
+                    {"password", document.getProperty("sharedSecretKey").Value.ToString()}
+                };
+
+            byte[] byteArray = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(postData));
+            HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(new Uri(document.getProperty("url").Value.ToString()));
+            webRequest.Method = WebRequestMethods.Http.Post;
+            webRequest.ContentType = "application/json; charset=utf-8";
+            webRequest.ContentLength = byteArray.Length;
+
+            Stream dataStream = webRequest.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            using (HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse())
+            {
+                if (webResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    StreamReader stream = new StreamReader(webResponse.GetResponseStream());
+                    JObject result = JObject.Parse(stream.ReadToEnd());
+                    if (Convert.ToInt32(result["status"]) == 0)
+                    {
+                        r = new SubscriptionReceipt
+                            {
+                                MemberId = member.Id,
+                                Status = result["status"].Value<int>(),
+                                Receipt = result["receipt"].ToString(),
+                                LatestReceipt = result["latest_receipt"].ToString(),
+                                LatestReceiptInfo = result["latest_receipt_info"].ToString(),
+                            };
+                        InsertReceipt(r);
+                        PurchaseWorkout();
+                        SendTemplateMessage(new TemplateMessage
+                        {
+                            Id = 1315, //1174,
+                            Email = member.Email,
+                            MemberId = member.Id,
+                            ObjectType = 151 //Purchase
+                        });
+                    }
+                    else
+                    {
+                        r = new SubscriptionReceipt
+                        {
+                            MemberId = member.Id,
+                            Status = result["status"].Value<int>(),
+                            Receipt = result["receipt"].ToString(),
+                            LatestExpiredReceiptInfo = result["latest_expired_receipt_info"].ToString()
+                        };
+                        UpdateReceipt(r);
+                        member.getProperty("purchase").Value = 131;
+                    }
+                }
+            }
+
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Verify Receipt successfully created");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    [HttpPost]
+    public HttpResponseMessage InsertReceipt(SubscriptionReceipt receipt)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        Member member = Member.GetCurrentMember();
+        try
+        {
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = receipt.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
+            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertReceipt",
+            parameter,
+            new SqlParameter { ParameterName = "@MemberId", Value = receipt.MemberId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@Status", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@Receipt", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@LatestReceipt", Value = receipt.LatestReceipt, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@LatestReceiptInfo", Value = receipt.LatestReceiptInfo, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+            );
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Receipt successfully created");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    [HttpPost]
+    public HttpResponseMessage UpdateReceipt(SubscriptionReceipt receipt)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        Member member = Member.GetCurrentMember();
+        try
+        {
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            //SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = receipt.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
+            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateReceipt",
+            new SqlParameter { ParameterName = "@MemberId", Value = receipt.MemberId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@Status", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@Receipt", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@LatestExpiredReceiptInfo", Value = receipt.LatestExpiredReceiptInfo, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+            );
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Receipt successfully created");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    [HttpGet]
+    public SubscriptionReceipt SelectReceipt(int id)
+    {
+        SubscriptionReceipt receipt = new SubscriptionReceipt();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectReceipt", new SqlParameter { ParameterName = "@Id", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                receipt = new SubscriptionReceipt
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    Status = Convert.ToInt32(reader.GetValue(1)),
+                    Receipt = reader.GetValue(2).ToString(),
+                    LatestReceipt = reader.GetValue(3).ToString(),
+                    LatestReceiptInfo = reader.GetValue(4).ToString(),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5))
+                };
+            }
+
+        }
+        return receipt;
+    }
+
     #endregion
 
     #region Workout
+
+    [HttpPost]
+    public HttpResponseMessage PurchaseWorkout()
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            Member member = Member.GetCurrentMember();
+            //Document gymnast = new Document(Convert.ToInt32(member.getProperty("gymnast").Value));
+            int purchaseTemplate = Convert.ToInt32(member.getProperty("purchaseTemplate").Value);
+            Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Template))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
+            foreach (Document document in documents)
+            {
+                Workout workout = InsertWorkout(new Workout
+                    {
+                        Name = document.Text,
+                        //ParentId = gymnast.Id,
+                        Description = document.getProperty("description").Value.ToString(),
+                        StateId = UmbracoCustom.PropertyValueId(UmbracoType.WorkoutState, "Not Viewed")
+                    });
+                IEnumerable<RoutineViewModel> routines = GetRoutineByWorkout(document.Id).Select((r) =>
+                    {
+                        r.ObjectId = workout.Id;
+                        return new RoutineViewModel
+                            {
+                                Routine = r,
+                                Stories = new List<Story>()
+                            };
+                    });
+                InsertRoutines(routines);
+            }
+            member.getProperty("purchaseTemplate").Value = documents.LastOrDefault().Id;
+            member.Save();
+
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Purchase Workout successfully added");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
 
     [HttpPost]
     public Workout InsertWorkout(Workout workout)
@@ -570,7 +761,7 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public Workout SelectWorkoutById(int id, int memberId)
+    public Workout SelectWorkoutById(int id, int memberId = 0)
     {
         User user = umbraco.BusinessLogic.User.GetCurrent();
         Member member = user != null ? new Member(memberId) : Member.GetCurrentMember();
@@ -1723,6 +1914,7 @@ public class MemberController : ApiController
                         IsActive = Convert.ToBoolean(reader.GetValue(4))
                     },
                     Id = Convert.ToInt32(reader.GetValue(5).ToString()),
+                    ExerciseId = Convert.ToInt32(reader.GetValue(0)),
                     Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(6)),
                     Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(7)),
                     Resistance = reader.IsDBNull(8) ? (decimal?)null : Convert.ToDecimal(reader.GetValue(8)),
@@ -2063,12 +2255,45 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public PushNotification GetNotificacion(string token)
+    public PushNotification GetNotificacion(string token, int memberid = 0)
     {
         Member member = Member.GetCurrentMember();
+        List<PushNotification> notifications = GetNotificacionByMember(memberid);
+        return notifications.SingleOrDefault(n => n.Token == token);
+    }
+
+    [HttpGet]
+    public List<PushNotification> GetNotificacionByMember(int memberid = 0)
+    {
+        Member member = memberid == 0 ? Member.GetCurrentMember() : new Member(memberid);
         List<PushNotification> notifications = new List<PushNotification>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectNotificationByMember", new SqlParameter { ParameterName = "@MemberId", Value = member.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                notifications.Add(new PushNotification
+                {
+                    Id = int.Parse(reader.GetValue(0).ToString()),
+                    MemberId = int.Parse(reader.GetValue(1).ToString()),
+                    Token = reader.GetValue(2).ToString(),
+                    DeviceId = int.Parse(reader.GetValue(3).ToString()),
+                    IsActive = bool.Parse(reader.GetValue(4).ToString()),
+                    Device = reader.GetValue(5).ToString(),
+                    //PlatformId = int.Parse(reader.GetValue(6).ToString()),
+                    //Platform = UmbracoCustom.PropertyValue(UmbracoType.Platform, reader.GetValue(6))
+                });
+            }
+        }
+        return notifications;
+    }
+
+    [HttpGet]
+    public List<PushNotification> GetNotificacion()
+    {
+        List<PushNotification> notifications = new List<PushNotification>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectNotification"))
         {
             while (reader.Read())
             {
@@ -2085,7 +2310,7 @@ public class MemberController : ApiController
                 });
             }
         }
-        return notifications.SingleOrDefault(n => n.Token == token);
+        return notifications;
     }
 
     [HttpPost]
@@ -2097,7 +2322,7 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateNotification",
                       new SqlParameter { ParameterName = "@Id", Value = notification.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                      new SqlParameter { ParameterName = "@Token", Value = notification.Token, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 50 },
+                      new SqlParameter { ParameterName = "@Token", Value = notification.Token, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 200 },
                       new SqlParameter { ParameterName = "@DeviceId", Value = notification.DeviceId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                       new SqlParameter { ParameterName = "@IsActive", Value = notification.IsActive, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Bit }
                       );
@@ -2125,7 +2350,7 @@ public class MemberController : ApiController
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertNotification",
                new SqlParameter { ParameterName = "@Id", Value = notification.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@MemberId", Value = member.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@Token", Value = notification.Token, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 50 },
+               new SqlParameter { ParameterName = "@Token", Value = notification.Token, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 200 },
                new SqlParameter { ParameterName = "@DeviceId", Value = notification.DeviceId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
                );
 
@@ -2155,6 +2380,7 @@ public class MemberController : ApiController
                new SqlParameter { ParameterName = "@UserId", Value = message.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@UserType", Value = message.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@ObjectId", Value = message.ObjectId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+               new SqlParameter { ParameterName = "@ObjectType", Value = message.ObjectType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                new SqlParameter { ParameterName = "@Email", Value = message.Email, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
                new SqlParameter { ParameterName = "@Message", Value = message.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 }
                );
@@ -2187,6 +2413,149 @@ public class MemberController : ApiController
             message.UserType =
                 UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
                     u => u.Value.ToLower() == "client").Id;
+        }
+    }
+
+    [HttpPost]
+    public HttpResponseMessage SendTemplateMessage(TemplateMessage message)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            Member member = Member.GetCurrentMember();
+            //Document trainer = new Document(Convert.ToInt32(member.getProperty("trainer").Value));
+            Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Notification)));
+            Document document = documents.Single(d => d.Id == message.Id);
+            //switch (message.MessageType)
+            //{
+            //case TemplateMessageType.Email:
+            if (member.getProperty("emailAlert").Value.ToString() == "1")
+            {
+                EmailMessage emailMessage = new EmailMessage
+                    {
+                        Email = message.Email,
+                        Message = document.getProperty("emailContent").Value.ToString().Replace("/media/", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/media/").Replace("https", "http"),
+                        Subject = document.getProperty("subject").Value.ToString(),
+                        ObjectId = message.ObjectId,
+                        ObjectType = message.ObjectType,
+                        //TrainerId = !string.IsNullOrEmpty(trainer.getProperty("").Value.ToString()) ? Convert.ToInt32(trainer.getProperty("").Value) : (int?)null
+                    };
+                SendEmail(emailMessage);
+                InsertEmailMessage(emailMessage);
+            }
+            //break;
+            //case TemplateMessageType.Push:
+            PushMessage pushMessage = new PushMessage
+                {
+                    MemberId = message.MemberId,
+                    Message = document.getProperty("pushContent").Value.ToString(),
+                    Token = message.Token,
+                    ObjectId = message.ObjectId,
+                    ObjectType = message.ObjectType,
+                    Type = message.MessageType,
+                    Title = document.getProperty("pushTitle").Value.ToString(),
+                    Badge = message.Badge,//Convert.ToInt32(document.getProperty("badge").Value),
+                    Alert = document.getProperty("alert").Value.ToString(),
+                    Sound = document.getProperty("sound").Value.ToString(),
+                };
+            SendPush(pushMessage);
+
+            //break;
+            //}
+
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Message was registered successfully");
+        }
+        catch (Exception ex)
+        {
+            umbraco.BusinessLogic.Log.Add(LogTypes.Error, message.MemberId, ex.Message);
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    [HttpPost]
+    private void PostMessage(Post post)
+    {
+        Topic topic = SelectTopicById(post.TopicId);
+        int trainerId = UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer");
+        int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+        if (topic.UserId != post.UserId && topic.UserType != trainerId)
+        {
+            SendTemplateMessage(new TemplateMessage
+            {
+                Id = 1264,//1174, 
+                Email = UmbracoCustom.GetEmail(topic.UserId.ToString(), topic.UserType.ToString()),
+                MemberId = topic.UserId,
+                MessageType = "topicid",
+                ObjectId = topic.Id,
+                ObjectType = 21
+            });
+        }
+        //List<Post> posts = SelectPost(topic.Id);
+        //var x = posts.Where(p => p.UserType != UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer") && (p.UserId != post.UserId)).Select(p => new TemplateMessage
+        //   {
+        //       Id = 1265, //1175, 
+        //       Email = UmbracoCustom.GetEmail(p.UserId.ToString(), p.UserType.ToString()),
+        //       MemberId = p.UserId,
+        //       MessageType = "topicid",
+        //       ObjectId = p.TopicId,
+        //       ObjectType = 22
+        //   }).GroupBy(tm => tm.Email).Select(tm => tm.First());
+        //List<TemplateMessage> list = new List<TemplateMessage>();
+        //foreach (TemplateMessage templateMessage in posts.Where(p => p.UserType != UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer") && p.UserId != post.UserId).Select(p => new TemplateMessage
+        //   {
+        //       Id = 1265, //1175, 
+        //       Email = UmbracoCustom.GetEmail(p.UserId.ToString(), p.UserType.ToString()),
+        //       MemberId = p.UserId,
+        //       MessageType = "topicid",
+        //       ObjectId = p.TopicId,
+        //       ObjectType = 22
+        //   }).GroupBy(tm => tm.Email).Select(tm => tm.First()))
+        //{
+        foreach (TemplateMessage templateMessage in SelectPostNotification(post.TopicId, post.UserId, trainerId).Select(p => new TemplateMessage
+           {
+               Id = 1265, //1175, 
+               Email = UmbracoCustom.GetEmail(p.ToString(), clientId.ToString()),
+               MemberId = p,
+               MessageType = "topicid",
+               ObjectId = post.TopicId,
+               ObjectType = 22
+           }))
+        {
+            //TemplateMessage tmp = list.Find(t => t.Email == templateMessage.Email && t.MemberId == templateMessage.MemberId);
+            //if (tmp == null)
+            //{
+            //    list.Add(templateMessage);
+            //}
+            SendTemplateMessage(templateMessage);
+        }
+
+        //foreach (TemplateMessage templateMessage in list)
+        //{
+        //    SendTemplateMessage(templateMessage);
+        //}
+    }
+
+    [HttpPost]
+    private void TopicMessage(Post post)
+    {
+        Member member = Member.GetCurrentMember();
+        Topic topic = SelectTopicById(post.TopicId);
+        if (post.UserType != UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer") || (member != null && topic.UserId != member.Id))
+        {
+            SendTemplateMessage(new TemplateMessage
+            {
+                Id = 1264,//1174, 
+                Email = UmbracoCustom.GetEmail(topic.UserId.ToString(), topic.UserType.ToString()),
+                MemberId = post.UserId,
+                MessageType = "topicid",
+                ObjectId = topic.Id,
+                ObjectType = 21
+            });
         }
     }
 
@@ -2241,32 +2610,189 @@ public class MemberController : ApiController
         }
     }
 
+    [HttpGet]
+    public void SendAllNotification(int objectId)
+    {
+        foreach (Member member in Member.GetAllAsList().Where(m => m.getProperty("isActive").Value.ToString() == "1"))
+        {
+            SendTemplateMessage(new TemplateMessage
+                {
+                    Email = member.Email,
+                    MemberId = member.Id,
+                    ObjectType = objectId
+                });
+        }
+    }
+
+
     [HttpPost]
     public HttpResponseMessage SendPush(PushMessage message)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         try
         {
-            Member member = Member.GetCurrentMember();
+            //Member member = Member.GetCurrentMember() ?? new Member(message.MemberId);
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-            PushNotification notification = GetNotificacion(message.Token);
-            int userType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(u => u.Value.ToLower() == "client").Id;
-            int objectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
+            //PushNotification notification = GetNotificacion(message.Token, message.MemberId);
+            //int userType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(u => u.Value.ToLower() == "client").Id;
+            //int objectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
 
-            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertPushMessage",
-               new SqlParameter { ParameterName = "@Id", Value = new int(), Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@Token", Value = notification.Token, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 50 },
-               new SqlParameter { ParameterName = "@NotificationId", Value = notification.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@UserId", Value = member.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@UserType", Value = userType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@ObjectId", Value = message.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@ObjectType", Value = objectType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-               new SqlParameter { ParameterName = "@Message", Value = message.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 500 }
-               );
+            //string type = UmbracoCustom.PropertyValue(UmbracoType.ObjectType, message.ObjectType);
+            string root = HttpContext.Current.Server.MapPath("~/certificate");
+            string certName = "certificate.p12";
+            byte[] cert = File.ReadAllBytes(Path.Combine(root, certName));
+            PushBroker push = new PushBroker();
+            push.OnNotificationSent += NotificationSent;
+            push.OnChannelException += ChannelException;
+            push.OnServiceException += ServiceException;
+            push.OnNotificationFailed += NotificationFailed;
+            push.OnDeviceSubscriptionExpired += DeviceSubscriptionExpired;
+            push.OnDeviceSubscriptionChanged += DeviceSubscriptionChanged;
+            push.OnChannelCreated += ChannelCreated;
+            push.OnChannelDestroyed += ChannelDestroyed;
+            push.RegisterAppleService(new ApplePushChannelSettings(cert, "MetaFitness12!@"));
+            AppleNotification appleNotification = new AppleNotification();
+            var notifications = GetNotificacionByMember(message.MemberId);
+            if (notifications.Count > 0)
+            {
+                foreach (PushNotification pushNotification in notifications)
+                {
+                    appleNotification
+                        .ForDeviceToken(pushNotification.Token)
+                        .WithAlert(message.Title, "", message.Alert, new object[] { })
+                        .WithSound(message.Sound)
+                        .WithCustomItem("message", message.Message)
+                        .WithCustomItem("objectid", message.ObjectType);
 
-            pushService.QueueNotification(new AppleNotification().ForDeviceToken(message.Token).WithAlert(message.Message).WithBadge(7));
-            pushService.StopAllServices();
+                    if (message.Badge != 0)
+                    {
+                        appleNotification.WithBadge(message.Badge);
+                    }
 
+                    if (!string.IsNullOrEmpty(message.Type))
+                    {
+                        appleNotification.WithCustomItem(message.Type, message.ObjectId);
+                    }
+
+                    push.QueueNotification(appleNotification);
+
+                    //pushService.OnDeviceSubscriptionExpired += new DeviceSubscriptionExpiredDelegate(Events_OnDeviceSubscriptionExpired);
+                    //pushService.OnDeviceSubscriptionIdChanged += new  DeviceSubscriptionIdChanged(Events_OnDeviceSubscriptionIdChanged);
+                    //pushService.OnChannelException += new ChannelExceptionDelegate(Events_OnChannelException);
+                    //pushService.OnNotificationSendFailure += new  NotificationSendFailureDelegate(Events_OnNotificationSendFailure);
+                    //pushService.OnNotificationSent += new NotificationSentDelegate(Events_OnNotificationSent);
+
+                    //ApplePushChannelSettings settings = new ApplePushChannelSettings(false, cert, "ilovebbq");
+                    //pushService.RegisterAppleService(settings);
+                    //pushService.QueueNotification(new AppleNotification().ForDeviceToken(message.Token).WithAlert(message.Message).WithBadge(7));
+                    //pushService.StopAllServices();
+                    message.MemberId = pushNotification.MemberId;
+                    message.Token = pushNotification.Token;
+                    InsertPushMessage(message);
+                }
+
+            }
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Message sent successfully");
+        }
+        catch (Exception ex)
+        {
+            umbraco.BusinessLogic.Log.Add(LogTypes.Error, message.MemberId, ex.Message);
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+
+        }
+        return response;
+    }
+
+    private void DeviceSubscriptionChanged(object sender, string oldSubscriptionId, string newSubscriptionId, INotification notification)
+    {
+        //Currently this event will only ever happen for Android GCM
+        Console.WriteLine("Device Registration Changed: Old-> " + oldSubscriptionId + " New-> " + newSubscriptionId + " -> " + notification);
+        umbraco.BusinessLogic.Log.Add(LogTypes.Error, -1, "Device Registration Changed: Old-> " + oldSubscriptionId + " New-> " + newSubscriptionId + " -> " + notification);
+    }
+
+    private void NotificationSent(object sender, INotification notification)
+    {
+        Console.WriteLine("Sent: " + sender + " -> " + notification);
+    }
+
+    private void NotificationFailed(object sender, INotification notification, Exception notificationFailureException)
+    {
+        Console.WriteLine("Failure: " + sender + " -> " + notificationFailureException.Message + " -> " + notification);
+        umbraco.BusinessLogic.Log.Add(LogTypes.Error, -1, "Failure: " + sender + " -> " + notificationFailureException.Message + " -> " + notification);
+    }
+
+    private void ChannelException(object sender, IPushChannel channel, Exception exception)
+    {
+        Console.WriteLine("Channel Exception: " + sender + " -> " + exception);
+        umbraco.BusinessLogic.Log.Add(LogTypes.Error, -1, "Channel Exception: " + sender + " -> " + exception);
+    }
+
+    private void ServiceException(object sender, Exception exception)
+    {
+        Console.WriteLine("Channel Exception: " + sender + " -> " + exception);
+        umbraco.BusinessLogic.Log.Add(LogTypes.Error, -1, "Channel Exception: " + sender + " -> " + exception);
+    }
+
+    private void DeviceSubscriptionExpired(object sender, string expiredDeviceSubscriptionId, DateTime timestamp, INotification notification)
+    {
+        Console.WriteLine("Device Subscription Expired: " + sender + " -> " + expiredDeviceSubscriptionId);
+        umbraco.BusinessLogic.Log.Add(LogTypes.Error, -1, "Device Subscription Expired: " + sender + " -> " + expiredDeviceSubscriptionId);
+    }
+
+    private void ChannelDestroyed(object sender)
+    {
+        Console.WriteLine("Channel Destroyed for: " + sender);
+        umbraco.BusinessLogic.Log.Add(LogTypes.Error, -1, "Channel Destroyed for: " + sender);
+    }
+
+    private void ChannelCreated(object sender, IPushChannel pushChannel)
+    {
+        Console.WriteLine("Channel Created for: " + sender);
+        umbraco.BusinessLogic.Log.Add(LogTypes.Error, -1, "Channel Created for: " + sender);
+    }
+
+    [HttpPost]
+    public HttpResponseMessage SendEmail(EmailMessage message)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+
+            SmtpClient client = new SmtpClient();
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.IsBodyHtml = true;
+            mailMessage.From = new MailAddress("app@metafitnessatx.com");
+            mailMessage.To.Add(message.Email);
+            mailMessage.Subject = message.Subject;
+            mailMessage.Body = message.Message;
+            //Document d = new Document(1149);
+            ////AlternateView alternateView = AlternateView.CreateAlternateViewFromString(message.Message, null, MediaTypeNames.Text.Html); //System.Text.Encoding.UTF8
+            //AlternateView alternateView = AlternateView.CreateAlternateViewFromString(d.getProperty("content").Value.ToString(), null, MediaTypeNames.Text.Html); //System.Text.Encoding.UTF8
+            //if (message.Attachments.Count > 0)
+            //{
+            //    foreach (string file in message.Attachments)
+            //    {
+            //        LinkedResource linkedResource = new LinkedResource(file, MediaTypeNames.Image.Jpeg)
+            //            {
+            //                ContentId = "photo",
+            //                TransferEncoding = TransferEncoding.Base64,
+            //                ContentType = {Name = "photo.jpg"}
+            //            };
+            //        //alternateView.LinkedResources.Add(linkedResource);
+            //        //Attachment attachment = new Attachment(file, MediaTypeNames.Image.Jpeg);
+            //        //ContentDisposition disposition = attachment.ContentDisposition;
+            //        //disposition.CreationDate = System.IO.File.GetCreationTime(file);
+            //        //disposition.ModificationDate = System.IO.File.GetLastWriteTime(file);
+            //        //disposition.ReadDate = System.IO.File.GetLastAccessTime(file);
+            //        //disposition.DispositionType = DispositionTypeNames.Inline;
+            //        //mailMessage.Attachments.Add(attachment);
+            //    }
+            //}
+            //mailMessage.AlternateViews.Add(alternateView);
+            client.Send(mailMessage);
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Message sent successfully");
         }
@@ -2350,17 +2876,60 @@ public class MemberController : ApiController
                 new SqlParameter { ParameterName = "@UserType", Value = post.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
             );
             post = SelectPostById(Convert.ToInt32(parameter.Value));
+            PostMessage(post);
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Post successfully created");
         }
         catch (Exception ex)
         {
+            umbraco.BusinessLogic.Log.Add(LogTypes.Error, post.TopicId, ex.Message);
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
         return post;
     }
+
+
+    //[HttpPost]
+    //public Task<Post> InsertPost(Post post)
+    //{
+    //    HttpResponseMessage response = new HttpResponseMessage();
+    //    try
+    //    {
+
+    //        SetPostUser(post);
+    //        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+    //        SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = post.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
+    //        SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertPost",
+    //            parameter,
+    //            new SqlParameter { ParameterName = "@Message", Value = post.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 500 },
+    //            new SqlParameter { ParameterName = "@TopicId", Value = post.TopicId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+    //            new SqlParameter { ParameterName = "@UserId", Value = post.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+    //            new SqlParameter { ParameterName = "@UserType", Value = post.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
+    //        );
+    //        post = SelectPostById(Convert.ToInt32(parameter.Value));
+    //        response.StatusCode = HttpStatusCode.OK;
+    //        response.Content = new StringContent("Post successfully created");
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        response.StatusCode = HttpStatusCode.InternalServerError;
+    //        response.Content = new StringContent(ex.Message);
+    //        throw new HttpResponseException(response);
+    //    }
+    //    return Task<Post>.Factory.StartNew(() =>
+    //    {
+    //        try
+    //        {
+    //            PostMessage(post);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //        }
+    //        return post;
+    //    });
+    //}
 
     private void SetPostUser(Post post)
     {
@@ -2469,6 +3038,25 @@ public class MemberController : ApiController
             //return posts.Skip((paging.CurrentPage - 1) * paging.Pagesize).Take(paging.Pagesize).ToList();
         }
         return posts;
+    }
+
+    [HttpGet]
+    public List<int> SelectPostNotification(int topicId, int userId, int userType)
+    {
+        List<int> users = new List<int>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectPostNotification",
+            new SqlParameter { ParameterName = "@TopicId", Value = topicId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@UserId", Value = userId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@UserType", Value = userType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
+            ))
+        {
+            while (reader.Read())
+            {
+                users.Add(Convert.ToInt32(reader.GetValue(0)));
+            }
+        }
+        return users;
     }
 
     [HttpGet]
@@ -2924,7 +3512,35 @@ public class MemberController : ApiController
                     UserId = Convert.ToInt32(reader.GetValue(3)),
                     UserType = Convert.ToInt32(reader.GetValue(4)),
                     CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
-                    IsRead = Convert.ToBoolean(reader.GetValue(6))
+                    IsRead = Convert.ToBoolean(reader.GetValue(6)),
+                    LastTalk = SelectLastTalk(Convert.ToInt32(reader.GetValue(0)))
+                };
+                GetChatUser(chat);
+                chats.Add(chat);
+            }
+        }
+        return chats;
+    }
+
+    [HttpGet]
+    public List<Chat> SelectReadRecentChat(int gymnastId)
+    {
+        List<Chat> chats = new List<Chat>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectReadRecentChat", new SqlParameter { ParameterName = "@GymnastId", Value = gymnastId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                Chat chat = new Chat
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    GymnastId = Convert.ToInt32(reader.GetValue(1)),
+                    Subject = reader.GetValue(2).ToString(),
+                    UserId = Convert.ToInt32(reader.GetValue(3)),
+                    UserType = Convert.ToInt32(reader.GetValue(4)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(5)),
+                    IsRead = Convert.ToBoolean(reader.GetValue(6)),
+                    LastTalk = SelectLastTalk(Convert.ToInt32(reader.GetValue(0)))
                 };
                 GetChatUser(chat);
                 chats.Add(chat);
@@ -3572,7 +4188,8 @@ public class MemberController : ApiController
                         Measurement = m
                         //Photos = GetMeasurementPhoto(m.Id).ToList()
                     }).ToList(),
-                Chats = SelectRecentChat(gymnastId),
+                RecentChats = SelectRecentChat(gymnastId),
+                ReadChats = SelectReadRecentChat(gymnastId),
                 UnreadChats = SelectUnreadRecentChat(gymnastId),
                 NumberUnreadChat = SelectNumberUnreadChat(gymnastId),
                 NumberNotViewedWorkout = SelectNumberNotViewedWorkout()

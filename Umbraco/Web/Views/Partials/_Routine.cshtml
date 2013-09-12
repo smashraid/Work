@@ -63,7 +63,7 @@
                             <td data-bind="text: Unit">
                             </td>
                             <td>
-                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Edit" data-bind="click: $root.updateRoutine">
+                                <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Edit" data-bind="click: $root.editRoutine">
                                     <i class="icon-pencil"></i>
                                 </button>
                                 <button class="btn bootstraptooltip" data-toggle="tooltip" data-placement="top" title="Delete" data-bind="click: $root.deleteRoutine">
@@ -81,7 +81,8 @@
     <div id="modal-routine" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Add Routine</h3>
+            <h3 data-bind="if: !$root.IsEdit()" >Add Routine</h3>
+            <h3 data-bind="if: $root.IsEdit()" >Edit Routine</h3>
         </div>
         <form data-bind="submit: saveRoutine">
             <div class="modal-body" data-bind="foreach: newRoutines">
@@ -93,6 +94,7 @@
                             </label>
                             <div class="controls">
                                 <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'></select>
+                                <input type="hidden" data-bind="text: Routine.Id" />
                             </div>
                         </div>
                         <div class="control-group">
@@ -182,16 +184,14 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-success" data-bind="click: $root.addRoutine">Add</button>
+                <button class="btn btn-success" type="button" data-bind="click: $root.updateRoutine, visible: $root.IsEdit">Update</button>
+                <button class="btn btn-primary" type="submit" data-bind="visible: !$root.IsEdit()">Save</button>
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <button class="btn btn-primary" type="submit">Save</button>
             </div>
         </form>
     </div>
 </div>
-
-<link href="/css/ui/jquery.ui.css" rel="stylesheet" type="text/css" />
 <script src="/scripts/jquery.js" type="text/javascript"></script>
-<script src="/scripts/bootstrap.js" type="text/javascript"></script>
 <script src="/scripts/knockout.js" type="text/javascript"></script>
 <script src="/scripts/knockout.mapping.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -268,7 +268,7 @@
     function Model() {
         var self = this;
         self.Routine = new RoutineViewModel();
-        self.Stories = ko.observableArray([new StoryViewModel(35), new StoryViewModel(36)]);
+        self.Stories = ko.observableArray();
         self.addStory = function(trainingid) {
             var x = trainingid;
             var y = 1;
@@ -356,6 +356,7 @@
         self.actions = ko.observableArray();
         self.trainings = ko.observableArray();
         //self.routine = new RoutineViewModel();
+        self.IsEdit = ko.observable(false);
         self.addRoutine = function() {
             self.newRoutines.push(new Model());
             //self.routines.push(self.routine);
@@ -367,8 +368,7 @@
                 delete item.exercises;
                 return item;
             });
-
-
+            
             $.ajax({
                 type: "POST",
                 async: false,
@@ -386,11 +386,42 @@
                 }
             });
         };
-        self.deleteRoutine = function(routine) {
-            alert('Delete: ' + ko.toJSON(routine));
+        self.editRoutine = function(routine) {
+            //alert(ko.toJSON(routine));
+            $.get('/api/member/GetExerciseByCategory', { categoryid: routine.Exercise.CategoryId }, function(data) {
+                self.newRoutines.removeAll();
+                var item = new Model(routine.ObjectId);
+                item.Routine.Id(routine.Id);
+                item.Routine.CategoryId(routine.Exercise.CategoryId);
+                item.Routine.exercises(data);
+                item.Routine.ExerciseId(routine.Exercise.Id);
+                item.Routine.Resistance(routine.Resistance);
+                item.Routine.UnitId(routine.UnitId);
+                item.Routine.Sets(routine.Sets);
+                item.Routine.Reps(routine.Reps);
+                item.Routine.Note(routine.Note);
+
+                self.newRoutines.push(item);
+                self.openModal();
+                self.IsEdit(true);
+            });
         };
-        self.updateRoutine = function(routine) {
-            alert('Update: ' + ko.toJSON(routine));
+        self.deleteRoutine = function(routine) {
+             $.post('/api/member/DeleteRoutine/' + routine.Id , function (data) {
+                self.routines.remove(routine);
+            });
+        };
+        self.updateRoutine = function() {
+            var items = ko.toJS(self.newRoutines);
+            var mappedItems = ko.utils.arrayMap(items, function(item) {
+                delete item.exercises;
+                return item;
+            });
+            $.post('/api/member/UpdateRoutine',  mappedItems[0].Routine, function (data) {
+                self.getRoutine();
+                self.closeModal();
+                self.IsEdit(false);
+            });
         };
         self.getRoutine = function() {
             $('#content-routine').ajaxLoading();
@@ -429,7 +460,11 @@
             });
         };
         self.openModal = function() {
+            self.IsEdit(false);
             $('#modal-routine').modal('show');
+        };
+        self.closeModal = function() {
+            $('#modal-routine').modal('hide');
         };
     }
 

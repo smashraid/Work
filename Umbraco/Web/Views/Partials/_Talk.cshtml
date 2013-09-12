@@ -1,3 +1,4 @@
+@using umbraco.cms.businesslogic.member
 @model Dictionary<string, string>
 @{
     Dictionary<string, string> x = (Dictionary<string, string>)Model;
@@ -5,6 +6,7 @@
     string memberId = Model["memberid"];
     string chatTitle = Model["chattitle"];
     string chatId = Model["chatid"];
+    string email = new Member(Convert.ToInt32(memberId)).Email;
 } 
 <div id="content-talk" >
     <fieldset>
@@ -66,6 +68,7 @@
             $.post('/api/member/InsertTalk',  ko.toJS(self.talk) , function (data) {
                 self.talks.unshift(data);
                 self.talk.Message("");
+                self.notificationTalk(data);
             });
         };
          self.editTalk = function (talk) {
@@ -105,6 +108,11 @@
                 error: function (xhr, ajaxOptions, thrownError) {
                     alert('Error: ' + xhr.status + ' ' + xhr.statusText);
                 }
+            });
+        };
+        self.notificationTalk = function(talk) {
+            $.get('/api/member/SelectNumberUnreadChat', { gymnastId: gymnastId }, function(data) {
+                $.post('/api/member/SendTemplateMessage', { Id: 1266, Email: '@email', MessageType: 'chatid', ObjectId: talk.Id, ObjectType: 23, MemberId: @memberId, Badge: data });
             });
         };
     }

@@ -23,6 +23,8 @@ using umbraco.cms.businesslogic.property;
 using umbraco.cms.businesslogic.web;
 using DataTypeDefinition = umbraco.cms.businesslogic.datatype.DataTypeDefinition;
 using Property = umbraco.cms.businesslogic.property.Property;
+using umbraco.BusinessLogic;
+using umbraco.cms.businesslogic.member;
 
 
 /// <summary>
@@ -103,6 +105,22 @@ public class UmbracoCustom : System.Web.UI.Page
         IEnumerable<PreValue> data = DataTypeValue(id);
         PreValue preValue = data.SingleOrDefault(dt => dt.Value.ToLower() == value.ToLower());
         string result = (preValue != null) ? preValue.Value : string.Empty;
+
+        return result;
+    }
+
+    /// <summary>
+    /// Return the id of a PreValue by value
+    /// </summary>
+    /// <param name="parameter">UmbracoType</param>
+    /// <param name="value">value as a string</param>
+    /// <returns>Returns the value of the PreValue if exists, if not returns an empty string</returns>
+    public static int PropertyValueId(UmbracoType parameter, string value)
+    {
+        int id = Convert.ToInt32(GetParameterValue(parameter));
+        IEnumerable<PreValue> data = DataTypeValue(id);
+        PreValue preValue = data.SingleOrDefault(dt => dt.Value.ToLower() == value.ToLower());
+        int result = (preValue != null) ? preValue.Id : 0;
 
         return result;
     }
@@ -356,6 +374,24 @@ public class UmbracoCustom : System.Web.UI.Page
         Image image = Image.FromStream(ms, true);
         return image;
     }
+
+    public static string GetEmail(string userId, string userType)
+    {
+        string email = string.Empty;
+        string type = PropertyValue(UmbracoType.UserType, Convert.ToInt32(userType)).ToLower();
+        switch (type)
+        {
+            case "trainer":
+            case "admin":
+            case "system":
+                email = new User(Convert.ToInt32(userId)).Email;
+                break;
+            case "client":
+                email = new Member(Convert.ToInt32(userId)).Email;
+                break;
+        }
+        return email;
+    }
 }
 
 public enum UmbracoType
@@ -384,5 +420,8 @@ public enum UmbracoType
     Resistance,
     WorkoutState,
     Temp,
-    Purchase
+    Purchase,
+    Notification,
+    Template
 }
+

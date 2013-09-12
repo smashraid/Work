@@ -51,6 +51,7 @@ public class Account
     #region Audit
 
     public bool IsActive { get; set; }
+    public bool EnablePrivateMessage { get; set; }
 
     #endregion
 

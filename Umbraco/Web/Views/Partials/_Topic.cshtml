@@ -127,7 +127,7 @@
             });
         };
         self.openPost = function (topic) {
-            parent.right.document.location.href = '/template.aspx?view=post&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&topicid=' + topic.Id + '&topictitle=' + topic.Name;
+            parent.right.document.location.href = '/template.aspx?view=post&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&topicid=' + topic.Id + '&topictitle=' + topic.Name + '&userid=' + topic.UserId + '&usertype=' + topic.UserType;;
         };
     }
 

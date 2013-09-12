@@ -1,8 +1,10 @@
+@using umbraco.cms.businesslogic.member
 @model Dictionary<string, string>
 @{
     Dictionary<string, string> x = (Dictionary<string, string>)Model;
     string gymnastId = Model["gymnastid"];
     string memberId = Model["memberid"];
+    string email = new Member(Convert.ToInt32(memberId)).Email;
 }
 <div class="row-fluid" >
     <div id="content-chat" class="span10">
@@ -77,6 +79,7 @@
             $.post('/api/member/InsertChat', { gymnastId: @gymnastId, subject: self.chat.Subject() }, function (data) {
                 self.chats.unshift(data);
                 self.chat.Subject("");
+                self.notificationChat(data);
             });
         };
         self.editChat = function (chat) {
@@ -125,7 +128,12 @@
             });
         };
         self.openTalk = function (chat) {
-            parent.right.document.location.href = '/template.aspx?view=talk&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&chatid=' + chat.Id + '&chattitle=' + chat.Subject;
+            parent.right.document.location.href = '/template.aspx?view=talk&gymnastid=' + @gymnastId + '&memberid=' + @memberId + '&chatid=' + chat.Id + '&chattitle=' + chat.Subject  + '&userid=' + chat.UserId + '&usertype=' + chat.UserType;
+        };
+        self.notificationChat = function(chat) {
+            $.get('/api/member/SelectNumberUnreadChat?gymnastId='+ @gymnastId , function(data) {
+                $.post('/api/member/SendTemplateMessage', { Id: 1266, Email: '@email', MessageType: 'chatid', ObjectId: chat.Id, ObjectType: 23, MemberId: @memberId, Badge: data });
+            });
         };
     }
 

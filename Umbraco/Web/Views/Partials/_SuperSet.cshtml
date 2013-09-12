@@ -257,8 +257,8 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-success" type="button" data-bind="click: $root.updateSuperSet, visible: $root.IsEditSuperSet">Update</button>
-                <button class="btn" type="button" data-dismiss="modal" aria-hidden="true">Close</button>
                 <button class="btn btn-primary" type="submit" data-bind="visible: !$root.IsEditSuperSet()">Save</button>
+                <button class="btn" type="button" data-dismiss="modal" aria-hidden="true">Close</button>
             </div>
         </form>
     </div>
@@ -395,7 +395,7 @@
             });
         };
         self.editRoutine = function(routine) {
-            alert(ko.toJSON(routine));
+            //alert(ko.toJSON(routine));
             $.get('/api/member/GetExerciseByCategory', { categoryid: routine.Routine.Exercise.CategoryId }, function(data) {
                 self.newRoutines.removeAll();
                 var item = new Model2(routine.Routine.ObjectId);
@@ -410,8 +410,8 @@
                 item.Routine.Note(routine.Routine.Note);
 
                 self.newRoutines.push(item);
-                self.IsEditRoutine(true);
                 self.openModal(undefined);
+                self.IsEditRoutine(true);
             });
         };
         self.deleteRoutine = function(routine) {
@@ -525,8 +525,8 @@
             self.superset.UnitId(superset.SuperSet.UnitId);
             //self.superset.Unit(superset.SuperSet.Unit);
             self.superset.Note(superset.SuperSet.Note);
-            self.IsEditSuperSet(true);
             self.openModalSuperSet();
+            self.IsEditSuperSet(true);
         };
         self.deleteSuperSet = function(superset) {
             $.post('/api/member/DeleteSuperSet/' + superset.SuperSet.Id, function (data) {

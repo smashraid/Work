@@ -1,3 +1,5 @@
+@using umbraco.BusinessLogic
+@using umbraco.cms.businesslogic.member
 @model Dictionary<string, string>
 @{
     Dictionary<string, string> x = (Dictionary<string, string>)Model;
@@ -5,11 +7,13 @@
     string memberId = Model["memberid"];
     string topicId = Model["topicid"];
     string topicTitle = Model["topictitle"];
+    string userId = Model["userid"];
+    string userType = Model["usertype"];
+    string email = UmbracoCustom.GetEmail(userId, userType);
 }
 <div id="content-post" >
     <fieldset>
         <legend>Post</legend>
-        
         <div class="form-inline" data-bind="with: post">
             <input type="text" name="Message" placeholder="Message" value="" data-bind="value: Message, valueUpdate:'afterkeydown'" />
             <button class="btn" data-bind="click: $root.savePost, visible: !$root.IsEdit(), enable: Message() != ''" ><i class="icon-plus"></i></button>
@@ -73,6 +77,7 @@
             $.post('/api/member/InsertPost',  ko.toJS(self.post) , function (data) {
                 self.posts.unshift(data);
                 self.post.Message("");
+                self.notificationPost(data);
             });
         };
          self.editPost = function (talk) {
@@ -115,6 +120,9 @@
                     alert('Error: ' + xhr.status + ' ' + xhr.statusText);
                 }
             });
+        };  
+        self.notificationPost = function(data) {
+            $.post('/api/member/PostMessage', ko.toJS(data));
         };
     }
 

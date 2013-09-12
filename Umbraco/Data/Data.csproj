@@ -48,6 +48,7 @@
     <Compile Include="Exercise.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Paging.cs" />
+    <Compile Include="Receipt.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="Gymnast.cs" />
     <Compile Include="Login.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Routine.cs" />
     <Compile Include="SuperSet.cs" />
     <Compile Include="Talk.cs" />
+    <Compile Include="TemplateMessage.cs" />
     <Compile Include="TemplateWorkout.cs" />
     <Compile Include="Topic.cs" />
     <Compile Include="UmbracoPreValue.cs" />

@@ -11,6 +11,8 @@
     string chatTitle = Request.QueryString["chattitle"];
     string topicId = Request.QueryString["topicid"];
     string topicTitle = Request.QueryString["topictitle"];
+    string userId = Request.QueryString["userid"];
+    string userType = Request.QueryString["usertype"];
     string workoutId = Request.QueryString["workoutid"];
     string workoutTitle = Request.QueryString["workouttitle"];
     Dictionary<string, string> model = new Dictionary<string, string>
@@ -22,7 +24,9 @@
             {"workoutid", workoutId},
             {"workouttitle", workoutTitle},
             {"topicid", topicId},
-            {"topictitle", topicTitle}
+            {"topictitle", topicTitle},
+            {"userid", userId},
+            {"usertype", userType}
         };
 }
 @switch (view)

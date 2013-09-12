@@ -15,7 +15,8 @@
     <Data key="1062">Measurement</Data>
 	<Data key="1146">Platform</Data>
 	
-    <Data key="1079">Notification</Data>
+    <!--<Data key="1148">Notification</Data>-->
+    <Data key="1232">Notification</Data>
     <Data key="1082">Trainer</Data>
     <Data key="1068">Category</Data>
     <Data key="1072">State</Data>
@@ -24,6 +25,8 @@
     <Data key="1063">GymnastNode</Data>
 	<Data key="1064">Section</Data>
     <Data key="1065">Site</Data>
+    <!--<Data key="1139">Template</Data>-->
+    <Data key="1232">Template</Data>
     <Data key="C:\Users\stsuchidac\Documents\GitHub\Work\Umbraco\Web\media\">Media</Data>
     <Data key="D:\Photo\">Photo</Data>
     <Data key="D:\Photo\Temp\">Temp</Data>

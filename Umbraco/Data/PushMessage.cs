@@ -25,5 +25,11 @@ public class PushMessage
     public int ObjectType { get; set; }
     public string Message { get; set; }
     public DateTime SendDate { get; set; }
+    public string Type { get; set; }
+
+    public string Title { get; set; }
+    public string Alert { get; set; }
+    public int Badge { get; set; }
+    public string Sound { get; set; }
 }
 

@@ -140,10 +140,10 @@
                     <div class="control-group">
                         <label class="control-label" >
                             Current Weight</label>
-                        <div class="controls" data-bind="if: measurements().length > 0">
+                        <div class="controls" data-bind="if: measurements().length > 1">
                             <span class="input-large uneditable-input" data-bind="text: measurements()[1].Measurement.Weight" ></span>
                         </div>
-                        <div class="controls" data-bind="ifnot: measurements().length > 0">
+                        <div class="controls" data-bind="ifnot: measurements().length > 1">
                             <span class="input-large uneditable-input" ></span>
                         </div>
                     </div>
@@ -197,10 +197,10 @@
                           <div >
                         <h4>MOST RECENT PHOTO</h4>
                     </div>
-                        <a class="thumbnail" href="#" data-bind="if: measurements().length > 0">
+                        <a class="thumbnail" href="#" data-bind="if: measurements().length > 1">
                             <img data-bind="attr: { src: measurements()[1].Photos[0].Base64 }" alt="" width="220" />
                         </a>
-                        <a class="thumbnail" href="#" data-bind="ifnot: measurements().length > 0">
+                        <a class="thumbnail" href="#" data-bind="ifnot: measurements().length > 1">
                             <img src="" alt="None" width="220"  />
                         </a>
                         <p>
@@ -438,7 +438,7 @@
             //model.numberCompleteWorkout (data.NumberCompleteWorkout);
             //model.numberNotCompleteWorkout(data.NumberNotCompleteWorkout);
                 ko.applyBindings(DashboaordViewModel(data), $('#content-dashboard')[0]);
-                console.log(data.Measurements);
+                console.log("Measurements: " + data.Measurements);
                 $('#content-dashboard').closeLoading();
             },
             error: function(xhr, ajaxOptions, thrownError) {
