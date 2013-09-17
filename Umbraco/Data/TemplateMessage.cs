@@ -11,6 +11,7 @@ public class TemplateMessage
     public string Email { get; set; }
     public string Token { get; set; }
     public string MessageType { get; set; }
+    public int UserId { get; set; }
     public int ObjectId { get; set; }
     public int ObjectType { get; set; }
     public int Badge { get; set; }

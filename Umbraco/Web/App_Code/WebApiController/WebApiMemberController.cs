@@ -519,17 +519,17 @@ public class MemberController : ApiController
     }
 
     [HttpPost]
-    public HttpResponseMessage VerifyReceipt(SubscriptionReceipt receipt)
+    public JObject VerifyAppleReceipt(string receipt)
     {
         HttpResponseMessage response = new HttpResponseMessage();
-        SubscriptionReceipt r = new SubscriptionReceipt();
         Member member = Member.GetCurrentMember();
+        JObject result = new JObject();
         try
         {
             Document document = new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Site)));
             var postData = new Dictionary<string, string>()
                 {
-                    {"receipt-data", receipt.Receipt},
+                    {"receipt-data", receipt},
                     {"password", document.getProperty("sharedSecretKey").Value.ToString()}
                 };
 
@@ -547,39 +547,7 @@ public class MemberController : ApiController
                 if (webResponse.StatusCode == HttpStatusCode.OK)
                 {
                     StreamReader stream = new StreamReader(webResponse.GetResponseStream());
-                    JObject result = JObject.Parse(stream.ReadToEnd());
-                    if (Convert.ToInt32(result["status"]) == 0)
-                    {
-                        r = new SubscriptionReceipt
-                            {
-                                MemberId = member.Id,
-                                Status = result["status"].Value<int>(),
-                                Receipt = result["receipt"].ToString(),
-                                LatestReceipt = result["latest_receipt"].ToString(),
-                                LatestReceiptInfo = result["latest_receipt_info"].ToString(),
-                            };
-                        InsertReceipt(r);
-                        PurchaseWorkout();
-                        SendTemplateMessage(new TemplateMessage
-                        {
-                            Id = 1315, //1174,
-                            Email = member.Email,
-                            MemberId = member.Id,
-                            ObjectType = 151 //Purchase
-                        });
-                    }
-                    else
-                    {
-                        r = new SubscriptionReceipt
-                        {
-                            MemberId = member.Id,
-                            Status = result["status"].Value<int>(),
-                            Receipt = result["receipt"].ToString(),
-                            LatestExpiredReceiptInfo = result["latest_expired_receipt_info"].ToString()
-                        };
-                        UpdateReceipt(r);
-                        member.getProperty("purchase").Value = 131;
-                    }
+                    result = JObject.Parse(stream.ReadToEnd());
                 }
             }
 
@@ -592,7 +560,83 @@ public class MemberController : ApiController
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
+        return result;
+    }
+
+    [HttpPost]
+    public HttpResponseMessage VerifyReceipt(SubscriptionReceipt receipt)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        Member member = receipt.MemberId != 0 ? new Member(receipt.MemberId) : Member.GetCurrentMember();
+        JObject result = VerifyAppleReceipt(receipt.Receipt);
+        try
+        {
+            switch (Convert.ToInt32(result["status"]))
+            {
+                case 0:
+                    PurchaseWorkout();
+                    SendTemplateMessage(new TemplateMessage
+                    {
+                        Id = 1315, //1174,
+                        Email = member.Email,
+                        MemberId = member.Id,
+                        UserId = 7,
+                        ObjectType = 151 //Purchase
+                    });
+                    InsertReceipt(new SubscriptionReceipt
+                    {
+                        MemberId = member.Id,
+                        Status = result["status"].Value<int>(),
+                        Receipt = result.ToString()
+                        //LatestReceipt = result["latest_receipt"].ToString(),
+                        //LatestReceiptInfo = result["latest_receipt_info"].ToString(),
+                    });
+                    member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
+                    member.Save();
+                    break;
+                case 21006:
+                    InsertReceipt(new SubscriptionReceipt
+                    {
+                        MemberId = member.Id,
+                        Status = result["status"].Value<int>(),
+                        Receipt = result.ToString()
+                        //LatestReceipt = result["latest_receipt"].ToString(),
+                        //LatestReceiptInfo = result["latest_receipt_info"].ToString(),
+                    });
+                    member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
+                    member.getProperty("purchase").Value = 131;
+                    member.Save();
+                    break;
+            }
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("Verify Receipt successfully created");
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
         return response;
+    }
+
+    [HttpGet]
+    public void PurchaseAll(int templateid, int objectId)
+    {
+        foreach (Member member in Member.GetAllAsList().Where(m => m.getProperty("isActive").Value.ToString() == "1"))
+        {
+            DateTime expiresDate = Convert.ToDateTime(member.getProperty("expiresDate").Value);
+
+            SendTemplateMessage(new TemplateMessage
+            {
+                Id = templateid,
+                Email = member.Email,
+                MemberId = member.Id,
+                UserId = 7,
+                ObjectId = 0,
+                ObjectType = objectId
+            });
+        }
     }
 
     [HttpPost]
@@ -608,9 +652,9 @@ public class MemberController : ApiController
             parameter,
             new SqlParameter { ParameterName = "@MemberId", Value = receipt.MemberId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@Status", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-            new SqlParameter { ParameterName = "@Receipt", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
-            new SqlParameter { ParameterName = "@LatestReceipt", Value = receipt.LatestReceipt, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
-            new SqlParameter { ParameterName = "@LatestReceiptInfo", Value = receipt.LatestReceiptInfo, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+            new SqlParameter { ParameterName = "@Receipt", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+                //new SqlParameter { ParameterName = "@LatestReceipt", Value = receipt.LatestReceipt, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
+                //new SqlParameter { ParameterName = "@LatestReceiptInfo", Value = receipt.LatestReceiptInfo, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
             );
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Receipt successfully created");
@@ -636,8 +680,8 @@ public class MemberController : ApiController
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateReceipt",
             new SqlParameter { ParameterName = "@MemberId", Value = receipt.MemberId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@Status", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-            new SqlParameter { ParameterName = "@Receipt", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 },
-            new SqlParameter { ParameterName = "@LatestExpiredReceiptInfo", Value = receipt.LatestExpiredReceiptInfo, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+            new SqlParameter { ParameterName = "@Receipt", Value = receipt.Status, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+                //new SqlParameter { ParameterName = "@LatestExpiredReceiptInfo", Value = receipt.LatestExpiredReceiptInfo, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 
             );
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Receipt successfully created");
@@ -2400,7 +2444,7 @@ public class MemberController : ApiController
     private void SetEmailUser(EmailMessage message)
     {
         //message.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
-        User user = umbraco.BusinessLogic.User.GetCurrent();
+        User user = message.UserId != 0 ? new User(message.UserId) : umbraco.BusinessLogic.User.GetCurrent();
         Member member = Member.GetCurrentMember();
         if (user != null)
         {
@@ -2423,7 +2467,7 @@ public class MemberController : ApiController
         try
         {
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-            Member member = Member.GetCurrentMember();
+            Member member = new Member(message.MemberId);
             //Document trainer = new Document(Convert.ToInt32(member.getProperty("trainer").Value));
             Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Notification)));
             Document document = documents.Single(d => d.Id == message.Id);
@@ -2437,6 +2481,7 @@ public class MemberController : ApiController
                         Email = message.Email,
                         Message = document.getProperty("emailContent").Value.ToString().Replace("/media/", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/media/").Replace("https", "http"),
                         Subject = document.getProperty("subject").Value.ToString(),
+                        UserId = message.UserId,
                         ObjectId = message.ObjectId,
                         ObjectType = message.ObjectType,
                         //TrainerId = !string.IsNullOrEmpty(trainer.getProperty("").Value.ToString()) ? Convert.ToInt32(trainer.getProperty("").Value) : (int?)null
@@ -2451,6 +2496,7 @@ public class MemberController : ApiController
                     MemberId = message.MemberId,
                     Message = document.getProperty("pushContent").Value.ToString(),
                     Token = message.Token,
+                    UserId = message.UserId,
                     ObjectId = message.ObjectId,
                     ObjectType = message.ObjectType,
                     Type = message.MessageType,
@@ -2594,7 +2640,7 @@ public class MemberController : ApiController
     private void SetPushUser(PushMessage message)
     {
         //message.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
-        User user = umbraco.BusinessLogic.User.GetCurrent();
+        User user = message.UserId != 0 ? new User(message.UserId) : umbraco.BusinessLogic.User.GetCurrent();
         Member member = Member.GetCurrentMember();
         if (user != null)
         {
@@ -2611,14 +2657,17 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
-    public void SendAllNotification(int objectId)
+    public void SendAllNotification(int templateid, int objectId)
     {
         foreach (Member member in Member.GetAllAsList().Where(m => m.getProperty("isActive").Value.ToString() == "1"))
         {
             SendTemplateMessage(new TemplateMessage
                 {
+                    Id = templateid,
                     Email = member.Email,
                     MemberId = member.Id,
+                    UserId = 7,
+                    ObjectId = 0,
                     ObjectType = objectId
                 });
         }
