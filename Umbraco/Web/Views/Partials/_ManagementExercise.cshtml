@@ -1,0 +1,206 @@
+<div class="row-fluid" >
+    <div id="mangement-exercise" class="span10">
+        <table id="grid" style="width: 800px;"></table>
+        <div id="pager" style="width: 800px;"></div>
+    </div>       
+</div>
+<link href="/css/ui/jquery.ui.css" rel="stylesheet" type="text/css" />
+<link href="/css/jqgrid/jqgrid.css" rel="stylesheet" type="text/css" />
+<script src="/scripts/jquery.js" type="text/javascript"></script>
+<script src="/scripts/jquery.ui.js" type="text/javascript"></script>
+<script src="/scripts/jquery.jqgrid.locale-es.js" type="text/javascript"></script>
+<script src="/scripts/jquery.jqgrid.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        if ($('#mangement-exercise').length) {
+            var lastSel;
+            $('#grid').jqGrid({
+                datatype: function() {
+                    var pageSize = $('#grid').getGridParam('rowNum');
+                    var currentPage = $('#grid').getGridParam('page');
+                    var sortColumn = $('#grid').getGridParam('sortname');
+                    var sortOrder = $('#grid').getGridParam('sortorder');
+                    var isSearch = $('#grid').getGridParam('search');
+                    var searchOptions;
+                    var searchField = '';
+                    var searchOper = '';
+                    var searchString = '';
+                    var filters = '';
+                    if (isSearch == true) { //Obtiene los parámetros de busqueda en caso de que la variable _search sea true
+                        searchOptions = $('#grid').getGridParam('postData');
+                        searchField = searchOptions.searchField;
+                        searchOper = searchOptions.searchOper;
+                        searchString = searchOptions.searchString;
+                        filters = searchOptions.filters;
+                    }
+                    var grid = {
+                        //Parametros de entrada
+                        PageSize: pageSize,
+                        CurrentPage: currentPage,
+                        SortColumn: sortColumn,
+                        SortOrder: sortOrder,
+                        IsSearch: isSearch,
+                        SearchField: searchField,
+                        SearchValue: searchString,
+                        SearchOper: searchOper,
+                        Filters: filters
+                    };
+
+                    var json = JSON.stringify(grid);
+                    $('#load_grid').show();
+                    $('#lui_grid').show(); 
+                    $.ajax({
+                        url: '/umbraco/surface/DataTypeSurface/GetExercise',
+                        cache: false,
+                        data: json,
+                        dataType: 'json',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function(data, state) { //success: function (data, textStatus, jqXHR) {
+                            if (state == 'success') {
+                                $('#grid')[0].addJSONData(data);
+                                //$('.loading').hide();
+                                $('#load_grid').hide();
+                                $('#lui_grid').hide();
+                                
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) { //error: function (jqXHR, textStatus, errorThrown) {
+                            alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+                        }
+                    });
+                },
+                jsonReader: {
+                    root: 'root',
+                    page: 'page',
+                    total: 'total',
+                    records: 'records',
+                    repeatitems: true,
+                    cell: 'cell',
+                    id: 'id'
+                },
+                colModel: [//Columns
+                    { name: 'Id', index: 'Id', width: 80, align: 'center', label: 'Id', hidden: false, sortable: true, search: true, stype: 'text', searchrules: { integer: true }, searchoptions: { sopt: ['eq', 'ne', 'lt', 'le', 'gt', 'ge'] }, edittype: 'text', formatter: 'integer', editoptions: { readonly: true, size: 10 } },
+                    { name: 'Category', index: 'Category', width: 200, align: 'left', label: 'Category', hidden: false, sortable: true, search: true, stype: 'text', searchoptions: { sopt: ['eq', 'bw', 'bn', 'ew', 'en', 'cn', 'nc'] }, editable: true, edittype: 'select', editoptions: { dataUrl: '/umbraco/surface/DataTypeSurface/GetPrevalue?id=1068' } },
+                    { name: 'ExerciseName', index: 'Name', width: 200, align: 'center', label: 'Exercise', hidden: false, sortable: true, search: false, editable: true, edittype: 'text', editrules: { edithidden: true, required: true }, editoptions: { size: 50, maxlength: 50} },
+                    { name: 'IsActive', index: 'IsActive', width: 100, align: 'center', label: 'IsActive', hidden: false, sortable: true, search: true, stype: 'text', searchoptions: { sopt: ['eq', 'bw', 'bn', 'ew', 'en', 'cn', 'nc'] }, editable: true, edittype: "checkbox", editoptions: { value: "True:False" } },
+                    { name: 'CategoryId', index: 'CategoryId', width: 80, align: 'center', label: 'CategoryId', hidden: true, sortable: true, search: true, stype: 'text', searchrules: { integer: true }, searchoptions: { sopt: ['eq', 'ne', 'lt', 'le', 'gt', 'ge'] }, editable: false }
+                ],
+                //            onSelectRow: function (id) {
+                //                if (id && id !== lastSel) {
+                //                    $('#grid').restoreRow(lastSel);
+                //                    lastSel = id;
+                //                }
+
+                //                $('#grid').jqGrid('saveRow', id,
+                //                    {
+                //                        successfunc: function (result) {
+                //                            var a = 1;
+                //                            var b = 2;
+                //                            var c = a + b;
+                //                            alert('saveRow - success - ' + result.responseText);
+                //                            return true;
+                //                        },
+                //                        url: '/umbraco/surface/DataTypeSurface/SaveRow',
+                //                        extraparam: { oper: 'save' },
+                //                        aftersavefunc: function (rowid, result) {
+                //                            var a = 1;
+                //                            var b = 2;
+                //                            var c = a + b;
+                //                            alert('saveRow - saved - ' + rowid + ' - ' + result.responseText);
+                //                        },
+                //                        errorfunc: function (rowid, result) {
+                //                            var a = 1;
+                //                            var b = 2;
+                //                            var c = a + b;
+                //                            alert('saveRow - error - ' + rowid + ' - ' + result.responseText);
+                //                        },
+                //                        afterrestorefunc: function (rowid) {
+                //                            var a = 1;
+                //                            var b = 2;
+                //                            var c = a + b;
+                //                            alert('saveRow - after restore - ' + rowid);
+                //                        },
+                //                        restoreAfterError: true,
+                //                        mtype: 'POST'
+                //                    }
+                //                );
+
+                //                $('#grid').jqGrid('editRow', id,
+                //                    {
+                //                        keys: false,
+                //                        oneditfunc: function (rowid) {
+                //                            var a = 1;
+                //                            var b = 2;
+                //                            var c = a + b;
+                //                            alert('editRow - onedit - ' + rowid);
+                //                        } ,
+                //                                                successfunc: function (result) {
+                //                                                    var a = 1;
+                //                                                    var b = 2;
+                //                                                    var c = a + b;
+                //                                                    alert('editRow - edited - ' + result.responseText);
+                //                                                    return true;
+                //                                                },
+                //                                                url: '/umbraco/surface/DataTypeSurface/EditRow',
+                //                                                extraparam: { oper: 'edit' },
+                //                                                aftersavefunc: function (rowid, result) {
+                //                                                    var a = 1;
+                //                                                    var b = 2;
+                //                                                    var c = a + b;
+                //                                                    alert('editRow - saved - ' + rowid + ' - ' + result.responseText);
+                //                                                },
+                //                                                errorfunc: function (rowid, result) {
+                //                                                    var a = 1;
+                //                                                    var b = 2;
+                //                                                    var c = a + b;
+                //                                                    alert('editRow - error - ' + rowid + ' - ' + result.responseText);
+                //                                                },
+                //                                                afterrestorefunc: function (rowid) {
+                //                                                    var a = 1;
+                //                                                    var b = 2;
+                //                                                    var c = a + b;
+                //                                                    alert('editRow - after restore - ' + rowid);
+                //                                                },
+                //                                                restoreAfterError: true,
+                //                                                mtype: 'POST'
+                //                    });
+                //            },
+                editurl: '/umbraco/surface/DataTypeSurface/SetExercise',
+                pager: '#pager', //Pager.
+                //loadonce: true,
+                loadui: 'block',
+                loadtext: 'Loading data...',
+                recordtext: '{0} - {1} de {2} elements',
+                emptyrecords: 'No results',
+                pgtext: 'Page: {0} of {1}', //Paging input control text format.
+                rowNum: '10', // PageSize.
+                rowList: [10, 20, 30, 40], //Variable PageSize DropDownList. 
+                viewrecords: true, //Show the RecordCount in the pager.
+                multiselect: false,
+                sortname: 'Id', //Default SortColumn
+                sortorder: 'asc', //Default SortOrder.
+                autowidth: true,
+                width: '800',
+                height: '400',
+                imgpath: '/css/ui/images',
+                caption: 'Exercise'
+            }).navGrid('#pager',
+                { edit: false, add: false, del: false, search: false, view: false },
+                {}, //Options for the Edit Dialog
+                {}, //Options for the Add Dialog
+                {}, //Options for Delete
+                {}, //Options for Search
+                {}  //Options for View
+            ).inlineNav('#pager',
+                {
+                    addParams: { useFormatter: false },
+                    editParams: {
+                        aftersavefunc: function(rowid, result) {
+                            $('#grid').trigger('reloadGrid');
+                        }
+                    }
+                });
+        }
+    });
+</script>

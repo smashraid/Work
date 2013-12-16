@@ -436,6 +436,7 @@
     <Content Include="App_Code\DataType\ChatContentDataType.cs" />
     <Content Include="App_Code\Section\ChatSection.cs" />
     <Content Include="App_Code\DataType\PartialDataType.cs" />
+    <Content Include="App_Code\Core\UmbracoTask.cs" />
     <Compile Include="App_Data\BundleConfig.cs" />
     <Compile Include="App_Data\RouteConfig.cs" />
     <Compile Include="App_Data\WebApiConfig.cs" />
@@ -457,7 +458,9 @@
     <Content Include="config\UrlRewriting.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config\umbracoSettings.config" />
+    <Content Include="config\umbracoSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="config\trees.config" />
@@ -539,6 +542,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Partials\_TemplateSuperSet.cshtml" />
+    <Content Include="Views\Partials\_ManagementExercise.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\MacroPartials\" />

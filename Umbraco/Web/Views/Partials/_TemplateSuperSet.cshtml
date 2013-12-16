@@ -203,29 +203,23 @@
             <fieldset>
                 <legend></legend>
                 <div data-bind="foreach: newRoutines">
-                    <label>
-                        Category</label>
-                    <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'>
+                    <label>Category *</label>
+                    <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "CATEGORY", value: Routine.CategoryId, uniqueName: true' required="">
                     </select>
                     <input type="hidden" data-bind="text: Routine.Id" />
-                    <label>
-                        Exercise</label>
-                    <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'>
+                    <label>Exercise *</label>
+                    <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "EXERCISE", value: Routine.ExerciseId, uniqueName: true' required="">
                     </select>
-                    <label>
-                        Resistance</label>
-                    <input type="text" data-bind="value: Routine.Resistance" class="inlineField" />
-                    <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' >
+                    <label>Resistance *</label>
+                    <input type="text" data-bind="value: Routine.Resistance" class="inlineField" required="" placeholder="RESISTANCE" />
+                    <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "UNIT", value: Routine.UnitId' >
                     </select>
-                    <label>
-                        Sets</label>
-                    <input type="text" data-bind="value: Routine.Sets" />
-                    <label>
-                        Reps</label>
-                    <input type="text" data-bind="value: Routine.Reps" />
-                    <label>
-                        Note</label>
-                    <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Routine.Note"></textarea>
+                    <label>Sets *</label>
+                    <input type="text" data-bind="value: Routine.Sets" required="" placeholder="SETS" />
+                    <label>Reps *</label>
+                    <input type="text" data-bind="value: Routine.Reps" required="" placeholder="REPS" />
+                    <label>Note *</label>
+                    <textarea placeholder="NOTE" rows="5" cols="30" data-bind="value: Routine.Note" required="" ></textarea>
                 </div>
             </fieldset>
         </form>
@@ -237,20 +231,20 @@
                 <legend></legend>
                 <div data-bind="with: superset">
                     <label>
-                        Resistance</label>
+                        Resistance *</label>
                     <select data-bind='options: $root.resistances, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: ResistanceId'>
                     </select>
                     <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: UnitId'>
                     </select>
                     <label>
-                        Sets</label>
-                    <input type="text" data-bind="value: Sets" />
+                        Sets *</label>
+                    <input type="text" data-bind="value: Sets" required="" />
                     <label>
-                        Reps</label>
-                    <input type="text" data-bind="value: Reps" />
+                        Reps *</label>
+                    <input type="text" data-bind="value: Reps"  required=""/>
                     <label>
-                        Note</label>
-                    <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Note"></textarea>
+                        Note *</label>
+                    <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Note" required=""></textarea>
                 </div>
             </fieldset>
         </form>

@@ -146,27 +146,27 @@
                     <legend></legend>
                     <div data-bind="foreach: newRoutines">
                         <label>
-                            Category</label>
+                            Category *</label>
                         <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'>
                         </select>
                         <input type="hidden" data-bind="text: Routine.Id" />
                         <label>
-                            Exercise</label>
+                            Exercise *</label>
                         <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'>
                         </select>
                         <label>
-                            Resistance</label>
+                            Resistance *</label>
                         <input type="text" class="inlineField" data-bind="value: Routine.Resistance" />
                         <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' >
                         </select>
                         <label>
-                            Sets</label>
+                            Sets *</label>
                         <input type="text" data-bind="value: Routine.Sets" />
                         <label>
-                            Reps</label>
+                            Reps *</label>
                         <input type="text" data-bind="value: Routine.Reps" />
                         <label>
-                            Note</label>
+                            Note *</label>
                         <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Routine.Note"></textarea>
                     </div>
                 </fieldset>

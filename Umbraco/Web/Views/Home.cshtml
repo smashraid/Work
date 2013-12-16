@@ -9,26 +9,27 @@
         <h2>Home</h2>
     </div>
     @{
-        Html.RenderPartial("_Slider");
+        //Html.RenderPartial("_Slider");
     }
     <div id="content">
         @Umbraco.Field("body")
     </div>
 </div>
+@Html.Partial("_ManagementExercise")
 @section script
 {
     <script type="text/javascript">
 
-        $(document).ready(function () {
-            $('#slider').cycle({
-                fx: 'scrollHorz',
-                delay: -1000,
-                timeout: 5000,
-                speed: 1000,
-                pager: '#nav ul',
-                next: '#next',
-                prev: '#prev'
-            });
-        });
+//        $(document).ready(function () {
+//            $('#slider').cycle({
+//                fx: 'scrollHorz',
+//                delay: -1000,
+//                timeout: 5000,
+//                speed: 1000,
+//                pager: '#nav ul',
+//                next: '#next',
+//                prev: '#prev'
+//            });
+//        });
     </script>
 }

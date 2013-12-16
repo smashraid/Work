@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using umbraco.BusinessLogic.Actions;
 using umbraco.cms.businesslogic;
 using umbraco.cms.presentation.Trees;
+using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Web.Models;
 using umbraco.BusinessLogic;
@@ -47,70 +48,70 @@ namespace Custom
         /// 
         public override void Render(ref XmlTree Tree)
         {
-            XmlTree xTree = new XmlTree();
-            ITreeService treeParams = new TreeService(1099, "content", false, false, TreeDialogModes.none, null);
-            TreeDefinition tree = TreeDefinitionCollection.Instance.FindTree("content");
-            BaseTree instance = tree.CreateInstance();
-            instance.SetTreeParameters((ITreeService)treeParams);
-            instance.Render(ref xTree);
+//            XmlTree xTree = new XmlTree();
+//            ITreeService treeParams = new TreeService(1099, "content", false, false, TreeDialogModes.none, null);
+//            TreeDefinition tree = TreeDefinitionCollection.Instance.FindTree("content");
+//            BaseTree instance = tree.CreateInstance();
+//            instance.SetTreeParameters((ITreeService)treeParams);
+//            instance.Render(ref xTree);
 
 
 
-            string json = @"{
-                              ""data"": {
-                                  ""title"": ""Workout 2"",
-                                  ""icon"": ""/umbraco/images/umbraco/bin.png"",
-                                  ""attributes"": {
-                                    ""class"": ""sprTree noSpr"",
-                                    ""href"": ""javascript:openContent(\u00271102\u0027);"",
-                                    ""umb:nodedata"": ""{\u0027menu\u0027:\u0027K,,,Z,T,L\u0027,\u0027nodeType\u0027:\u0027content\u0027,\u0027source\u0027:\u0027/umbraco/tree.aspx?rnd=45fec03ca8454bf394a4828a40513c60\\u0026id=1102\\u0026treeType=content\\u0026contextMenu=true\\u0026isDialog=false\u0027}"",
-                                  }                                  
-                                },
-                              ""attributes"": {
-                                  ""id"": ""1102"",  
-                                  ""class"": ""dim overlay-new"",  
-                                  ""rel"": ""dataNode"",  
-                                  ""umb:type"": ""content""                                    
-                                }                              
-                            }";
+//            string json = @"{
+//                              ""data"": {
+//                                  ""title"": ""Workout 2"",
+//                                  ""icon"": ""/umbraco/images/umbraco/bin.png"",
+//                                  ""attributes"": {
+//                                    ""class"": ""sprTree noSpr"",
+//                                    ""href"": ""javascript:openContent(\u00271102\u0027);"",
+//                                    ""umb:nodedata"": ""{\u0027menu\u0027:\u0027K,,,Z,T,L\u0027,\u0027nodeType\u0027:\u0027content\u0027,\u0027source\u0027:\u0027/umbraco/tree.aspx?rnd=45fec03ca8454bf394a4828a40513c60\\u0026id=1102\\u0026treeType=content\\u0026contextMenu=true\\u0026isDialog=false\u0027}"",
+//                                  }                                  
+//                                },
+//                              ""attributes"": {
+//                                  ""id"": ""1102"",  
+//                                  ""class"": ""dim overlay-new"",  
+//                                  ""rel"": ""dataNode"",  
+//                                  ""umb:type"": ""content""                                    
+//                                }                              
+//                            }";
 
-            string json1 = @"{
-                              ""data"": {
-                                  ""title"": ""Workout 2"",
-                                  ""icon"": ""/umbraco/images/umbraco/bin.png"",
-                                  ""attributes"": {
-                                    ""class"": ""sprTree noSpr"",
-                                    ""href"": ""javascript:openContent(\u00271102\u0027);"",
-                                    ""umb:nodedata"": ""{\u0027menu\u0027:\u0027K,,,Z,T,L\u0027,\u0027nodeType\u0027:\u0027content\u0027,\u0027source\u0027:\u0027/umbraco/tree.aspx?rnd=45fec03ca8454bf394a4828a40513c60\\u0026id=1102\\u0026treeType=content\\u0026contextMenu=true\\u0026isDialog=false\u0027}"",
-                                  }                                  
-                                },
-                              ""attributes"": {
-                                  ""id"": ""1102"",  
-                                  ""class"": ""dim overlay-new"",  
-                                  ""rel"": ""dataNode"",  
-                                  ""umb:type"": ""content""                                    
-                                }                              
-                            }";
+//            string json1 = @"{
+//                              ""data"": {
+//                                  ""title"": ""Workout 2"",
+//                                  ""icon"": ""/umbraco/images/umbraco/bin.png"",
+//                                  ""attributes"": {
+//                                    ""class"": ""sprTree noSpr"",
+//                                    ""href"": ""javascript:openContent(\u00271102\u0027);"",
+//                                    ""umb:nodedata"": ""{\u0027menu\u0027:\u0027K,,,Z,T,L\u0027,\u0027nodeType\u0027:\u0027content\u0027,\u0027source\u0027:\u0027/umbraco/tree.aspx?rnd=45fec03ca8454bf394a4828a40513c60\\u0026id=1102\\u0026treeType=content\\u0026contextMenu=true\\u0026isDialog=false\u0027}"",
+//                                  }                                  
+//                                },
+//                              ""attributes"": {
+//                                  ""id"": ""1102"",  
+//                                  ""class"": ""dim overlay-new"",  
+//                                  ""rel"": ""dataNode"",  
+//                                  ""umb:type"": ""content""                                    
+//                                }                              
+//                            }";
 
-            JObject o = JObject.Parse(json);
-            JObject o1 = JObject.Parse(json1);
+//            JObject o = JObject.Parse(json);
+//            JObject o1 = JObject.Parse(json1);
 
 
 
-            var z = this.NodeKey;
+//            var z = this.NodeKey;
 
-            Dictionary.DictionaryItem[] tmp = this.id == this.StartNodeID
-                                                  ? Dictionary.getTopMostItems
-                                                  : new Dictionary.DictionaryItem(this.id).Children;
+//            Dictionary.DictionaryItem[] tmp = this.id == this.StartNodeID
+//                                                  ? Dictionary.getTopMostItems
+//                                                  : new Dictionary.DictionaryItem(this.id).Children;
 
 
 
             Tree.treeCollection.Clear();
             User user = User.GetCurrent();
-            IEnumerable<Member> members = Member.GetAllAsList().Where(m => Roles.GetRolesForUser(m.LoginName).Contains("Users"));
-            Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.GymnastNode)));
-            IEnumerable<Document> gymnasts = documents.Where(d => d.getProperty("trainer").Value.ToString() == user.Id.ToString());
-            foreach (Document gymnast in gymnasts)
+            List<Member> members = Member.GetAllAsList().Where(m => Roles.GetRolesForUser(m.LoginName).Contains("Users") && m.getProperty("isActive").Value.ToString() == "1").ToList();
+            List<IContent> documents = ApplicationContext.Current.Services.ContentService.GetChildren(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.GymnastNode))).ToList();
+            List<IContent> gymnasts = documents.Where(d => d.GetValue("trainer").ToString() == user.Id.ToString() && members.Select(m => m.Id).Contains(d.GetValue<int>("member"))).ToList();
+            foreach (IContent gymnast in gymnasts)
             {
                 Member member = members.Single(m => m.getProperty("gymnast").Value.ToString() == gymnast.Id.ToString());
                 var node = XmlTreeNode.Create(this);

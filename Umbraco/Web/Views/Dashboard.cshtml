@@ -127,16 +127,16 @@
     <div class="row-fluid">
         <div class="page-header">
             <img src="https://www.google.com/images/icons/product/contacts-32.png" style="float: left; padding-right: 10px;" alt="Gymnast" />
-            <h1>Gymnast</h1>
+            <h1>Member</h1>
         </div>
         <div class="row-fluid" >
-            <div class="span9">
-                <div class="span3">
+            <div class="span12">
+                <div class="span4">
                     <div class="thumbnail">
                         <img data-bind="attr: { src: avatar }" alt="Photo Profile" width="220" />
                     </div>
                 </div>
-                <div class="span3" data-bind="with: account">
+                <div class="span4" data-bind="with: account">
                     <div class="control-group">
                         <label class="control-label" >
                             Current Weight</label>
@@ -163,7 +163,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="span3">
+                <div class="span4">
                     <button class="btn btn-primary" data-bind="click: openGymnast">More</button>
                     <button class="btn btn-primary hidden" data-bind="click: openTemplateRoutine">Routine</button>
                     <button class="btn btn-primary hidden" data-bind="click: openTemplateSuperSet">SuperSet</button>
@@ -177,9 +177,9 @@
             <h1 >Measurement</h1>
         </div>
         <div class="row-fluid">
-            <div class="span9">
+            <div class="span12">
                 <ul class="thumbnails" >
-                    <li class="span3" >
+                    <li class="span4" >
                          <div >
                         <h4>FIRST PHOTO</h4>
                     </div>
@@ -193,7 +193,7 @@
                             
                         </p>
                     </li>
-                    <li class="span3">
+                    <li class="span4">
                           <div >
                         <h4>MOST RECENT PHOTO</h4>
                     </div>
@@ -207,7 +207,7 @@
                             
                         </p>
                     </li>
-                    <li class="span3">
+                    <li class="span4">
                         <button class="btn btn-primary" data-bind="click: openMeasurement">More</button>
                     </li>
                 </ul>
@@ -220,40 +220,40 @@
             <h1>Workout</h1>
         </div>
         <div class="row-fluid">
-            <div class="span9">
-                <div class="span3">
+            <div class="span12">
+                <div class="span4">
                     <div>TOTAL <span data-bind="text: numberWorkout"></span></div>
                 </div>
-                <div class="span3">
+                <div class="span4">
                     <div>VIEWED <span data-bind="text: numberViewedWorkout"></span></div>
                 </div>
-                <div class="span3">
+                <div class="span4">
                       <button class="btn btn-primary" data-bind="click: openWorkout">More</button>
                 </div>
             </div>
         </div>
         <div class="row-fluid">
-            <div class="span9">
-                <div class="span3">
+            <div class="span12">
+                <div class="span4">
                     <div>NOT VIEWED <span data-bind="text: numberNotViewedWorkout"></span></div>
                 </div>
-                <div class="span3">
+                <div class="span4">
                     <div>COMPLETE <span data-bind="text: numberCompleteWorkout"></span></div>
                 </div>
-                <div class="span3">
+                <div class="span4">
                     
                 </div>
             </div>
         </div>
                    <div class="row-fluid">
-            <div class="span9">
-                <div class="span3">
+            <div class="span12">
+                <div class="span4">
                    <div>NOT COMPLETE <span data-bind="text: numberNotCompleteWorkout"></span></div>
                 </div>
-                <div class="span3">
+                <div class="span4">
                     
                 </div>
-                <div class="span3">
+                <div class="span4">
                     
                 </div>
             </div>
@@ -266,25 +266,25 @@
         </div>
         <div class="row-fluid">
             <div class="row-fluid">
-                <div class="span9">
-                    <div class="span3">
+                <div class="span12">
+                    <div class="span4">
                         <div>TOTAL <span data-bind="text: numberChat"></span></div>
                     </div>
-                    <div class="span3">
+                    <div class="span4">
                         <div>UNREAD <span data-bind="text: numberUnreadChat"></span></div>
                     </div>
-                    <div class="span3">
+                    <div class="span4">
                           <button class="btn btn-primary" data-bind="click: openChat">More</button>
                     </div>
                 </div>
             </div>
             <div class="row-fluid">
-                <div class="span9">
+                <div class="span12">
                     <div >
                         <h4>RECENT CHATS</h4>
                     </div>
                     <ul class="thumbnails" data-bind="foreach: chats">
-                        <li class="span3">
+                        <li class="span10" data-bind="style: { marginLeft: 0 < 1 ? '22px' : '' }">
                             <div class="thumbnail">
                                 <div class="caption">
                                     <h3 data-bind="text: Subject">
@@ -300,12 +300,12 @@
                 </div>
             </div>
             <div class="row-fluid">
-                <div class="span9">
+                <div class="span12">
                     <div >
                         <h4>UNREAD CHATS</h4>
                     </div>
                     <ul class="thumbnails" data-bind="foreach: unreadChats">
-                        <li class="span3">
+                        <li class="span10" data-bind="style: { marginLeft: 0 < 1 ? '22px' : '' }">
                             <div class="thumbnail">
                                 <div class="caption">
                                     <h3 data-bind="text: Subject">
@@ -330,24 +330,24 @@
         </div>
         <div class="row-fluid">
             <div class="row-fluid">
-                <div class="span9">
-                    <div class="span3">
+                <div class="span12">
+                    <div class="span4">
                         <div>TOTAL <span data-bind="text: numberTopic"></span></div>
                     </div>
-                    <div class="span3">
+                    <div class="span4">
                     </div>
-                    <div class="span3">
+                    <div class="span4">
                         <button class="btn btn-primary" data-bind="click: openTopic">More</button>
                     </div>
                 </div>
             </div>
             <div class="row-fluid">
-                <div class="span9">
+                <div class="span12">
                     <div >
                         <h4>Recent Topics</h4>
                     </div>
                     <ul class="thumbnails" data-bind="foreach: topics">
-                        <li class="span3">
+                        <li class="span10" data-bind="style: { marginLeft: 0 < 1 ? '22px' : '' }">
                             <div class="thumbnail">
                                 <div class="caption">
                                     <h3 data-bind="text: Name">
@@ -438,7 +438,7 @@
             //model.numberCompleteWorkout (data.NumberCompleteWorkout);
             //model.numberNotCompleteWorkout(data.NumberNotCompleteWorkout);
                 ko.applyBindings(DashboaordViewModel(data), $('#content-dashboard')[0]);
-                console.log("Measurements: " + data.Measurements);
+                console.log(data.Measurements);
                 $('#content-dashboard').closeLoading();
             },
             error: function(xhr, ajaxOptions, thrownError) {

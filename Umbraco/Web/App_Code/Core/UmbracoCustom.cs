@@ -422,6 +422,8 @@ public enum UmbracoType
     Temp,
     Purchase,
     Notification,
-    Template
+    Template,
+    Male,
+    Female
 }
 

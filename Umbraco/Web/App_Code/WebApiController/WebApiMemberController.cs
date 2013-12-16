@@ -35,9 +35,12 @@ using umbraco.cms.businesslogic.datatype;
 using umbraco.cms.businesslogic.media;
 using umbraco.cms.businesslogic.member;
 using umbraco.cms.businesslogic.web;
+using umbraco.editorControls.SettingControls.Pickers;
 using umbraco.providers.members;
+using DocumentType = umbraco.cms.businesslogic.web.DocumentType;
 using File = System.IO.File;
 using Log = umbraco.BusinessLogic.Log;
+using Path = System.IO.Path;
 using Property = umbraco.cms.businesslogic.property.Property;
 
 
@@ -77,6 +80,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(login),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "Login"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -107,6 +122,17 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "LogOff"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -185,6 +211,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(changePassword),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "ChangePassword"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -217,9 +255,21 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = loginName,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "ForgotPassword"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
-            //throw new HttpResponseException(response);
+            throw new HttpResponseException(response);
         }
         return response;
     }
@@ -309,6 +359,68 @@ public class MemberController : ApiController
         return account;
     }
 
+    [HttpGet]
+    public Account SelectMemberByGymnast(int gymnastid)
+    {
+        Document gymnast = new Document(gymnastid);
+        int memberId = Convert.ToInt32(gymnast.getProperty("member").Value);
+        Member member = new Member(memberId);
+        Account account = new Account();
+        //Document document = new Document(Convert.ToInt32(member.getProperty("gymnast").Value));
+        try
+        {
+            account = new Account
+            {
+                Id = member.Id,
+                Name = member.Text,
+                Email = member.Email,
+                LoginName = member.LoginName,
+                FirstName = member.getProperty("firstName").Value.ToString(),
+                LastName = member.getProperty("lastName").Value.ToString(),
+                Birthday = member.getProperty("birthday").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("birthday").Value) : (DateTime?)null,
+                Gender = UmbracoCustom.PropertyValue(UmbracoType.Gender, member.getProperty("gender")),
+                City = member.getProperty("city").Value.ToString(),
+                State = member.getProperty("state").Value.ToString(),
+                Country = member.getProperty("country").Value.ToString(),
+                ZipCode = member.getProperty("zipCode").Value.ToString(),
+                Address = member.getProperty("address").Value.ToString(),
+                Phone = member.getProperty("phone").Value.ToString(),
+                IsActive = member.getProperty("isActive").Value.ToString() == "1",
+                Facebook = member.getProperty("facebook").Value.ToString(),
+                Twitter = member.getProperty("twitter").Value.ToString(),
+                Google = member.getProperty("google").Value.ToString(),
+                Gymnast = Convert.ToInt32(member.getProperty("gymnast").Value),
+                Height = member.getProperty("height").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("height").Value) : (decimal?)null,
+                StartWeight = member.getProperty("startWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("startWeight").Value) : (decimal?)null,
+                GoalWeight = member.getProperty("goalWeight").Value.ToString() != string.Empty ? Convert.ToDecimal(member.getProperty("goalWeight").Value) : (decimal?)null,
+                //DOB = member.getProperty("dob").Value.ToString() != string.Empty ? Convert.ToDateTime(member.getProperty("dob").Value) : (DateTime?)null,
+                //UseMetric = member.getProperty("useMetric").Value.ToString() == "1",
+                TrainerId = gymnast.getProperty("trainer").Value.ToString() != string.Empty ? Convert.ToInt32(gymnast.getProperty("trainer").Value) : 0,
+                EmailAlert = member.getProperty("emailAlert").Value.ToString() == "1",
+                EnablePrivateMessage = member.getProperty("enablePrivateMessage").Value.ToString() == "1",
+                PurchaseId = member.getProperty("purchase").Value.ToString() != string.Empty ? Convert.ToInt32(member.getProperty("purchase").Value) : (int?)null,
+                Purchase = member.getProperty("purchase").Value.ToString() != string.Empty ? UmbracoCustom.PropertyValue(UmbracoType.Purchase, member.getProperty("purchase")) : string.Empty,
+            };
+        }
+        catch (Exception ex)
+        {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserType = clientId,
+                Endpoint = "api/member/SelectMemberByGymnast",
+                RequestObject = gymnastid.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "SelectMemberByGymnast"
+            });
+        }
+        
+        return account;
+    }
+
     public IEnumerable<Member> SelectAllMember()
     {
         return Member.GetAllAsList().Where(m => Roles.GetRolesForUser(m.LoginName).Contains("Users"));
@@ -342,7 +454,9 @@ public class MemberController : ApiController
             //member.getProperty("useMetric").Value = account.UseMetric ? "1" : "0";
             member.getProperty("emailAlert").Value = account.EmailAlert ? "1" : "0";
             member.getProperty("purchase").Value = account.PurchaseId.HasValue ? account.PurchaseId.ToString() : string.Empty;
-            member.getProperty("purchaseTemplate").Value = new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Template))).Children[0].Id;
+            member.getProperty("purchaseTemplate").Value = account.Gender.ToLower() == "male"
+                ? new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Male))).Children[0].Id
+                : new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Female))).Children[0].Id;  //new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Template))).Children[0].Id;
             member.Save();
             FormsAuthentication.SetAuthCookie(account.LoginName, true);
             //CreateGymnast(new Gymnast { MemberId = member.Id, Name = member.Text });
@@ -352,6 +466,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(account),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertMember"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -367,7 +493,7 @@ public class MemberController : ApiController
         try
         {
             Member member = Member.GetCurrentMember();
-            member.Email = account.Email ?? member.Email;
+            //member.Email = account.Email ?? member.Email;
             member.getProperty("gender").Value = !string.IsNullOrEmpty(account.Gender) ? UmbracoCustom.PropertyId(UmbracoType.Gender, account.Gender) : member.getProperty("gender").Value;
             member.getProperty("firstName").Value = !string.IsNullOrEmpty(account.FirstName) ? account.FirstName : member.getProperty("firstName").Value;
             member.getProperty("lastName").Value = !string.IsNullOrEmpty(account.LastName) ? account.LastName : member.getProperty("lastName").Value;
@@ -384,6 +510,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId =  Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(account),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertMember"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -407,6 +546,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(emailAlert),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateEmailAlert"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -454,6 +606,19 @@ public class MemberController : ApiController
                     }
                     catch (Exception ex)
                     {
+                        int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+                        InsertLog(new global::Log
+                        {
+                            UserId = Member.GetCurrentMember().Id,
+                            UserType = clientId,
+                            Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                            RequestObject = JsonConvert.SerializeObject(file),
+                            ExceptionMessage = ex.Message,
+                            ExceptionType = ex.GetType().Name,
+                            StackTrace = ex.StackTrace,
+                            Source = ex.Source,
+                            Operation = "InsertAvatar"
+                        });
                         umbraco.BusinessLogic.Log.Add(LogTypes.New, -1, ex.Message);
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                     }
@@ -556,6 +721,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = receipt,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "VerifyAppleReceipt"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -591,6 +769,7 @@ public class MemberController : ApiController
                         //LatestReceipt = result["latest_receipt"].ToString(),
                         //LatestReceiptInfo = result["latest_receipt_info"].ToString(),
                     });
+                    member.getProperty("receipt").Value = receipt.Receipt;
                     member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
                     member.Save();
                     break;
@@ -603,6 +782,7 @@ public class MemberController : ApiController
                         //LatestReceipt = result["latest_receipt"].ToString(),
                         //LatestReceiptInfo = result["latest_receipt_info"].ToString(),
                     });
+                    member.getProperty("receipt").Value = receipt.Receipt;
                     member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
                     member.getProperty("purchase").Value = 131;
                     member.Save();
@@ -613,6 +793,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(receipt),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "VerifyReceipt"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -625,17 +818,17 @@ public class MemberController : ApiController
     {
         foreach (Member member in Member.GetAllAsList().Where(m => m.getProperty("isActive").Value.ToString() == "1"))
         {
+            DateTime current = DateTime.Now;
             DateTime expiresDate = Convert.ToDateTime(member.getProperty("expiresDate").Value);
-
-            SendTemplateMessage(new TemplateMessage
+            if (expiresDate.ToShortDateString() == current.ToShortDateString())
             {
-                Id = templateid,
-                Email = member.Email,
-                MemberId = member.Id,
-                UserId = 7,
-                ObjectId = 0,
-                ObjectType = objectId
-            });
+                string receipt = member.getProperty("receipt").Value.ToString();
+                VerifyReceipt(new SubscriptionReceipt
+                {
+                    MemberId = member.Id,
+                    Receipt = receipt
+                });
+            }
         }
     }
 
@@ -661,6 +854,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(receipt),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertReceipt"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -688,6 +894,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(receipt),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateReceipt"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -732,7 +951,17 @@ public class MemberController : ApiController
             Member member = Member.GetCurrentMember();
             //Document gymnast = new Document(Convert.ToInt32(member.getProperty("gymnast").Value));
             int purchaseTemplate = Convert.ToInt32(member.getProperty("purchaseTemplate").Value);
-            Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Template))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
+             Document[] documents = new Document[10000];
+            string gender = UmbracoCustom.PropertyValue(UmbracoType.Gender, member.getProperty("gender")).ToLower();
+            switch (gender)
+            {
+                case "male":
+                    documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Male))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
+                    break;
+                case "female":
+                    documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Female))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
+                    break;
+            }
             foreach (Document document in documents)
             {
                 Workout workout = InsertWorkout(new Workout
@@ -761,6 +990,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "PurchaseWorkout"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -797,6 +1038,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(workout),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertWorkout"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -892,6 +1146,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateWorkoutOrder"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -923,6 +1189,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateWorkout"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -947,6 +1225,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeleteWorkout"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1051,6 +1342,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(gymnast),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateGymnast"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1076,6 +1380,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(gymnast),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertGymnast"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1126,26 +1443,48 @@ public class MemberController : ApiController
     public HttpResponseMessage LoginTrainer(Login login)
     {
         HttpResponseMessage response = new HttpResponseMessage();
-        if (umbraco.BusinessLogic.User.validateCredentials(login.LoginName, UmbracoCustom.EncodePassword(login.Password)))
+        try
         {
-            User[] users = umbraco.BusinessLogic.User.getAllByLoginName(login.LoginName);
-            Guid guid = Guid.NewGuid();
-            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertUserLogin",
-                      new SqlParameter { ParameterName = "@ContextID", Value = guid, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.UniqueIdentifier },
-                      new SqlParameter { ParameterName = "@UserID", Value = users[0].Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                      new SqlParameter { ParameterName = "@Timeout", Value = DateTime.Now.Ticks + 600000000L * long.Parse(UmbracoCustom.GetParameterValue(UmbracoType.TimeOut)), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.BigInt }
-                      );
-            FormsAuthentication.Encrypt(new FormsAuthenticationTicket(1, guid.ToString(), DateTime.Now, DateTime.Now.AddDays(1.0), false, guid.ToString(), FormsAuthentication.FormsCookiePath));
-            StateHelper.Cookies.UserContext.SetValue(guid.ToString(), 1.0);
-            response.StatusCode = HttpStatusCode.OK;
-            response.Content = new StringContent("User valid");
+            if (umbraco.BusinessLogic.User.validateCredentials(login.LoginName, UmbracoCustom.EncodePassword(login.Password)))
+            {
+                User[] users = umbraco.BusinessLogic.User.getAllByLoginName(login.LoginName);
+                Guid guid = Guid.NewGuid();
+                string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+                SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertUserLogin",
+                          new SqlParameter { ParameterName = "@ContextID", Value = guid, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.UniqueIdentifier },
+                          new SqlParameter { ParameterName = "@UserID", Value = users[0].Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                          new SqlParameter { ParameterName = "@Timeout", Value = DateTime.Now.Ticks + 600000000L * long.Parse(UmbracoCustom.GetParameterValue(UmbracoType.TimeOut)), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.BigInt }
+                          );
+                FormsAuthentication.Encrypt(new FormsAuthenticationTicket(1, guid.ToString(), DateTime.Now, DateTime.Now.AddDays(1.0), false, guid.ToString(), FormsAuthentication.FormsCookiePath));
+                StateHelper.Cookies.UserContext.SetValue(guid.ToString(), 1.0);
+                response.StatusCode = HttpStatusCode.OK;
+                response.Content = new StringContent("User valid");
+            }
+            else
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Content = new StringContent("User is not registered");
+            }
         }
-        else
+        catch (Exception ex)
         {
+            int trainerId = UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer");
+            InsertLog(new global::Log
+            {
+                UserType = trainerId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(login),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "LoginTrainer"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
-            response.Content = new StringContent("User is not registered");
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
         }
+        
         return response;
     }
 
@@ -1264,6 +1603,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(routine),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateRoutine"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1293,6 +1645,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(routine),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateRoutineExercise"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1490,6 +1855,19 @@ public class MemberController : ApiController
         }
         catch (SqlException ex)
         {
+           
+            InsertLog(new global::Log
+            {
+                UserId = routineViewModel.Routine.UserId,
+                UserType = routineViewModel.Routine.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(routineViewModel),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertRoutine"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             transaction.Rollback();
@@ -1560,6 +1938,18 @@ public class MemberController : ApiController
         }
         catch (SqlException ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = routineViewModels.First().Routine.UserId,
+                UserType = routineViewModels.First().Routine.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(routineViewModels),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertRoutines"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             transaction.Rollback();
@@ -1662,6 +2052,18 @@ public class MemberController : ApiController
         }
         catch (SqlException ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = routineViewModel.Routine.UserId,
+                UserType = routineViewModel.Routine.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(routineViewModel),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertRoutineSuperSet"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             transaction.Rollback();
@@ -1729,6 +2131,18 @@ public class MemberController : ApiController
         }
         catch (SqlException ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = routineViewModels.First().Routine.UserId,
+                UserType = routineViewModels.First().Routine.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(routineViewModels),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertRoutinesSuperSet"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             transaction.Rollback();
@@ -1800,6 +2214,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeleteRoutine"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1836,6 +2263,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = story.UserId,
+                UserType = story.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(story),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertStory"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1903,6 +2342,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = story.UserId,
+                UserType = story.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(story),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateStory"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -1928,6 +2379,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeleteStory"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2116,6 +2580,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(superSet),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertSuperSet"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2146,6 +2623,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(superSet),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateSuperSet"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2171,6 +2661,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeleteSuperSet"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2376,6 +2879,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = notification.MemberId,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(notification),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateNotification"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2403,6 +2919,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(notification),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertNotification"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2417,7 +2946,6 @@ public class MemberController : ApiController
         try
         {
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
-            Member member = Member.GetCurrentMember();
             SetEmailUser(message);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertEmailMessage",
                new SqlParameter { ParameterName = "@Id", Value = message.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int },
@@ -2434,6 +2962,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = message.UserId,
+                UserType = message.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(message),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertEmailMessage"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2466,7 +3006,6 @@ public class MemberController : ApiController
         HttpResponseMessage response = new HttpResponseMessage();
         try
         {
-            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             Member member = new Member(message.MemberId);
             //Document trainer = new Document(Convert.ToInt32(member.getProperty("trainer").Value));
             Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Notification)));
@@ -2474,12 +3013,13 @@ public class MemberController : ApiController
             //switch (message.MessageType)
             //{
             //case TemplateMessageType.Email:
-            if (member.getProperty("emailAlert").Value.ToString() == "1")
+            if (member.getProperty("emailAlert").Value.ToString() == "1" || message.UserType != 0)
             {
+                string content = message.MessageParams != null ? string.Format(document.getProperty("emailContent").Value.ToString(), message.MessageParams) : document.getProperty("emailContent").Value.ToString();
                 EmailMessage emailMessage = new EmailMessage
                     {
                         Email = message.Email,
-                        Message = document.getProperty("emailContent").Value.ToString().Replace("/media/", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/media/").Replace("https", "http"),
+                        Message = " Member: " + member.Id + content.Replace("/media/", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/media/").Replace("https", "http"),
                         Subject = document.getProperty("subject").Value.ToString(),
                         UserId = message.UserId,
                         ObjectId = message.ObjectId,
@@ -2487,26 +3027,28 @@ public class MemberController : ApiController
                         //TrainerId = !string.IsNullOrEmpty(trainer.getProperty("").Value.ToString()) ? Convert.ToInt32(trainer.getProperty("").Value) : (int?)null
                     };
                 SendEmail(emailMessage);
-                InsertEmailMessage(emailMessage);
+                //InsertEmailMessage(emailMessage);
             }
             //break;
             //case TemplateMessageType.Push:
-            PushMessage pushMessage = new PushMessage
+            if (message.UserType == 0)
+            {
+                PushMessage pushMessage = new PushMessage
                 {
                     MemberId = message.MemberId,
-                    Message = document.getProperty("pushContent").Value.ToString(),
+                    Message = document.getProperty("pushContent").Value.ToString() + " Member: " + member.Id,
                     Token = message.Token,
                     UserId = message.UserId,
                     ObjectId = message.ObjectId,
                     ObjectType = message.ObjectType,
                     Type = message.MessageType,
                     Title = document.getProperty("pushTitle").Value.ToString(),
-                    Badge = message.Badge,//Convert.ToInt32(document.getProperty("badge").Value),
+                    Badge = message.Badge, //Convert.ToInt32(document.getProperty("badge").Value),
                     Alert = document.getProperty("alert").Value.ToString(),
                     Sound = document.getProperty("sound").Value.ToString(),
                 };
-            SendPush(pushMessage);
-
+                SendPush(pushMessage);
+            }
             //break;
             //}
 
@@ -2515,7 +3057,16 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
-            umbraco.BusinessLogic.Log.Add(LogTypes.Error, message.MemberId, ex.Message);
+            InsertLog(new global::Log
+            {
+               Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(message),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+               Operation = "SendTemplateMessage"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2630,6 +3181,17 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = message.UserId,
+                UserType = message.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertPushMessage"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2659,9 +3221,13 @@ public class MemberController : ApiController
     [HttpGet]
     public void SendAllNotification(int templateid, int objectId)
     {
-        foreach (Member member in Member.GetAllAsList().Where(m => m.getProperty("isActive").Value.ToString() == "1"))
+        DateTime current = DateTime.UtcNow;
+        if (current.DayOfWeek == DayOfWeek.Monday && current.Hour == 8)
         {
-            SendTemplateMessage(new TemplateMessage
+            foreach (
+                Member member in Member.GetAllAsList().Where(m => m.getProperty("isActive").Value.ToString() == "1"))
+            {
+                SendTemplateMessage(new TemplateMessage
                 {
                     Id = templateid,
                     Email = member.Email,
@@ -2670,6 +3236,7 @@ public class MemberController : ApiController
                     ObjectId = 0,
                     ObjectType = objectId
                 });
+            }
         }
     }
 
@@ -2746,7 +3313,16 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
-            umbraco.BusinessLogic.Log.Add(LogTypes.Error, message.MemberId, ex.Message);
+            InsertLog(new global::Log
+            {
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(message),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "SendPush"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2847,6 +3423,16 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(message),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "SendEmail"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2881,6 +3467,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = topic.UserId,
+                UserType = topic.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(topic),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertTopic"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -2931,7 +3529,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
-            umbraco.BusinessLogic.Log.Add(LogTypes.Error, post.TopicId, ex.Message);
+            InsertLog(new global::Log
+            {
+                UserId = post.UserId,
+                UserType = post.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(post),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertPost"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3199,6 +3808,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeleteTopic"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3219,6 +3841,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeletePost"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3243,6 +3878,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(topic),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateTopic"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3267,6 +3915,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(post),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdatePost"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3297,6 +3958,18 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = chat.UserId,
+                UserType = chat.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(chat),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertChat"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3345,11 +4018,39 @@ public class MemberController : ApiController
             {
                 UpdateChat(new Chat { Id = talk.ChatId, IsRead = false });
             }
+            else
+            {
+                int trainerId = UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer");
+                Account account = MemberIsLoggedOn();
+                    SendTemplateMessage(new TemplateMessage
+                    {
+                        Id = 3881, //1174, 
+                        MessageParams = new object[]{account.FirstName, account.LastName, account.Email},
+                        Email = UmbracoCustom.GetEmail(account.TrainerId.ToString(), trainerId.ToString()),
+                        MemberId = account.Id,
+                        UserType = trainerId,
+                        MessageType = "chatid",
+                        ObjectId = talk.ChatId,
+                        ObjectType = 23
+                    });
+            }
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Talk successfully created");
         }
         catch (Exception ex)
         {
+            InsertLog(new global::Log
+            {
+                UserId = talk.UserId,
+                UserType = talk.UserType,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(talk),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertTalk"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3642,6 +4343,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(chat),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateChat"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3666,6 +4380,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(talk),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateTalk"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3686,6 +4413,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeleteChat"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3706,6 +4446,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = id.ToString(),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "DeleteTalk"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -3828,6 +4581,20 @@ public class MemberController : ApiController
             throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
         }
 
+        int trainerId = UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer");
+        Account account = MemberIsLoggedOn(); //SelectMemberByGymnast(gymnastId);//;SelectMemberByGymnast(Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]));
+        if (account.TrainerId != 0)
+        {
+            SendTemplateMessage(new TemplateMessage
+            {
+                Id = 3883, //1174, 
+                MessageParams = new object[] {account.FirstName, account.LastName, account.Email},
+                Email = UmbracoCustom.GetEmail(account.TrainerId.ToString(), trainerId.ToString()),
+                MemberId = account.Id,
+                UserId = account.Id,
+                UserType = trainerId
+            });
+        }
         //string root = HttpContext.Current.Server.MapPath("~/App_Data");
         //string root = HttpContext.Current.Server.MapPath(UmbracoCustom.GetParameterValue(UmbracoType.Temp));
         //MultipartFormDataStreamProvider provider = new MultipartFormDataStreamProvider(root);
@@ -3840,7 +4607,7 @@ public class MemberController : ApiController
             {
                 if (t.IsFaulted || t.IsCanceled)
                 {
-                    Request.CreateErrorResponse(HttpStatusCode.InternalServerError, t.Exception);
+                    Request.CreateErrorResponse(HttpStatusCode.InternalServerError, t.Exception + " IsFaulted");
                 }
 
                 try
@@ -3866,12 +4633,13 @@ public class MemberController : ApiController
                     //        Thigh = Convert.ToDecimal(provider.FormData.GetValues("Thigh")[0]),
                     //        Back = Convert.ToDecimal(provider.FormData.GetValues("Back")[0])
                     //    };
-
+                    
                     string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
                     SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = new int(), Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
+                    int gymnastId = Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]);
                     SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertMeasurement",
                       parameter,
-                      new SqlParameter { ParameterName = "@GymnastId", Value = Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                      new SqlParameter { ParameterName = "@GymnastId", Value = gymnastId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                       new SqlParameter { ParameterName = "@Weight", Value = Convert.ToDecimal(provider.FormData.GetValues("Weight")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
                       new SqlParameter { ParameterName = "@Neck", Value = Convert.ToDecimal(provider.FormData.GetValues("Neck")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
                       new SqlParameter { ParameterName = "@Shoulders", Value = Convert.ToDecimal(provider.FormData.GetValues("Shoulders")[0]), Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal, Precision = 8, Scale = 3 },
@@ -3891,7 +4659,7 @@ public class MemberController : ApiController
                       new SqlParameter { ParameterName = "@HasPhotos", Value = provider.FileData.Count > 0, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Bit }
                       );
 
-                    string imagePath = UmbracoCustom.GetParameterValue(UmbracoType.Photo) + provider.FormData.GetValues("GymnastId")[0];
+                    string imagePath = UmbracoCustom.GetParameterValue(UmbracoType.Photo) + gymnastId;
                     //string datePath = Path.Combine(imagePath, DateTime.Now.ToString("MMddyyyy"));
                     string datePath = Path.Combine(imagePath, Convert.ToInt32(parameter.Value).ToString());
                     DirectoryInfo directoryInfo = !Directory.Exists(imagePath) ? Directory.CreateDirectory(imagePath) : new DirectoryInfo(imagePath);
@@ -3950,6 +4718,19 @@ public class MemberController : ApiController
         }
         catch (Exception ex)
         {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(measurement),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdateMeasurement"
+            });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
@@ -4283,11 +5064,17 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertLog",
             new SqlParameter { ParameterName = "@Id", Value = log.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-            new SqlParameter { ParameterName = "@UserId", Value = log.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-            new SqlParameter { ParameterName = "@UserType", Value = log.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-            new SqlParameter { ParameterName = "@Message", Value = log.Message, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@UserId", Value = (object)log.UserId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@UserType", Value = (object)log.UserType ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
             new SqlParameter { ParameterName = "@Endpoint", Value = log.Endpoint, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
-            new SqlParameter { ParameterName = "@Screen", Value = log.Screen, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 }
+            new SqlParameter { ParameterName = "@RequestObject", Value = log.RequestObject, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@ExceptionMessage", Value = log.ExceptionMessage, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@ExceptionType", Value = log.ExceptionType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@StackTrace", Value = log.StackTrace, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@Source", Value = log.Source, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@Operation", Value = log.Operation, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 2147483647 },
+            new SqlParameter { ParameterName = "@ObjectId", Value = (object)log.ObjectId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@ObjectType", Value = (object)log.ObjectType ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
             );
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Log successfully created");
