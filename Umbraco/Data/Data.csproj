@@ -43,10 +43,12 @@
     <Compile Include="Account.cs" />
     <Compile Include="ChangePassword.cs" />
     <Compile Include="Chat.cs" />
+    <Compile Include="PackageMember.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="EmailMessage.cs" />
     <Compile Include="Exercise.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Package.cs" />
     <Compile Include="Paging.cs" />
     <Compile Include="Receipt.cs" />
     <Compile Include="Story.cs" />

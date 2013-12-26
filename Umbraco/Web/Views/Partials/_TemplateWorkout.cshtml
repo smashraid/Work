@@ -44,7 +44,7 @@
     }
     div#content-routine
     {
-        width: 350px;
+        width: 800px;
         margin: 20px 0;
     }
     div#content-routine table
@@ -92,40 +92,34 @@
             </caption>
             <thead>
                 <tr class="ui-widget-header ">
-                    <th>
-                        Id
-                    </th>
-                    <th>
+                   <th style="width: 40%;">
                         Exercise
                     </th>
-                    <th>
+                    <th style="width: 15%;">
                         Sets
                     </th>
-                    <th>
+                    <th style="width: 15%;">
                         Reps
                     </th>
-                    <th>
+                    <th style="width: 15%;">
                         Resistance
                     </th>
-                    <th>
-                        Unit
+                    <th style="width: 15%;">
+                        
                     </th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody data-bind="foreach: routines">
                 <tr>
-                    <td data-bind="text: Id">
-                    </td>
                     <td data-bind="text: Exercise.ExerciseName">
                     </td>
                     <td data-bind="text: Sets">
                     </td>
                     <td data-bind="text: Reps">
                     </td>
-                    <td data-bind="text: Resistance">
-                    </td>
-                    <td data-bind="text: Unit">
+                    <td >
+                        <span data-bind="text: Resistance"></span>&nbsp;
+                        <span data-bind="text: Unit"></span>
                     </td>
                     <td>
                         <button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
@@ -145,29 +139,23 @@
                 <fieldset>
                     <legend></legend>
                     <div data-bind="foreach: newRoutines">
-                        <label>
-                            Category *</label>
+                        <label>Category *</label>
                         <select data-bind='options: $root.categories, optionsText: "Value", optionsValue: "Id", optionsCaption: "Select...", value: Routine.CategoryId, uniqueName: true'>
                         </select>
                         <input type="hidden" data-bind="text: Routine.Id" />
-                        <label>
-                            Exercise *</label>
+                        <label>Exercise *</label>
                         <select data-bind='options: Routine.exercises, optionsText: "ExerciseName", optionsValue: "Id", optionsCaption: "Select...", value: Routine.ExerciseId, uniqueName: true'>
                         </select>
-                        <label>
-                            Resistance *</label>
-                        <input type="text" class="inlineField" data-bind="value: Routine.Resistance" />
+                        <label>Resistance *</label>
+                        <input type="text" class="inlineField" data-bind="value: Routine.Resistance" required="" />
                         <select data-bind='options: $root.units, optionsText: "Value", optionsValue: "Id", optionsCaption: "...", value: Routine.UnitId' >
                         </select>
-                        <label>
-                            Sets *</label>
-                        <input type="text" data-bind="value: Routine.Sets" />
-                        <label>
-                            Reps *</label>
-                        <input type="text" data-bind="value: Routine.Reps" />
-                        <label>
-                            Note *</label>
-                        <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Routine.Note"></textarea>
+                        <label>Sets *</label>
+                        <input type="text" data-bind="value: Routine.Sets" required="" />
+                        <label>Reps *</label>
+                        <input type="text" data-bind="value: Routine.Reps"  required=""/>
+                        <label>Note *</label>
+                        <textarea placeholder="Note" rows="5" cols="30" data-bind="value: Routine.Note" ></textarea>
                     </div>
                 </fieldset>
             </form>
@@ -224,10 +212,10 @@
         self.DocumentId = ko.observable();
         self.CategoryId = ko.observable();
         self.ExerciseId = ko.observable();
-        self.UserId = ko.observable();
-        self.UserType = ko.observable();
+        self.UserId = ko.observable(0);
+        self.UserType = ko.observable(48);
         self.ObjectId = ko.observable(@workoutId);
-        self.ObjectType = ko.observable();
+        self.ObjectType = ko.observable(163);
         self.StateId = ko.observable();
         self.State = ko.observable();
         self.Exercise = ko.observable();

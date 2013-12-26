@@ -417,7 +417,7 @@ public class MemberController : ApiController
                 Operation = "SelectMemberByGymnast"
             });
         }
-        
+
         return account;
     }
 
@@ -513,7 +513,7 @@ public class MemberController : ApiController
             int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
             InsertLog(new global::Log
             {
-                UserId =  Member.GetCurrentMember().Id,
+                UserId = Member.GetCurrentMember().Id,
                 UserType = clientId,
                 Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
                 RequestObject = JsonConvert.SerializeObject(account),
@@ -752,7 +752,7 @@ public class MemberController : ApiController
             switch (Convert.ToInt32(result["status"]))
             {
                 case 0:
-                    PurchaseWorkout();
+                    PurchaseWorkout(receipt.PackageId);
                     SendTemplateMessage(new TemplateMessage
                     {
                         Id = 1315, //1174,
@@ -769,8 +769,14 @@ public class MemberController : ApiController
                         //LatestReceipt = result["latest_receipt"].ToString(),
                         //LatestReceiptInfo = result["latest_receipt_info"].ToString(),
                     });
-                    member.getProperty("receipt").Value = receipt.Receipt;
-                    member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
+                    InsertPackageMember(new PackageMember
+                    {
+                        MemberId = member.Id,
+                        PackageId = receipt.PackageId,
+                        Receipt = receipt.Receipt
+                    });
+                    //member.getProperty("receipt").Value = receipt.Receipt;
+                    //member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
                     member.Save();
                     break;
                 case 21006:
@@ -782,9 +788,9 @@ public class MemberController : ApiController
                         //LatestReceipt = result["latest_receipt"].ToString(),
                         //LatestReceiptInfo = result["latest_receipt_info"].ToString(),
                     });
-                    member.getProperty("receipt").Value = receipt.Receipt;
-                    member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
-                    member.getProperty("purchase").Value = 131;
+                    //member.getProperty("receipt").Value = receipt.Receipt;
+                    //member.getProperty("expiresDate").Value = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds((long.Parse(result["receipt"]["expires_date"].ToString())));
+                    //member.getProperty("purchase").Value = 131;
                     member.Save();
                     break;
             }
@@ -942,47 +948,99 @@ public class MemberController : ApiController
 
     #region Workout
 
+    //[HttpPost]
+    //public HttpResponseMessage PurchaseWorkout()
+    //{
+    //    HttpResponseMessage response = new HttpResponseMessage();
+    //    try
+    //    {
+    //        Member member = Member.GetCurrentMember();
+    //        //Document gymnast = new Document(Convert.ToInt32(member.getProperty("gymnast").Value));
+    //        int purchaseTemplate = Convert.ToInt32(member.getProperty("purchaseTemplate").Value);
+    //         Document[] documents = new Document[10000];
+    //        string gender = UmbracoCustom.PropertyValue(UmbracoType.Gender, member.getProperty("gender")).ToLower();
+    //        switch (gender)
+    //        {
+    //            case "male":
+    //                documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Male))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
+    //                break;
+    //            case "female":
+    //                documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Female))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
+    //                break;
+    //        }
+    //        foreach (Document document in documents)
+    //        {
+    //            Workout workout = InsertWorkout(new Workout
+    //                {
+    //                    Name = document.Text,
+    //                    //ParentId = gymnast.Id,
+    //                    Description = document.getProperty("description").Value.ToString(),
+    //                    StateId = UmbracoCustom.PropertyValueId(UmbracoType.WorkoutState, "Not Viewed")
+    //                });
+    //            IEnumerable<RoutineViewModel> routines = GetRoutineByWorkout(document.Id).Select((r) =>
+    //                {
+    //                    r.ObjectId = workout.Id;
+    //                    return new RoutineViewModel
+    //                        {
+    //                            Routine = r,
+    //                            Stories = new List<Story>()
+    //                        };
+    //                });
+    //            InsertRoutines(routines);
+    //        }
+    //        member.getProperty("purchaseTemplate").Value = documents.LastOrDefault().Id;
+    //        member.Save();
+
+    //        response.StatusCode = HttpStatusCode.OK;
+    //        response.Content = new StringContent("Purchase Workout successfully added");
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+    //        InsertLog(new global::Log
+    //        {
+    //            UserId = Member.GetCurrentMember().Id,
+    //            UserType = clientId,
+    //            Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+    //            ExceptionMessage = ex.Message,
+    //            ExceptionType = ex.GetType().Name,
+    //            StackTrace = ex.StackTrace,
+    //            Source = ex.Source,
+    //            Operation = "PurchaseWorkout"
+    //        });
+    //        response.StatusCode = HttpStatusCode.InternalServerError;
+    //        response.Content = new StringContent(ex.Message);
+    //        throw new HttpResponseException(response);
+    //    }
+    //    return response;
+    //}
+
     [HttpPost]
-    public HttpResponseMessage PurchaseWorkout()
+    public HttpResponseMessage PurchaseWorkout(int pacakgeId)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         try
         {
             Member member = Member.GetCurrentMember();
-            //Document gymnast = new Document(Convert.ToInt32(member.getProperty("gymnast").Value));
-            int purchaseTemplate = Convert.ToInt32(member.getProperty("purchaseTemplate").Value);
-             Document[] documents = new Document[10000];
-            string gender = UmbracoCustom.PropertyValue(UmbracoType.Gender, member.getProperty("gender")).ToLower();
-            switch (gender)
+            Document package = new Document(pacakgeId);
+            Workout workout = InsertWorkout(new Workout
             {
-                case "male":
-                    documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Male))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
-                    break;
-                case "female":
-                    documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Female))).Where(d => d.Id >= purchaseTemplate).Take(30).ToArray();
-                    break;
-            }
-            foreach (Document document in documents)
+                Name = package.Text,
+                //ParentId = gymnast.Id,
+                Description = package.getProperty("description").Value.ToString(),
+                StateId = UmbracoCustom.PropertyValueId(UmbracoType.WorkoutState, "Not Viewed"),
+                CreatedUser = UmbracoCustom.PropertyValueId(UmbracoType.UserType, "admin")
+            });
+            IEnumerable<RoutineViewModel> routines = GetRoutineByWorkout(package.Id).Select((r) =>
             {
-                Workout workout = InsertWorkout(new Workout
-                    {
-                        Name = document.Text,
-                        //ParentId = gymnast.Id,
-                        Description = document.getProperty("description").Value.ToString(),
-                        StateId = UmbracoCustom.PropertyValueId(UmbracoType.WorkoutState, "Not Viewed")
-                    });
-                IEnumerable<RoutineViewModel> routines = GetRoutineByWorkout(document.Id).Select((r) =>
-                    {
-                        r.ObjectId = workout.Id;
-                        return new RoutineViewModel
-                            {
-                                Routine = r,
-                                Stories = new List<Story>()
-                            };
-                    });
-                InsertRoutines(routines);
-            }
-            member.getProperty("purchaseTemplate").Value = documents.LastOrDefault().Id;
+                r.ObjectId = workout.Id;
+                return new RoutineViewModel
+                {
+                    Routine = r,
+                    Stories = new List<Story>()
+                };
+            });
+            InsertRoutines(routines);
             member.Save();
 
             response.StatusCode = HttpStatusCode.OK;
@@ -1024,12 +1082,13 @@ public class MemberController : ApiController
             Document document = documents.Single(d => d.Text == member.Text);
             //Document document = documents.SingleOrDefault(d => d.Text == member.Text) ?? CreateGymnast(new Gymnast { MemberId = member.Id, Name = member.Text });
             DocumentType documentType = DocumentType.GetByAlias("Workout");
-            document = Document.MakeNew(workout.Name, documentType, new User("admin"), document.Id);
+            document = Document.MakeNew(workout.Name, documentType, new User(0), document.Id);
             document.getProperty("dateScheduled").Value = workout.DateScheduled;
             document.getProperty("dateCompleted").Value = workout.DateCompleted;
             document.getProperty("description").Value = workout.Description;
             document.getProperty("state").Value = workout.StateId;
             document.getProperty("note").Value = workout.Note;
+            document.getProperty("createdUser").Value = workout.CreatedUser;//UmbracoCustom.PropertyValueId(UmbracoType.UserType, (user != null ? "trainer" : "client"));
             document.Save();
             workout = SelectWorkoutById(document.Id, member.Id);
 
@@ -1097,6 +1156,41 @@ public class MemberController : ApiController
         Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.GymnastNode)));
         Document document = documents.Single(d => d.Text == member.Text);
         List<Workout> workouts = document.Children.Select(child => new Workout
+        {
+            Id = child.Id,
+            ParentId = child.ParentId,
+            Name = child.Text,
+            DateScheduled = (child.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateScheduled").Value) : (DateTime?)null),
+            DateCompleted = (child.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateCompleted").Value) : (DateTime?)null),
+            Description = child.getProperty("description").Value.ToString(),
+            StateId = (!string.IsNullOrEmpty(child.getProperty("state").Value.ToString()) ? Convert.ToInt32(child.getProperty("state").Value) : (int?)null),
+            State = (!string.IsNullOrEmpty(child.getProperty("state").Value.ToString()) ? UmbracoCustom.PropertyValue(UmbracoType.WorkoutState, Convert.ToInt32(child.getProperty("state").Value)) : string.Empty),
+            //RateId = (child.getProperty("rate").Value.ToString() != "" ? Convert.ToInt32(child.getProperty("rate").Value) : (int?)null),
+            //Rate = UmbracoCustom.PropertyValue(UmbracoType.Rate, child.getProperty("rate")),
+            Note = child.getProperty("note").Value.ToString(),
+            TimeSpent = (!string.IsNullOrEmpty(child.getProperty("timeSpent").Value.ToString()) ? Convert.ToInt32(child.getProperty("timeSpent").Value) : (int?)null),
+            CreatedDate = child.CreateDateTime,
+            UpdatedDate = child.UpdateDate,
+            SortOrder = child.sortOrder
+        }).ToList();
+
+        if (fromDate != null && toDate != null)
+        {
+            workouts = workouts.Where(w => w.UpdatedDate >= fromDate && w.UpdatedDate <= toDate).ToList();
+        }
+
+        return workouts;
+    }
+
+    [HttpGet]
+    public IEnumerable<Workout> SelectWorkoutByUserType(int userType = 0, int id = 0, DateTime? fromDate = null, DateTime? toDate = null)
+    {
+        User user = umbraco.BusinessLogic.User.GetCurrent();
+        Member member = user != null ? new Member(id) : Member.GetCurrentMember();
+
+        Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.GymnastNode)));
+        Document document = documents.Single(d => d.Text == member.Text );
+        List<Workout> workouts = document.Children.Where(w => w.getProperty("createdUser").Value.ToString() == userType.ToString()).Select(child => new Workout
         {
             Id = child.Id,
             ParentId = child.ParentId,
@@ -1484,7 +1578,7 @@ public class MemberController : ApiController
             response.Content = new StringContent(ex.Message);
             throw new HttpResponseException(response);
         }
-        
+
         return response;
     }
 
@@ -1855,7 +1949,7 @@ public class MemberController : ApiController
         }
         catch (SqlException ex)
         {
-           
+
             InsertLog(new global::Log
             {
                 UserId = routineViewModel.Routine.UserId,
@@ -2154,45 +2248,59 @@ public class MemberController : ApiController
 
     private void SetRoutineUser(Routine routine)
     {
-        routine.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
-        User user = umbraco.BusinessLogic.User.GetCurrent();
-        Member member = Member.GetCurrentMember();
-        if (user != null)
+        if (routine.ObjectType == 0)
         {
-            routine.UserId = user.Id;
-            routine.UserType =
-                UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
-                    u => u.Value.ToLower() == "trainer").Id;
+            routine.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "workout").Id;
         }
-        else
+        if (routine.UserType == 0 && routine.UserId == 0)
         {
-            routine.UserId = member.Id;
-            routine.UserType =
-                UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
-                    u => u.Value.ToLower() == "client").Id;
+            User user = umbraco.BusinessLogic.User.GetCurrent();
+            Member member = Member.GetCurrentMember();
+            if (user != null)
+            {
+                routine.UserId = user.Id;
+                routine.UserType =
+                    UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType)))
+                        .Single(
+                            u => u.Value.ToLower() == "trainer").Id;
+            }
+            else
+            {
+                routine.UserId = member.Id;
+                routine.UserType =
+                    UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType)))
+                        .Single(
+                            u => u.Value.ToLower() == "client").Id;
+            }
         }
     }
 
     private void SetRoutineSuperSetUser(Routine routine)
     {
-        routine.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "superset").Id;
+        if (routine.ObjectType == 0)
+        {
+            routine.ObjectType = UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.ObjectType))).Single(o => o.Value.ToLower() == "superset").Id;
+        }
         //Document WorkoutId = new Document(GetSuperSetById(routine.ObjectId).WorkoutId);
         //routine.DocumentId = new Document(WorkoutId.ParentId).Id;
-        User user = umbraco.BusinessLogic.User.GetCurrent();
-        Member member = Member.GetCurrentMember();
-        if (user != null)
+        if (routine.UserType == 0 && routine.UserId == 0)
         {
-            routine.UserId = user.Id;
-            routine.UserType =
-                UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
-                    u => u.Value.ToLower() == "trainer").Id;
-        }
-        else
-        {
-            routine.UserId = member.Id;
-            routine.UserType =
-                UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
-                    u => u.Value.ToLower() == "client").Id;
+            User user = umbraco.BusinessLogic.User.GetCurrent();
+            Member member = Member.GetCurrentMember();
+            if (user != null)
+            {
+                routine.UserId = user.Id;
+                routine.UserType =
+                    UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
+                        u => u.Value.ToLower() == "trainer").Id;
+            }
+            else
+            {
+                routine.UserId = member.Id;
+                routine.UserType =
+                    UmbracoCustom.DataTypeValue(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.UserType))).Single(
+                        u => u.Value.ToLower() == "client").Id;
+            }
         }
     }
 
@@ -2407,6 +2515,62 @@ public class MemberController : ApiController
         List<Routine> routines = new List<Routine>();
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectRoutineByWorkout", new SqlParameter { ParameterName = "@ObjectId", Value = id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                routines.Add(new Routine
+                {
+                    Exercise = new Exercise
+                    {
+                        Id = Convert.ToInt32(reader.GetValue(0)),
+                        ExerciseName = reader.GetValue(1).ToString(),
+                        TrainerId = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
+                        CategoryId = Convert.ToInt32(reader.GetValue(3).ToString()),
+                        Category = UmbracoCustom.PropertyValue(UmbracoType.Category, reader.GetValue(3)),
+                        IsActive = Convert.ToBoolean(reader.GetValue(4))
+                    },
+                    Id = Convert.ToInt32(reader.GetValue(5).ToString()),
+                    ExerciseId = Convert.ToInt32(reader.GetValue(0)),
+                    Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(6)),
+                    Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(7)),
+                    Resistance = reader.IsDBNull(8) ? (decimal?)null : Convert.ToDecimal(reader.GetValue(8)),
+                    UnitId = reader.IsDBNull(9) ? (int?)null : Convert.ToInt32(reader.GetValue(9)),
+                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(9)),
+                    Note = reader.GetValue(10).ToString(),
+                    StateId = reader.IsDBNull(11) ? (int?)null : Convert.ToInt32(reader.GetValue(11)),
+                    State = UmbracoCustom.PropertyValue(UmbracoType.State, reader.GetValue(11)),
+                    SortOrder = Convert.ToInt32(reader.GetValue(12)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(13)),
+                    ObjectId = Convert.ToInt32(reader.GetValue(14))
+                });
+            }
+        }
+        return routines;
+    }
+
+    [HttpGet]
+    public IEnumerable<Routine> SelectRoutineByUserType(int userType)
+    {
+        Member member = new Member(3910); //Member.GetCurrentMember();
+        Document document = new Document(Convert.ToInt32(member.getProperty("gymnast").Value));
+        int userId = 0;
+        switch (userType)
+        {
+            case 49:
+                userId = member.Id;
+                break;
+            case 50:
+                userId = document.getProperty("trainer").Value.ToString() != string.Empty ? Convert.ToInt32(document.getProperty("trainer").Value) : 0;
+                break;
+        }
+
+
+        List<Routine> routines = new List<Routine>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectRoutineByUserType",
+            new SqlParameter { ParameterName = "@UserType", Value = userType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@UserId", Value = userId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
+            ))
         {
             while (reader.Read())
             {
@@ -3059,13 +3223,13 @@ public class MemberController : ApiController
         {
             InsertLog(new global::Log
             {
-               Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
                 RequestObject = JsonConvert.SerializeObject(message),
                 ExceptionMessage = ex.Message,
                 ExceptionType = ex.GetType().Name,
                 StackTrace = ex.StackTrace,
                 Source = ex.Source,
-               Operation = "SendTemplateMessage"
+                Operation = "SendTemplateMessage"
             });
             response.StatusCode = HttpStatusCode.InternalServerError;
             response.Content = new StringContent(ex.Message);
@@ -4022,17 +4186,17 @@ public class MemberController : ApiController
             {
                 int trainerId = UmbracoCustom.PropertyId(UmbracoType.UserType, "trainer");
                 Account account = MemberIsLoggedOn();
-                    SendTemplateMessage(new TemplateMessage
-                    {
-                        Id = 3881, //1174, 
-                        MessageParams = new object[]{account.FirstName, account.LastName, account.Email},
-                        Email = UmbracoCustom.GetEmail(account.TrainerId.ToString(), trainerId.ToString()),
-                        MemberId = account.Id,
-                        UserType = trainerId,
-                        MessageType = "chatid",
-                        ObjectId = talk.ChatId,
-                        ObjectType = 23
-                    });
+                SendTemplateMessage(new TemplateMessage
+                {
+                    Id = 3881, //1174, 
+                    MessageParams = new object[] { account.FirstName, account.LastName, account.Email },
+                    Email = UmbracoCustom.GetEmail(account.TrainerId.ToString(), trainerId.ToString()),
+                    MemberId = account.Id,
+                    UserType = trainerId,
+                    MessageType = "chatid",
+                    ObjectId = talk.ChatId,
+                    ObjectType = 23
+                });
             }
             response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent("Talk successfully created");
@@ -4588,7 +4752,7 @@ public class MemberController : ApiController
             SendTemplateMessage(new TemplateMessage
             {
                 Id = 3883, //1174, 
-                MessageParams = new object[] {account.FirstName, account.LastName, account.Email},
+                MessageParams = new object[] { account.FirstName, account.LastName, account.Email },
                 Email = UmbracoCustom.GetEmail(account.TrainerId.ToString(), trainerId.ToString()),
                 MemberId = account.Id,
                 UserId = account.Id,
@@ -4633,7 +4797,7 @@ public class MemberController : ApiController
                     //        Thigh = Convert.ToDecimal(provider.FormData.GetValues("Thigh")[0]),
                     //        Back = Convert.ToDecimal(provider.FormData.GetValues("Back")[0])
                     //    };
-                    
+
                     string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
                     SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = new int(), Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
                     int gymnastId = Convert.ToInt32(provider.FormData.GetValues("GymnastId")[0]);
@@ -5167,6 +5331,163 @@ public class MemberController : ApiController
 
 
         return workouts;
+    }
+
+    #endregion
+
+    #region Store
+
+    [HttpGet]
+    public IEnumerable<Package> SelectAllPackage()
+    {
+        Member member = Member.GetCurrentMember();
+        string gender = UmbracoCustom.PropertyValue(UmbracoType.Gender, member.getProperty("gender"));
+        Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Store)));
+        List<Package> packages = new List<Package>();
+        var filter = documents
+            .First(d => d.Text == gender).Children
+            .Where(d => !string.IsNullOrEmpty(d.getProperty("id").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("description").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("price").Value.ToString()));
+        foreach (Document document in filter)
+        {
+
+            packages.Add(new Package
+            {
+                Id = document.getProperty("id").Value.ToString(),
+                Name = document.Text,
+                Description = document.getProperty("description").Value.ToString(),
+                Price = Convert.ToDecimal(document.getProperty("price").Value),
+                Routines = GetRoutineByWorkout(document.Id),
+                DocumentId = document.Id,
+                State = SelectStatePackageMember(document.Id)
+            });
+        }
+        return packages;
+    }
+
+    [HttpPost]
+    public HttpResponseMessage InsertPackageMember(PackageMember packageMember)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            SqlParameter parameter = new SqlParameter { ParameterName = "@Id", Value = packageMember.Id, Direction = ParameterDirection.Output, SqlDbType = SqlDbType.Int };
+            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertPackageMember",
+            parameter,
+            new SqlParameter { ParameterName = "@MemberId", Value = packageMember.MemberId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@PackageId", Value = packageMember.PackageId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@Receipt", Value = packageMember.Receipt, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar, Size = 2147483647 }
+            );
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("PackageMember successfully created");
+        }
+        catch (Exception ex)
+        {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(packageMember),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "InsertPackageMember"
+            });
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    [HttpPost]
+    public HttpResponseMessage UpdatePackageMember(PackageMember packageMember)
+    {
+        HttpResponseMessage response = new HttpResponseMessage();
+        try
+        {
+            string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+            SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdatePackageMember",
+            new SqlParameter { ParameterName = "@Id", Value = packageMember.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@IsActive", Value = packageMember.IsActive, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Bit }
+            );
+            response.StatusCode = HttpStatusCode.OK;
+            response.Content = new StringContent("PackageMember successfully updated");
+        }
+        catch (Exception ex)
+        {
+            int clientId = UmbracoCustom.PropertyId(UmbracoType.UserType, "client");
+            InsertLog(new global::Log
+            {
+                UserId = Member.GetCurrentMember().Id,
+                UserType = clientId,
+                Endpoint = HttpContext.Current.Request.Url.PathAndQuery,
+                RequestObject = JsonConvert.SerializeObject(packageMember),
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                Operation = "UpdatePackageMember"
+            });
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.Content = new StringContent(ex.Message);
+            throw new HttpResponseException(response);
+        }
+        return response;
+    }
+
+    [HttpGet]
+    public IEnumerable<PackageMember> SelectPackageMember()
+    {
+        Member member = Member.GetCurrentMember();
+        List<PackageMember> packageMembers = new List<PackageMember>();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        using (SqlDataReader reader = SqlHelper.ExecuteReader(cn, CommandType.StoredProcedure, "SelectPackageMember", new SqlParameter { ParameterName = "@MemberId", Value = member.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }))
+        {
+            while (reader.Read())
+            {
+                packageMembers.Add(new PackageMember
+                {
+                    Id = Convert.ToInt32(reader.GetValue(0)),
+                    MemberId = Convert.ToInt32(reader.GetValue(1)),
+                    PackageId = Convert.ToInt32(reader.GetValue(2)),
+                    WasBought = Convert.ToBoolean(reader.GetValue(3)),
+                    Receipt = reader.GetValue(4).ToString(),
+                    IsActive = Convert.ToBoolean(reader.GetValue(5)),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(6).ToString()),
+                    UpdatedDate = reader.IsDBNull(7) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(7))
+                });
+            }
+            
+        }
+        return packageMembers;
+    }
+
+    [HttpGet]
+    public bool SelectStatePackageMember(int packageId)
+    {
+        Member member = Member.GetCurrentMember();
+        string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
+        bool result = Convert.ToBoolean(SqlHelper.ExecuteScalar(cn, CommandType.StoredProcedure, "SelectStatePackageMember",
+            new SqlParameter
+            {
+                ParameterName = "@MemberId",
+                Value = member.Id,
+                Direction = ParameterDirection.Input,
+                SqlDbType = SqlDbType.Int
+            },
+            new SqlParameter
+            {
+                ParameterName = "@PackageId",
+                Value = packageId,
+                Direction = ParameterDirection.Input,
+                SqlDbType = SqlDbType.Int
+            }
+            ));
+        return result;
     }
 
     #endregion

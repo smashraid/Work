@@ -31,4 +31,5 @@ public class Workout
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
     public int SortOrder { get; set; }
+    public int CreatedUser { get; set; }
 }

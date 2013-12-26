@@ -424,6 +424,7 @@ public enum UmbracoType
     Notification,
     Template,
     Male,
-    Female
+    Female,
+    Store
 }
 

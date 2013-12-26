@@ -8,6 +8,7 @@ public class SubscriptionReceipt
     {
       public int Id { get; set; }
       public int MemberId { get; set; }
+      public int PackageId { get; set; }
       public int Status { get; set; }
       public string Receipt { get; set; }
       public string LatestReceipt { get; set; }
