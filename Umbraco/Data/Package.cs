@@ -11,5 +11,5 @@ public class Package
     public string Description { get; set; }
     public decimal Price { get; set; }
     public bool State { get; set; }
-    public IEnumerable<Routine> Routines { get; set; }
+    public IEnumerable<Workout> Workouts { get; set; }
 }

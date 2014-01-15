@@ -393,6 +393,7 @@
     <Content Include="scripts\jquery.colorbox.js" />
     <Content Include="scripts\jquery.cycle.js" />
     <Content Include="scripts\jquery.jqgrid.js" />
+    <Content Include="scripts\jquery.jqgrid.locale-en.js" />
     <Content Include="scripts\jquery.jqgrid.locale-es.js" />
     <Content Include="scripts\jquery.js" />
     <Content Include="scripts\jquery.ui.js" />
@@ -560,7 +561,7 @@
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
+          <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>21773</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>

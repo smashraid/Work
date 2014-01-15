@@ -453,10 +453,8 @@ public class MemberController : ApiController
             //member.getProperty("dob").Value = account.Birthday.HasValue ? account.Birthday.Value.ToShortDateString() : string.Empty;
             //member.getProperty("useMetric").Value = account.UseMetric ? "1" : "0";
             member.getProperty("emailAlert").Value = account.EmailAlert ? "1" : "0";
-            member.getProperty("purchase").Value = account.PurchaseId.HasValue ? account.PurchaseId.ToString() : string.Empty;
-            member.getProperty("purchaseTemplate").Value = account.Gender.ToLower() == "male"
-                ? new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Male))).Children[0].Id
-                : new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Female))).Children[0].Id;  //new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Template))).Children[0].Id;
+            //member.getProperty("purchase").Value = account.PurchaseId.HasValue ? account.PurchaseId.ToString() : string.Empty;
+            //member.getProperty("purchaseTemplate").Value = account.Gender.ToLower() == "male" ? new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Male))).Children[0].Id : new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Female))).Children[0].Id;  //new Document(Convert.ToInt32(UmbracoCustom.GetParameterValue(UmbracoType.Template))).Children[0].Id;
             member.Save();
             FormsAuthentication.SetAuthCookie(account.LoginName, true);
             //CreateGymnast(new Gymnast { MemberId = member.Id, Name = member.Text });
@@ -1016,31 +1014,52 @@ public class MemberController : ApiController
     //}
 
     [HttpPost]
-    public HttpResponseMessage PurchaseWorkout(int pacakgeId)
+    public HttpResponseMessage PurchaseWorkout(int packageId)
     {
         HttpResponseMessage response = new HttpResponseMessage();
         try
         {
             Member member = Member.GetCurrentMember();
-            Document package = new Document(pacakgeId);
-            Workout workout = InsertWorkout(new Workout
+                //new Member(4625);
+            //Document package = new Document(packageId);
+            foreach (Workout w in SelectWorkoutByTemplate(packageId))
             {
-                Name = package.Text,
-                //ParentId = gymnast.Id,
-                Description = package.getProperty("description").Value.ToString(),
-                StateId = UmbracoCustom.PropertyValueId(UmbracoType.WorkoutState, "Not Viewed"),
-                CreatedUser = UmbracoCustom.PropertyValueId(UmbracoType.UserType, "admin")
-            });
-            IEnumerable<RoutineViewModel> routines = GetRoutineByWorkout(package.Id).Select((r) =>
-            {
-                r.ObjectId = workout.Id;
-                return new RoutineViewModel
+                //WORKOUT
+                Workout workout = InsertWorkout(new Workout
                 {
-                    Routine = r,
-                    Stories = new List<Story>()
-                };
-            });
-            InsertRoutines(routines);
+                    Name = w.Name,//package.Text,
+                    //ParentId = gymnast.Id,
+                    PackageId = packageId,
+                    Description = w.Description, //package.getProperty("description").Value.ToString(),
+                    StateId = UmbracoCustom.PropertyValueId(UmbracoType.WorkoutState, "Not Viewed"),
+                    CreatedUser = UmbracoCustom.PropertyValueId(UmbracoType.UserType, "admin")
+                });
+                //SUPERSET
+                IEnumerable<SuperSetViewModel> supersets = GetSuperSetByWorkout(w.Id);
+                foreach (SuperSetViewModel superset in supersets)
+                {
+                    superset.SuperSet.WorkoutId = workout.Id;
+                    int id = InsertSuperSet(superset.SuperSet);
+                    IEnumerable<RoutineViewModel> routinesSuperSet = superset.Routines.Select((r) =>
+                    {
+                        r.Routine.ObjectId = id;
+                        r.Stories = new List<Story>();
+                        return r;
+                    });
+                    InsertRoutinesSuperSet(routinesSuperSet);
+                }
+                //ROUTINE
+                IEnumerable<RoutineViewModel> routines = GetRoutineByWorkout(w.Id).Select((r) =>
+                {
+                    r.ObjectId = workout.Id;
+                    return new RoutineViewModel
+                    {
+                        Routine = r,
+                        Stories = new List<Story>()
+                    };
+                });
+                InsertRoutines(routines);
+            }
             member.Save();
 
             response.StatusCode = HttpStatusCode.OK;
@@ -1076,6 +1095,7 @@ public class MemberController : ApiController
         {
             User user = umbraco.BusinessLogic.User.GetCurrent();
             Member member = user != null ? new Member(workout.MemberId) : Member.GetCurrentMember();
+            //new Member(4625);
             //int trainerId = Convert.ToInt32(member.getProperty("trainer").Value);
             //Document document = new Document(trainerId);
             Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.GymnastNode)));
@@ -1083,6 +1103,7 @@ public class MemberController : ApiController
             //Document document = documents.SingleOrDefault(d => d.Text == member.Text) ?? CreateGymnast(new Gymnast { MemberId = member.Id, Name = member.Text });
             DocumentType documentType = DocumentType.GetByAlias("Workout");
             document = Document.MakeNew(workout.Name, documentType, new User(0), document.Id);
+            document.getProperty("package").Value = workout.PackageId;
             document.getProperty("dateScheduled").Value = workout.DateScheduled;
             document.getProperty("dateCompleted").Value = workout.DateCompleted;
             document.getProperty("description").Value = workout.Description;
@@ -1122,7 +1143,7 @@ public class MemberController : ApiController
     {
         User user = umbraco.BusinessLogic.User.GetCurrent();
         Member member = user != null ? new Member(memberId) : Member.GetCurrentMember();
-
+            //new Member(4625);
         Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.GymnastNode)));
         Document document = documents.Single(d => d.Text == member.Text);
         Document workout = document.Children.SingleOrDefault(w => w.Id == id);
@@ -1131,6 +1152,7 @@ public class MemberController : ApiController
         {
             Id = workout.Id,
             ParentId = workout.ParentId,
+            PackageId = (workout.getProperty("package").Value.ToString() != "" ? Convert.ToInt16(workout.getProperty("package").Value) : (int?)null),
             Name = workout.Text,
             DateScheduled = (workout.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(workout.getProperty("dateScheduled").Value) : (DateTime?)null),
             DateCompleted = (workout.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(workout.getProperty("dateCompleted").Value) : (DateTime?)null),
@@ -1148,6 +1170,77 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
+    public IEnumerable<Workout> SelectWorkoutByTemplate(int packageId)
+    {
+        
+        Document[] documents = Document.GetChildrenForTree(packageId);
+        List<Workout> workouts = new List<Workout>();
+        foreach (Document w in documents)
+        {
+            Workout workout = new Workout();
+
+            workout.Id = w.Id;
+            workout.ParentId = w.ParentId;
+            workout.Name = w.Text;
+            //workout.Description = w.getProperty("description").ToString();
+            workout.CreatedDate = w.CreateDateTime;
+            workout.UpdatedDate = w.UpdateDate;
+            workout.SortOrder = w.sortOrder;
+            workouts.Add(workout);
+        }
+        return workouts;
+    }
+
+    [HttpGet]
+    public IEnumerable<Workout> SelectWorkoutByPackage(int packageId)
+    {
+
+        Document[] documents = Document.GetChildrenForTree(packageId);
+        return documents.Select(w => new Workout
+        {
+            Id = w.Id,
+            ParentId = w.ParentId,
+            PackageId = (w.getProperty("package").Value.ToString() != "" ? Convert.ToInt16(w.getProperty("package").Value) : (int?)null),
+            Name = w.Text,
+            DateScheduled = (w.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(w.getProperty("dateScheduled").Value) : (DateTime?)null),
+            DateCompleted = (w.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(w.getProperty("dateCompleted").Value) : (DateTime?)null),
+            Description = w.getProperty("description").Value.ToString(),
+            StateId = (!string.IsNullOrEmpty(w.getProperty("state").Value.ToString()) ? Convert.ToInt32(w.getProperty("state").Value) : (int?)null),
+            State = (!string.IsNullOrEmpty(w.getProperty("state").Value.ToString()) ? UmbracoCustom.PropertyValue(UmbracoType.WorkoutState, Convert.ToInt32(w.getProperty("state").Value)) : string.Empty),
+            //RateId = (child.getProperty("rate").Value.ToString() != "" ? Convert.ToInt32(child.getProperty("rate").Value) : (int?)null),
+            //Rate = UmbracoCustom.PropertyValue(UmbracoType.Rate, child.getProperty("rate")),
+            TimeSpent = (!string.IsNullOrEmpty(w.getProperty("timeSpent").Value.ToString()) ? Convert.ToInt32(w.getProperty("timeSpent").Value) : (int?)null),
+            Note = w.getProperty("note").Value.ToString(),
+            CreatedDate = w.CreateDateTime,
+            UpdatedDate = w.UpdateDate,
+            SortOrder = w.sortOrder
+        });
+        //List<Workout> workouts = new List<Workout>();
+        //foreach (Document w in documents)
+        //{
+        //    Workout workout = new Workout();
+        //    workout.Id = w.Id;
+        //    workout.ParentId = w.ParentId;
+        //    workout.PackageId = (w.getProperty("package").Value.ToString() != "" ? Convert.ToInt16(w.getProperty("package").Value) : (int?)null);
+        //    workout.Name = w.Text;
+        //    workout.DateScheduled = (w.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(w.getProperty("dateScheduled").Value) : (DateTime?)null);
+        //    workout.DateCompleted = (w.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(w.getProperty("dateCompleted").Value) : (DateTime?)null);
+        //    workout.Description = w.getProperty("description").Value.ToString();
+        //    workout.StateId = (!string.IsNullOrEmpty(w.getProperty("state").Value.ToString()) ? Convert.ToInt32(w.getProperty("state").Value) : (int?)null);
+        //    workout.State = (!string.IsNullOrEmpty(w.getProperty("state").Value.ToString()) ? UmbracoCustom.PropertyValue(UmbracoType.WorkoutState, Convert.ToInt32(w.getProperty("state").Value)) : string.Empty);
+        //    //RateId = (child.getProperty("rate").Value.ToString() != "" ? Convert.ToInt32(child.getProperty("rate").Value) : (int?)null),
+        //    //Rate = UmbracoCustom.PropertyValue(UmbracoType.Rate, child.getProperty("rate")),
+        //    workout.TimeSpent = (!string.IsNullOrEmpty(w.getProperty("timeSpent").Value.ToString()) ? Convert.ToInt32(w.getProperty("timeSpent").Value) : (int?)null);
+        //    workout.Note = w.getProperty("note").Value.ToString();
+        //    workout.CreatedDate = w.CreateDateTime;
+        //    workout.UpdatedDate = w.UpdateDate;
+        //    workout.SortOrder = w.sortOrder;
+        //    workouts.Add(workout);
+        //}
+        //return workouts;
+    }
+
+    [HttpGet]
     public IEnumerable<Workout> SelectWorkoutByMember(int id = 0, DateTime? fromDate = null, DateTime? toDate = null)
     {
         User user = umbraco.BusinessLogic.User.GetCurrent();
@@ -1159,6 +1252,7 @@ public class MemberController : ApiController
         {
             Id = child.Id,
             ParentId = child.ParentId,
+            PackageId = (child.getProperty("package").Value.ToString() != "" ? Convert.ToInt16(child.getProperty("package").Value) : (int?)null),
             Name = child.Text,
             DateScheduled = (child.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateScheduled").Value) : (DateTime?)null),
             DateCompleted = (child.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateCompleted").Value) : (DateTime?)null),
@@ -1183,6 +1277,34 @@ public class MemberController : ApiController
     }
 
     [HttpGet]
+    public IEnumerable<Workout> SelectPackageByWorkout(int packageId)
+    {
+        Member member = Member.GetCurrentMember();
+             //new Member(4625);
+        Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.GymnastNode)));
+        Document document = documents.Single(d => d.Text == member.Text);
+        return document.Children.Where(d => d.getProperty("package").Value.ToString() == packageId.ToString()).Select(w => new Workout
+        {
+            Id = w.Id,
+            ParentId = w.ParentId,
+            PackageId = (w.getProperty("package").Value.ToString() != "" ? Convert.ToInt16(w.getProperty("package").Value) : (int?)null),
+            Name = w.Text,
+            DateScheduled = (w.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(w.getProperty("dateScheduled").Value) : (DateTime?)null),
+            DateCompleted = (w.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(w.getProperty("dateCompleted").Value) : (DateTime?)null),
+            Description = w.getProperty("description").Value.ToString(),
+            StateId = (!string.IsNullOrEmpty(w.getProperty("state").Value.ToString()) ? Convert.ToInt32(w.getProperty("state").Value) : (int?)null),
+            State = (!string.IsNullOrEmpty(w.getProperty("state").Value.ToString()) ? UmbracoCustom.PropertyValue(UmbracoType.WorkoutState, Convert.ToInt32(w.getProperty("state").Value)) : string.Empty),
+            //RateId = (child.getProperty("rate").Value.ToString() != "" ? Convert.ToInt32(child.getProperty("rate").Value) : (int?)null),
+            //Rate = UmbracoCustom.PropertyValue(UmbracoType.Rate, child.getProperty("rate")),
+            TimeSpent = (!string.IsNullOrEmpty(w.getProperty("timeSpent").Value.ToString()) ? Convert.ToInt32(w.getProperty("timeSpent").Value) : (int?)null),
+            Note = w.getProperty("note").Value.ToString(),
+            CreatedDate = w.CreateDateTime,
+            UpdatedDate = w.UpdateDate,
+            SortOrder = w.sortOrder
+        });
+    }
+
+    [HttpGet]
     public IEnumerable<Workout> SelectWorkoutByUserType(int userType = 0, int id = 0, DateTime? fromDate = null, DateTime? toDate = null)
     {
         User user = umbraco.BusinessLogic.User.GetCurrent();
@@ -1194,6 +1316,7 @@ public class MemberController : ApiController
         {
             Id = child.Id,
             ParentId = child.ParentId,
+            PackageId = (child.getProperty("package").Value.ToString() != "" ? Convert.ToInt16(child.getProperty("package").Value) : (int?)null),
             Name = child.Text,
             DateScheduled = (child.getProperty("dateScheduled").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateScheduled").Value) : (DateTime?)null),
             DateCompleted = (child.getProperty("dateCompleted").Value.ToString() != "" ? Convert.ToDateTime(child.getProperty("dateCompleted").Value) : (DateTime?)null),
@@ -1269,6 +1392,7 @@ public class MemberController : ApiController
             Member member = Member.GetCurrentMember();
 
             Document document = new Document(workout.Id);
+            document.getProperty("package").Value = workout.PackageId.HasValue ? workout.PackageId.Value : document.getProperty("package").Value;
             document.getProperty("dateScheduled").Value = workout.DateScheduled.HasValue ? workout.DateScheduled.Value : document.getProperty("dateScheduled").Value;
             document.getProperty("dateCompleted").Value = workout.DateCompleted.HasValue ? workout.DateCompleted.Value : document.getProperty("dateCompleted").Value;
             document.getProperty("description").Value = !string.IsNullOrEmpty(workout.Description) ? workout.Description : document.getProperty("description").Value;
@@ -2551,7 +2675,8 @@ public class MemberController : ApiController
     [HttpGet]
     public IEnumerable<Routine> SelectRoutineByUserType(int userType)
     {
-        Member member = new Member(3910); //Member.GetCurrentMember();
+        Member member =  Member.GetCurrentMember();
+        //new Member(3910);
         Document document = new Document(Convert.ToInt32(member.getProperty("gymnast").Value));
         int userId = 0;
         switch (userType)
@@ -2731,6 +2856,7 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertSuperSet",
                     parameter,
+                    new SqlParameter { ParameterName = "@Name", Value = superSet.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 300},
                     new SqlParameter { ParameterName = "@WorkoutId", Value = superSet.WorkoutId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@Reps", Value = (object)superSet.Reps ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@Sets", Value = (object)superSet.Sets ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
@@ -2775,6 +2901,7 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateSuperSet",
                     new SqlParameter { ParameterName = "@Id", Value = superSet.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+                    new SqlParameter { ParameterName = "@Name", Value = superSet.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 300 },
                     new SqlParameter { ParameterName = "@Reps", Value = (object)superSet.Reps ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@Sets", Value = (object)superSet.Sets ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@ResistanceId", Value = (object)superSet.ResistanceId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
@@ -2858,15 +2985,18 @@ public class MemberController : ApiController
                 superSets.Add(new SuperSet
                 {
                     Id = Convert.ToInt32(reader.GetValue(0).ToString()),
-                    Reps = reader.IsDBNull(1) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
-                    Sets = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
-                    ResistanceId = Convert.ToInt32(reader.GetValue(3)),
-                    Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
-                    UnitId = reader.IsDBNull(4) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
-                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
-                    Note = reader.GetValue(5).ToString(),
-                    WorkoutId = Convert.ToInt32(reader.GetValue(6).ToString()),
-                    CreatedDate = Convert.ToDateTime(reader.GetValue(7))
+                    Name = reader.IsDBNull(1) ? null : reader.GetValue(1).ToString(),
+                    //Reps = reader.IsDBNull(2) ? null : reader.GetValue(2).ToString(),
+                    //Sets = reader.IsDBNull(3) ? null : reader.GetValue(3).ToString(),
+                    Reps = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
+                    Sets = reader.IsDBNull(3) ? (int?)null : Convert.ToInt32(reader.GetValue(3)),
+                    ResistanceId = Convert.ToInt32(reader.GetValue(4)),
+                    Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(4)),
+                    UnitId = reader.IsDBNull(5) ? (int?)null : Convert.ToInt32(reader.GetValue(5)),
+                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(5)),
+                    Note = reader.GetValue(6).ToString(),
+                    WorkoutId = Convert.ToInt32(reader.GetValue(7).ToString()),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(8))
                 });
             }
         }
@@ -2888,15 +3018,18 @@ public class MemberController : ApiController
                         SuperSet = new SuperSet
                             {
                                 Id = Convert.ToInt32(reader.GetValue(0).ToString()),
-                                Reps = reader.IsDBNull(1) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
-                                Sets = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
-                                ResistanceId = Convert.ToInt32(reader.GetValue(3)),
-                                Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
-                                UnitId = reader.IsDBNull(4) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
-                                Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
-                                Note = reader.GetValue(5).ToString(),
-                                WorkoutId = Convert.ToInt32(reader.GetValue(6).ToString()),
-                                CreatedDate = Convert.ToDateTime(reader.GetValue(7))
+                                Name = reader.IsDBNull(1) ? null : reader.GetValue(1).ToString(),
+                                //Reps = reader.IsDBNull(2) ? null : reader.GetValue(2).ToString(),
+                                //Sets = reader.IsDBNull(3) ? null : reader.GetValue(3).ToString(),
+                                Reps = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
+                                Sets = reader.IsDBNull(3) ? (int?)null : Convert.ToInt32(reader.GetValue(3)),
+                                ResistanceId = Convert.ToInt32(reader.GetValue(4)),
+                                Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(4)),
+                                UnitId = reader.IsDBNull(5) ? (int?)null : Convert.ToInt32(reader.GetValue(5)),
+                                Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(5)),
+                                Note = reader.GetValue(6).ToString(),
+                                WorkoutId = Convert.ToInt32(reader.GetValue(7).ToString()),
+                                CreatedDate = Convert.ToDateTime(reader.GetValue(8))
                             },
                         Routines = GetRoutineStories(Convert.ToInt32(reader.GetValue(0).ToString()))
                     });
@@ -2917,15 +3050,18 @@ public class MemberController : ApiController
                 superSet = new SuperSet
                 {
                     Id = Convert.ToInt32(reader.GetValue(0).ToString()),
-                    Reps = reader.IsDBNull(1) ? (int?)null : Convert.ToInt32(reader.GetValue(1)),
-                    Sets = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
-                    ResistanceId = Convert.ToInt32(reader.GetValue(3)),
-                    Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(3)),
-                    UnitId = reader.IsDBNull(4) ? (int?)null : Convert.ToInt32(reader.GetValue(4)),
-                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(4)),
-                    Note = reader.GetValue(5).ToString(),
-                    WorkoutId = Convert.ToInt32(reader.GetValue(6).ToString()),
-                    CreatedDate = Convert.ToDateTime(reader.GetValue(7))
+                    Name = reader.IsDBNull(1) ? null : reader.GetValue(1).ToString(),
+                    //Reps = reader.IsDBNull(2) ? null : reader.GetValue(2).ToString(),
+                    //Sets = reader.IsDBNull(3) ? null : reader.GetValue(3).ToString(),
+                    Reps = reader.IsDBNull(2) ? (int?)null : Convert.ToInt32(reader.GetValue(2)),
+                    Sets = reader.IsDBNull(3) ? (int?)null : Convert.ToInt32(reader.GetValue(3)),
+                    ResistanceId = Convert.ToInt32(reader.GetValue(4)),
+                    Resistance = UmbracoCustom.PropertyValue(UmbracoType.Resistance, reader.GetValue(4)),
+                    UnitId = reader.IsDBNull(5) ? (int?)null : Convert.ToInt32(reader.GetValue(5)),
+                    Unit = UmbracoCustom.PropertyValue(UmbracoType.Unit, reader.GetValue(5)),
+                    Note = reader.GetValue(6).ToString(),
+                    WorkoutId = Convert.ToInt32(reader.GetValue(7).ToString()),
+                    CreatedDate = Convert.ToDateTime(reader.GetValue(8))
                 };
             }
         }
@@ -5341,25 +5477,35 @@ public class MemberController : ApiController
     public IEnumerable<Package> SelectAllPackage()
     {
         Member member = Member.GetCurrentMember();
-        string gender = UmbracoCustom.PropertyValue(UmbracoType.Gender, member.getProperty("gender"));
-        Document[] documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Store)));
+            //new Member(4721);
+        //string gender = UmbracoCustom.PropertyValue(UmbracoType.Gender, member.getProperty("gender"));
+        List<Document> documents = Document.GetChildrenForTree(int.Parse(UmbracoCustom.GetParameterValue(UmbracoType.Store))).Where(d => !string.IsNullOrEmpty(d.getProperty("id").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("description").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("price").Value.ToString()) && d.ChildCount > 0).ToList();
         List<Package> packages = new List<Package>();
-        var filter = documents
-            .First(d => d.Text == gender).Children
-            .Where(d => !string.IsNullOrEmpty(d.getProperty("id").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("description").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("price").Value.ToString()));
-        foreach (Document document in filter)
+        //var filter = documents.First(d => d.Text == gender).Children.Where(d => !string.IsNullOrEmpty(d.getProperty("id").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("description").Value.ToString()) && !string.IsNullOrEmpty(d.getProperty("price").Value.ToString()));
+        foreach (Document document in documents)
         {
-
-            packages.Add(new Package
+           Package package = new Package
             {
                 Id = document.getProperty("id").Value.ToString(),
                 Name = document.Text,
                 Description = document.getProperty("description").Value.ToString(),
                 Price = Convert.ToDecimal(document.getProperty("price").Value),
-                Routines = GetRoutineByWorkout(document.Id),
+                //Routines = GetRoutineByWorkout(document.Id),
+                //Workouts = SelectWorkoutByPackage(document.Id),
                 DocumentId = document.Id,
                 State = SelectStatePackageMember(document.Id)
-            });
+            };
+
+           if (package.State)
+           {
+               package.Workouts = SelectPackageByWorkout(package.DocumentId);
+           }
+           else
+           {
+               package.Workouts = SelectWorkoutByTemplate(package.DocumentId);
+           }
+
+            packages.Add(package);
         }
         return packages;
     }
@@ -5470,22 +5616,11 @@ public class MemberController : ApiController
     public bool SelectStatePackageMember(int packageId)
     {
         Member member = Member.GetCurrentMember();
+            //new Member(4625);
         string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
         bool result = Convert.ToBoolean(SqlHelper.ExecuteScalar(cn, CommandType.StoredProcedure, "SelectStatePackageMember",
-            new SqlParameter
-            {
-                ParameterName = "@MemberId",
-                Value = member.Id,
-                Direction = ParameterDirection.Input,
-                SqlDbType = SqlDbType.Int
-            },
-            new SqlParameter
-            {
-                ParameterName = "@PackageId",
-                Value = packageId,
-                Direction = ParameterDirection.Input,
-                SqlDbType = SqlDbType.Int
-            }
+            new SqlParameter { ParameterName = "@MemberId", Value = member.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
+            new SqlParameter { ParameterName = "@PackageId", Value = packageId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int }
             ));
         return result;
     }
