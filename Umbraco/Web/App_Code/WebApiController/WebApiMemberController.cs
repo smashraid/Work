@@ -1813,7 +1813,7 @@ public class MemberController : ApiController
               new SqlParameter { ParameterName = "@Sets", Value = (object)routine.Sets ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
               new SqlParameter { ParameterName = "@Resistance", Value = (object)routine.Resistance ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
               new SqlParameter { ParameterName = "@UnitId", Value = (object)routine.UnitId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-              new SqlParameter { ParameterName = "@Note", Value = routine.Note, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
+              new SqlParameter { ParameterName = "@Note", Value = (object)routine.Note ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
               );
 
             response.StatusCode = HttpStatusCode.OK;
@@ -2487,7 +2487,7 @@ public class MemberController : ApiController
                     new SqlParameter { ParameterName = "@TypeId", Value = (object)story.TypeId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@UserId", Value = story.UserId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@UserType", Value = story.UserType, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                    new SqlParameter { ParameterName = "@Note", Value = story.Note, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
+                    new SqlParameter { ParameterName = "@Note", Value = (object)story.Note ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
                 );
 
             response.StatusCode = HttpStatusCode.OK;
@@ -2566,7 +2566,7 @@ public class MemberController : ApiController
                     new SqlParameter { ParameterName = "@UnitId", Value = (object)story.UnitId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@Value", Value = (object)story.Value ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Decimal },
                     new SqlParameter { ParameterName = "@TypeId", Value = (object)story.TypeId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                    new SqlParameter { ParameterName = "@Note", Value = story.Note, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
+                    new SqlParameter { ParameterName = "@Note", Value = (object)story.Note ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
                 );
 
             response.StatusCode = HttpStatusCode.OK;
@@ -2753,6 +2753,7 @@ public class MemberController : ApiController
                             IsActive = Convert.ToBoolean(reader.GetValue(4))
                         },
                         Id = Convert.ToInt32(reader.GetValue(5)),
+                        ExerciseId = Convert.ToInt32(reader.GetValue(0)),
                         Reps = reader.IsDBNull(6) ? (int?)null : Convert.ToInt32(reader.GetValue(6)),
                         Sets = reader.IsDBNull(7) ? (int?)null : Convert.ToInt32(reader.GetValue(7)),
                         Resistance = reader.IsDBNull(8) ? (decimal?)null : Convert.ToDecimal(reader.GetValue(8)),
@@ -2856,13 +2857,13 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "InsertSuperSet",
                     parameter,
-                    new SqlParameter { ParameterName = "@Name", Value = superSet.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 300},
+                    new SqlParameter { ParameterName = "@Name", Value = (object)superSet.Name ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 300 },
                     new SqlParameter { ParameterName = "@WorkoutId", Value = superSet.WorkoutId, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@Reps", Value = (object)superSet.Reps ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@Sets", Value = (object)superSet.Sets ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@ResistanceId", Value = (object)superSet.ResistanceId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@UnitId", Value = (object)superSet.UnitId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                    new SqlParameter { ParameterName = "@Note", Value = superSet.Note, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
+                    new SqlParameter { ParameterName = "@Note", Value = (object)superSet.Note ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
                 );
             id = Convert.ToInt32(parameter.Value);
             response.StatusCode = HttpStatusCode.OK;
@@ -2901,12 +2902,12 @@ public class MemberController : ApiController
             string cn = UmbracoCustom.GetParameterValue(UmbracoType.Connection);
             SqlHelper.ExecuteNonQuery(cn, CommandType.StoredProcedure, "UpdateSuperSet",
                     new SqlParameter { ParameterName = "@Id", Value = superSet.Id, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                    new SqlParameter { ParameterName = "@Name", Value = superSet.Name, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 300 },
+                    new SqlParameter { ParameterName = "@Name", Value = (object)superSet.Name ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.NVarChar, Size = 300 },
                     new SqlParameter { ParameterName = "@Reps", Value = (object)superSet.Reps ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@Sets", Value = (object)superSet.Sets ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@ResistanceId", Value = (object)superSet.ResistanceId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
                     new SqlParameter { ParameterName = "@UnitId", Value = (object)superSet.UnitId ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.Int },
-                    new SqlParameter { ParameterName = "@Note", Value = superSet.Note, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
+                    new SqlParameter { ParameterName = "@Note", Value = (object)superSet.Note ?? DBNull.Value, Direction = ParameterDirection.Input, SqlDbType = SqlDbType.VarChar }
               );
 
             response.StatusCode = HttpStatusCode.OK;
@@ -3319,7 +3320,7 @@ public class MemberController : ApiController
                 EmailMessage emailMessage = new EmailMessage
                     {
                         Email = message.Email,
-                        Message = " Member: " + member.Id + content.Replace("/media/", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/media/").Replace("https", "http"),
+                        Message = content.Replace("/media/", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/media/").Replace("https", "http"),
                         Subject = document.getProperty("subject").Value.ToString(),
                         UserId = message.UserId,
                         ObjectId = message.ObjectId,
